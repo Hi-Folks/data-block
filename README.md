@@ -29,7 +29,7 @@
     </i>
 </p>
 
-This PHP package provides robust tools for managing, querying, filtering, and setting nested data structures with ease. Whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays, this package offers a streamlined approach to handle nested data efficiently.
+This PHP package provides robust tools for managing, querying, filtering, and setting nested data structures with ease. Whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays, this package offers a streamlined approach to handling nested data efficiently.
 
 ## The Block class
 
@@ -202,6 +202,15 @@ Once you set the values, you can access them via `get()` (or `getBlock()`) metho
 ```php
 $textField->get("content.0.content.0.text");
 ```
+
+
+## Loading Data from JSON file
+
+```php
+$file = "./composer.json";
+$composerContent = Block::fromJsonFile($file);
+echo $composerContent->get("name"); // for example: "hi-folks/data-block"
+echo $composerContent->get("authors.0.name"); // for example: "Roberto B."
 
 ## Testing
 
