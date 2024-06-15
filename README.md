@@ -202,7 +202,41 @@ Once you set the values, you can access them via `get()` (or `getBlock()`) metho
 ```php
 $textField->get("content.0.content.0.text");
 ```
+## Extracting Keys
 
+Via the `keys()` method you can retrieve the list of the key:
+
+```php
+$data = Block::make($fruitsArray);
+$keys = $data->keys();
+/*
+Array
+(
+    [0] => avocado
+    [1] => apple
+    [2] => banana
+    [3] => cherry
+)
+*/
+```
+
+You can retrieve the keys of a nested element, combining the usage of `getBlock()` and the `keys()`:
+
+```php
+$data = Block::make($fruitsArray);
+$keys = $data->getBlock("avocado")->keys();
+
+/*
+Array
+(
+    [0] => name
+    [1] => fruit
+    [2] => wikipedia
+    [3] => color
+    [4] => rating
+)
+*/
+```
 
 ## Loading Data from JSON file
 

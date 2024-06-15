@@ -86,12 +86,31 @@ test(
     },
 );
 
+test(
+    'Block keys()',
+    function () use ($fruitsArray) {
+        $data = Block::make($fruitsArray);
+        expect($data->getBlock("avocado")->keys())->toHaveCount(5);
+        expect($data->getBlock("avocado")->keys())->toBeArray();
+        expect($data->getBlock("avocado")->keys())->toMatchArray([0 => "name"]);
+        expect($data->keys())->toHaveCount(4);
+        expect($data->keys())->toBeArray();
+        expect($data->keys())->toMatchArray([0 => "avocado"]);
+        expect($data->keys())->toMatchArray([1 => "apple"]);
+        print_r($data->getBlock("avocado")->keys());
+
+    }
+);
+
+
 it('Basic get Block', function (): void {
     $block = Block::make(['A','B','C']);
     expect($block->get(1))->toBe('B');
     expect($block->get(4))->toBeNull();
     expect($block->get(4, 'AAAA'))->toBe("AAAA");
 });
+
+
 
 it('Basic nested get', function (): void {
     $block = Block::make([
