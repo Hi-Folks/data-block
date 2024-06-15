@@ -3,7 +3,7 @@
 use HiFolks\DataType\Block;
 
 test('load JSON object HTTP', function () {
-    $jsonString = file_get_contents("https://api.storyblok.com/v2/cdn/stories/ww/home?version=draft&token=cJZAPSr2vzn9Gz7NnzgJeQtt&cv=1718398116");
+    $jsonString = file_get_contents("./tests/data/story.json");
 
     $composerContent = Block::fromJsonString($jsonString);
     expect($composerContent->get("story.name"))->toBe("Home");
@@ -31,7 +31,7 @@ test('load JSON object HTTP', function () {
 it('load JSON object', function (): void {
     $file = "./composer.json";
     $composerContent = Block::fromJsonFile($file);
-    expect($composerContent->get("name"))->toBe("hi-folks/data-blocks");
+    expect($composerContent->get("name"))->toBe("hi-folks/data-block");
     expect($composerContent->get("authors.0.name"))->toBe("Roberto B.");
     $composerContent->set("authors.0.name", "Test");
     expect($composerContent->get("authors.0.name"))->toBe("Test");

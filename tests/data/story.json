@@ -1,0 +1,836 @@
+{
+    "story": {
+        "name": "Home",
+        "created_at": "2024-06-05T12:58:00.444Z",
+        "published_at": "2023-12-08T10:45:52.621Z",
+        "id": 507271391,
+        "uuid": "adcc9fa7-2a2b-4d23-b1bf-43dac356f67e",
+        "content": {
+            "_uid": "4c19da45-ab81-49ff-9705-3da3a670ad26",
+            "body": [
+                {
+                    "_uid": "c82a6670-e10a-40df-b2de-5f4bf86f86bc",
+                    "buttons": [],
+                    "overlay": "",
+                    "headline": "New banner",
+                    "component": "banner",
+                    "full_width": false,
+                    "text_color": "primary",
+                    "subheadline": "",
+                    "background_blur": "",
+                    "background_color": "",
+                    "background_image": {
+                        "id": null,
+                        "alt": null,
+                        "name": "",
+                        "focus": null,
+                        "title": null,
+                        "source": null,
+                        "filename": "",
+                        "copyright": null,
+                        "fieldtype": "asset",
+                        "meta_data": {}
+                    },
+                    "background_video": {
+                        "id": null,
+                        "alt": null,
+                        "name": "",
+                        "focus": null,
+                        "title": null,
+                        "source": null,
+                        "filename": "",
+                        "copyright": null,
+                        "fieldtype": "asset",
+                        "meta_data": {}
+                    },
+                    "background_brightness": "",
+                    "enable_background_color": false,
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"banner\", \"space\": \"291582\", \"uid\": \"c82a6670-e10a-40df-b2de-5f4bf86f86bc\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "f9cc7b2b-b20b-4cc0-9227-a44981ae237b",
+                    "buttons": [
+                        {
+                            "_uid": "e217a308-5401-4c08-8283-ba24340e6051",
+                            "link": {
+                                "id": "1431945b-144d-429d-aee1-4ecc8f47ed1a",
+                                "url": "",
+                                "linktype": "story",
+                                "fieldtype": "multilink",
+                                "cached_url": "articles/"
+                            },
+                            "size": "large",
+                            "label": "Learn More",
+                            "style": "semi",
+                            "component": "button",
+                            "text_color": "dark",
+                            "border_radius": "default",
+                            "background_color": "white",
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"e217a308-5401-4c08-8283-ba24340e6051\", \"id\": \"507271391\"}--\u003e"
+                        }
+                    ],
+                    "overlay": "overlay-pattern-1",
+                    "headline": "Hello Everyone",
+                    "component": "hero-section",
+                    "text_color": "light",
+                    "full_height": true,
+                    "subheadline": "",
+                    "background_image": {
+                        "id": 5674587,
+                        "alt": "",
+                        "name": "",
+                        "focus": "",
+                        "title": "",
+                        "filename": "https://a.storyblok.com/f/172000/2560x1946/7ddce44d28/earth.jpg",
+                        "copyright": "",
+                        "fieldtype": "asset",
+                        "is_external_url": false
+                    },
+                    "background_video": {
+                        "id": 5674589,
+                        "alt": "",
+                        "name": "",
+                        "focus": "",
+                        "title": "",
+                        "filename": "https://a.storyblok.com/f/172000/x/1901ea4866/earth.mp4",
+                        "copyright": "",
+                        "fieldtype": "asset",
+                        "is_external_url": false
+                    },
+                    "vertical_alignment": "center",
+                    "horizontal_alignment": "center",
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"hero-section\", \"space\": \"291582\", \"uid\": \"f9cc7b2b-b20b-4cc0-9227-a44981ae237b\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "0328648d-0481-434c-8c71-9cd3f86420ef",
+                    "lead": "Until the mid 1990's, we didn't even know that other solar systems existed.",
+                    "text": {
+                        "type": "doc",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "text": "There are many things we don't know about space. The mysteries of black holes, dark matter, dark energy, quantum entanglement, antimatter, and so much more. ",
+                                        "type": "text"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "text": "Follow along with us to learn more.",
+                                        "type": "text",
+                                        "marks": [
+                                            {
+                                                "type": "bold"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "button": [
+                        {
+                            "_uid": "83dcbb2b-6c5e-4a67-9264-665092a209c2",
+                            "link": {
+                                "id": "",
+                                "url": "",
+                                "linktype": "story",
+                                "fieldtype": "multilink",
+                                "cached_url": ""
+                            },
+                            "size": "medium",
+                            "label": "Begin your journey",
+                            "style": "default",
+                            "component": "button",
+                            "text_color": "light",
+                            "border_radius": "default",
+                            "background_color": "primary",
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"83dcbb2b-6c5e-4a67-9264-665092a209c2\", \"id\": \"507271391\"}--\u003e"
+                        }
+                    ],
+                    "headline": "We don't know what we don't know.",
+                    "alignment": "center",
+                    "component": "text-section",
+                    "background_color": "light",
+                    "overlap_preceding_hero": false,
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"text-section\", \"space\": \"291582\", \"uid\": \"0328648d-0481-434c-8c71-9cd3f86420ef\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "ba28730e-6d56-4902-856d-2e344e7f76e9",
+                    "cols": "3",
+                    "lead": "",
+                    "articles": [
+                        "5c92a78f-e27a-4d76-9012-f575ef141792",
+                        "5de53282-b18e-4f15-8f3d-3b053dfc5ecf",
+                        "3b6202f6-f475-4ad3-be43-90f2ff096483"
+                    ],
+                    "headline": "Featured articles",
+                    "component": "featured-articles-section",
+                    "background_color": "light",
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"featured-articles-section\", \"space\": \"291582\", \"uid\": \"ba28730e-6d56-4902-856d-2e344e7f76e9\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "238a3552-a559-4acb-9788-384b3f2c2ee6",
+                    "buttons": [
+                        {
+                            "_uid": "bff52d00-de56-4496-bd35-c52ec27deaaf",
+                            "link": {
+                                "id": "",
+                                "url": "",
+                                "linktype": "story",
+                                "fieldtype": "multilink",
+                                "cached_url": ""
+                            },
+                            "size": "medium",
+                            "label": "Explore Mars",
+                            "style": "default",
+                            "component": "button",
+                            "text_color": "dark",
+                            "border_radius": "default",
+                            "background_color": "white",
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"bff52d00-de56-4496-bd35-c52ec27deaaf\", \"id\": \"507271391\"}--\u003e"
+                        }
+                    ],
+                    "overlay": "overlay-pattern-1",
+                    "headline": "Top Five Discoveries, Curiosity Rover at Mars",
+                    "component": "banner",
+                    "full_width": true,
+                    "text_color": "white",
+                    "subheadline": "There are many things we don't know about space. The mysteries of black holes, dark matter, dark energy, quantum entanglement, antimatter, and so much more.",
+                    "background_blur": {
+                        "value": 0,
+                        "plugin": "storyblok-slider"
+                    },
+                    "background_color": {
+                        "_uid": "b23df809-7c7b-4c46-982c-3325c7c0336b",
+                        "color": "#f40000",
+                        "plugin": "native-color-picker"
+                    },
+                    "background_image": {
+                        "id": 5671216,
+                        "alt": "",
+                        "name": "",
+                        "focus": "",
+                        "title": "",
+                        "filename": "https://a.storyblok.com/f/172000/2560x1414/f8bb0b8f17/mars-surface.jpg",
+                        "copyright": "",
+                        "fieldtype": "asset",
+                        "is_external_url": false
+                    },
+                    "background_video": {
+                        "id": null,
+                        "alt": null,
+                        "name": "",
+                        "focus": null,
+                        "title": null,
+                        "source": null,
+                        "filename": "",
+                        "copyright": null,
+                        "fieldtype": "asset",
+                        "meta_data": {}
+                    },
+                    "background_brightness": {
+                        "value": 0,
+                        "plugin": "storyblok-slider"
+                    },
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"banner\", \"space\": \"291582\", \"uid\": \"238a3552-a559-4acb-9788-384b3f2c2ee6\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "0e00a577-7a9b-4aaa-af1d-5ef677a7cc8e",
+                    "text": {
+                        "type": "doc",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "text": "Astronauts typically have about 4-5 hours of free time per work day, as well as 2.5 hours of time to exercise. So, what do they do to avoid boredom? ",
+                                        "type": "text"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "bullet_list",
+                                "content": [
+                                    {
+                                        "type": "list_item",
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "content": [
+                                                    {
+                                                        "text": "Staring out the window is unsurprisingly a common pastime. Astronauts even get to experience a sunrise or sunset every 45 minutes while orbiting Earth.",
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "list_item",
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "content": [
+                                                    {
+                                                        "text": "When you are bunked this closely with your team, inevitably some time is spent hanging out with each other.",
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "list_item",
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "content": [
+                                                    {
+                                                        "text": "Astronauts commonly contact family and friends from their computers. They can call, email, or even video chat!",
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "list_item",
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "content": [
+                                                    {
+                                                        "text": "Astronauts have hobbies like the rest of us, so you might also catch them reading a book, watching DVDs, taking photographs of the incredible views, or even playing an musical instrument.",
+                                                        "type": "text"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "image": {
+                        "id": 5671213,
+                        "alt": "",
+                        "name": "",
+                        "focus": "502x327:503x328",
+                        "title": "",
+                        "filename": "https://a.storyblok.com/f/172000/1000x1170/f92915eac0/astronaut.jpg",
+                        "copyright": "",
+                        "fieldtype": "asset",
+                        "meta_data": {},
+                        "content_type": "jpg",
+                        "is_external_url": false
+                    },
+                    "button": [
+                        {
+                            "_uid": "96cc055c-58e3-4d91-8528-bd5ba0deefc8",
+                            "link": {
+                                "id": "1431945b-144d-429d-aee1-4ecc8f47ed1a",
+                                "url": "",
+                                "linktype": "story",
+                                "fieldtype": "multilink",
+                                "cached_url": "articles/"
+                            },
+                            "size": "medium",
+                            "label": "Read More",
+                            "style": "ghost",
+                            "component": "button",
+                            "text_color": "light",
+                            "border_radius": "default",
+                            "background_color": "primary",
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"96cc055c-58e3-4d91-8528-bd5ba0deefc8\", \"id\": \"507271391\"}--\u003e"
+                        }
+                    ],
+                    "headline": "What do astronauts do for fun?",
+                    "component": "image-text-section",
+                    "image_layout": "fixed-height",
+                    "reverse_layout": true,
+                    "background_color": "white",
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"image-text-section\", \"space\": \"291582\", \"uid\": \"0e00a577-7a9b-4aaa-af1d-5ef677a7cc8e\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "5eca004d-8447-485b-89e6-2527d9d6e50e",
+                    "cols": "3",
+                    "lead": "Space is the area beyond the upper limits of Earth’s atmosphere. Space is a vacuum, meaning it contains almost nothing, but it is not completely empty.",
+                    "cards": [
+                        {
+                            "_uid": "c12a0589-81dd-417d-a214-1abbfa9e58aa",
+                            "icon": {
+                                "id": 5664862,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/172000/x/aba05ce8db/ico-space.svg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "text": "Space does not begin at a specific altitude above the Earth, but the Kármán line at 100 km is a commonly used definition.",
+                            "label": "Space",
+                            "button": [
+                                {
+                                    "_uid": "fd4e78e5-8b69-458b-a47d-a44d8fbf3c9a",
+                                    "link": {
+                                        "id": "1431945b-144d-429d-aee1-4ecc8f47ed1a",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "articles/"
+                                    },
+                                    "size": "small",
+                                    "label": "Read More",
+                                    "style": "ghost",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"fd4e78e5-8b69-458b-a47d-a44d8fbf3c9a\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "component": "grid-card",
+                            "icon_width": "80",
+                            "text_color": "dark",
+                            "background_color": {
+                                "value": "",
+                                "plugin": "storyblok-palette"
+                            },
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"grid-card\", \"space\": \"291582\", \"uid\": \"c12a0589-81dd-417d-a214-1abbfa9e58aa\", \"id\": \"507271391\"}--\u003e"
+                        },
+                        {
+                            "_uid": "37b66502-abd0-4170-95f4-1e154cf28781",
+                            "icon": {
+                                "id": 5664861,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/172000/x/eb62e014b3/ico-stars.svg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "text": "Every star you see in the night sky is bigger and brighter than our sun. You can't see millions of stars on a dark night.",
+                            "label": "Stars",
+                            "button": [
+                                {
+                                    "_uid": "a0cbeffb-32ea-46b5-a8a9-7000f8f0903f",
+                                    "link": {
+                                        "id": "1431945b-144d-429d-aee1-4ecc8f47ed1a",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "articles/"
+                                    },
+                                    "size": "small",
+                                    "label": "Read More",
+                                    "style": "ghost",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"a0cbeffb-32ea-46b5-a8a9-7000f8f0903f\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "component": "grid-card",
+                            "icon_width": "80",
+                            "text_color": "dark",
+                            "background_color": {
+                                "value": "",
+                                "plugin": "storyblok-palette"
+                            },
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"grid-card\", \"space\": \"291582\", \"uid\": \"37b66502-abd0-4170-95f4-1e154cf28781\", \"id\": \"507271391\"}--\u003e"
+                        },
+                        {
+                            "_uid": "4735c8d9-a024-4300-9d02-c9cb6b5b3db2",
+                            "icon": {
+                                "id": 5664860,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/172000/x/e314ecb990/ico-rocket.svg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "text": "The International Space Station is the largest ever crewed object in space.",
+                            "label": "ISS",
+                            "button": [
+                                {
+                                    "_uid": "76ebfa51-d60d-4034-a22c-6143d6760584",
+                                    "link": {
+                                        "id": "1431945b-144d-429d-aee1-4ecc8f47ed1a",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "articles/"
+                                    },
+                                    "size": "small",
+                                    "label": "Read More",
+                                    "style": "ghost",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"76ebfa51-d60d-4034-a22c-6143d6760584\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "component": "grid-card",
+                            "icon_width": "80",
+                            "text_color": "dark",
+                            "background_color": {
+                                "value": "",
+                                "plugin": "storyblok-palette"
+                            },
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"grid-card\", \"space\": \"291582\", \"uid\": \"4735c8d9-a024-4300-9d02-c9cb6b5b3db2\", \"id\": \"507271391\"}--\u003e"
+                        },
+                        {
+                            "_uid": "7f0b5d43-ee7c-42b2-981f-d0a6521c307c",
+                            "icon": {
+                                "id": 5664857,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/172000/x/8b73ffa684/ico-comet.svg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "text": "Comets are leftovers from the creation of our solar system about 4.5 billion years ago – they consist of sand, ice and carbon dioxide.",
+                            "label": "Comets",
+                            "button": [
+                                {
+                                    "_uid": "b0232d86-e053-4cc7-87d2-56fd19e2b2c1",
+                                    "link": {
+                                        "id": "1431945b-144d-429d-aee1-4ecc8f47ed1a",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "articles/"
+                                    },
+                                    "size": "small",
+                                    "label": "Read More",
+                                    "style": "ghost",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"b0232d86-e053-4cc7-87d2-56fd19e2b2c1\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "component": "grid-card",
+                            "icon_width": "80",
+                            "text_color": "dark",
+                            "background_color": {
+                                "value": "",
+                                "plugin": "storyblok-palette"
+                            },
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"grid-card\", \"space\": \"291582\", \"uid\": \"7f0b5d43-ee7c-42b2-981f-d0a6521c307c\", \"id\": \"507271391\"}--\u003e"
+                        },
+                        {
+                            "_uid": "630d962f-c01a-49f5-9e78-c0ed9d185c16",
+                            "icon": {
+                                "id": 5664859,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/172000/x/c7590b7f21/ico-hot-planet.svg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "text": "The hottest planet in the solar system is Venus. This scorching planet has an average surface temperature of about 232 °F (450 °C)",
+                            "label": "The hottest planet",
+                            "button": [
+                                {
+                                    "_uid": "3a778059-340a-4f8e-9da0-92c6a195d009",
+                                    "link": {
+                                        "id": "1431945b-144d-429d-aee1-4ecc8f47ed1a",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "articles/"
+                                    },
+                                    "size": "small",
+                                    "label": "Read More",
+                                    "style": "ghost",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"3a778059-340a-4f8e-9da0-92c6a195d009\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "component": "grid-card",
+                            "icon_width": "80",
+                            "text_color": "dark",
+                            "background_color": {
+                                "value": "",
+                                "plugin": "storyblok-palette"
+                            },
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"grid-card\", \"space\": \"291582\", \"uid\": \"630d962f-c01a-49f5-9e78-c0ed9d185c16\", \"id\": \"507271391\"}--\u003e"
+                        },
+                        {
+                            "_uid": "2dcc316f-9c5f-400f-9673-8b811ca9e443",
+                            "icon": {
+                                "id": 5664858,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/172000/x/0d9c1872fa/ico-astronaut.svg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "text": "The word astronaut comes from the Greek words for “star” and “sailor.” Not all astronauts are called astronauts...",
+                            "label": "Astronaut",
+                            "button": [
+                                {
+                                    "_uid": "8ed6045b-8157-4378-bb44-5c311f583618",
+                                    "link": {
+                                        "id": "1431945b-144d-429d-aee1-4ecc8f47ed1a",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "articles/"
+                                    },
+                                    "size": "small",
+                                    "label": "Read More",
+                                    "style": "ghost",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"8ed6045b-8157-4378-bb44-5c311f583618\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "component": "grid-card",
+                            "icon_width": "80",
+                            "text_color": "dark",
+                            "background_color": {
+                                "value": "",
+                                "plugin": "storyblok-palette"
+                            },
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"grid-card\", \"space\": \"291582\", \"uid\": \"2dcc316f-9c5f-400f-9673-8b811ca9e443\", \"id\": \"507271391\"}--\u003e"
+                        }
+                    ],
+                    "headline": "Space Facts",
+                    "component": "grid-section",
+                    "background_color": "white",
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"grid-section\", \"space\": \"291582\", \"uid\": \"5eca004d-8447-485b-89e6-2527d9d6e50e\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "ddeb00d6-f71f-4ffb-a0fa-130f0a9fb524",
+                    "lead": "Read more about Mars, Venus, and Jupiter.",
+                    "entries": [
+                        {
+                            "_uid": "605f969e-1312-4c0a-91ce-109dbce74d7b",
+                            "image": {
+                                "id": 7544550,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/192354/3500x2000/c1eaf13a48/mars.jpg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "button": [
+                                {
+                                    "_uid": "3d56e38d-4c2c-44ca-a368-c19f07cef85e",
+                                    "link": {
+                                        "id": "48b2fd50-5610-4842-b304-e1617391bd28",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "categories/mars-exploration"
+                                    },
+                                    "size": "medium",
+                                    "label": "Read the article",
+                                    "style": "default",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"3d56e38d-4c2c-44ca-a368-c19f07cef85e\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "headline": "Mars",
+                            "component": "tabbed-content-entry",
+                            "description": "Mars has become a favorite subject of experts and enthusiasts everywhere. It's not hard to see why – the dense rock formations, captured asteroids, and stunning color all make for a breathtakingly different world. However, a few key facts show us that Mars isn't actually that different from our own.",
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"tabbed-content-entry\", \"space\": \"291582\", \"uid\": \"605f969e-1312-4c0a-91ce-109dbce74d7b\", \"id\": \"507271391\"}--\u003e"
+                        },
+                        {
+                            "_uid": "293210b0-e67e-43bf-a831-bab045de7237",
+                            "image": {
+                                "id": 7544551,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/192354/3500x2000/fb337a2b19/venus.jpg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "button": [
+                                {
+                                    "_uid": "adcdd02c-1ce0-4235-820b-5d4fadd511a6",
+                                    "link": {
+                                        "id": "3b6202f6-f475-4ad3-be43-90f2ff096483",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "articles/can-anything-survive-on-venus"
+                                    },
+                                    "size": "medium",
+                                    "label": "Read the article",
+                                    "style": "default",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"adcdd02c-1ce0-4235-820b-5d4fadd511a6\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "headline": "Venus",
+                            "component": "tabbed-content-entry",
+                            "description": "In astrology, Venus is thought to represent love. However, the sheer difficulty of surviving on Venus means that it might be more accurate to say it represents tough love.\nIt's a well-known fact that humans wouldn't exactly thrive on the other planets in our solar system. However, Venus is one of the tougher options.",
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"tabbed-content-entry\", \"space\": \"291582\", \"uid\": \"293210b0-e67e-43bf-a831-bab045de7237\", \"id\": \"507271391\"}--\u003e"
+                        },
+                        {
+                            "_uid": "c41468e9-1666-41b8-8b4d-d9dd15286e9f",
+                            "image": {
+                                "id": 7544552,
+                                "alt": "",
+                                "name": "",
+                                "focus": "",
+                                "title": "",
+                                "filename": "https://a.storyblok.com/f/192354/3500x2000/153cc75d3c/jupiter.jpg",
+                                "copyright": "",
+                                "fieldtype": "asset",
+                                "is_external_url": false
+                            },
+                            "button": [
+                                {
+                                    "_uid": "205ed79d-1d31-4cb5-9a7a-5531f9e2004b",
+                                    "link": {
+                                        "id": "5de53282-b18e-4f15-8f3d-3b053dfc5ecf",
+                                        "url": "",
+                                        "linktype": "story",
+                                        "fieldtype": "multilink",
+                                        "cached_url": "articles/jupiter-larger-than-life"
+                                    },
+                                    "size": "medium",
+                                    "label": "Read the article",
+                                    "style": "default",
+                                    "component": "button",
+                                    "text_color": "light",
+                                    "border_radius": "default",
+                                    "background_color": "primary",
+                                    "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"205ed79d-1d31-4cb5-9a7a-5531f9e2004b\", \"id\": \"507271391\"}--\u003e"
+                                }
+                            ],
+                            "headline": "Jupiter",
+                            "component": "tabbed-content-entry",
+                            "description": "Jupiter is a gas giant unlike any other. Its giant size, multiple moons, and high speeds set it apart as a truly incredible planet.\nJupiter's size is undeniably impressive. However, it isn't just confined to the planet itself. It also puts things into perspective elsewhere: for as large as Jupiter is, you could easily fit it in between Earth and our Moon! Aren't cosmic distances wild?",
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"tabbed-content-entry\", \"space\": \"291582\", \"uid\": \"c41468e9-1666-41b8-8b4d-d9dd15286e9f\", \"id\": \"507271391\"}--\u003e"
+                        }
+                    ],
+                    "headline": "Planet Facts",
+                    "component": "tabbed-content-section",
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"tabbed-content-section\", \"space\": \"291582\", \"uid\": \"ddeb00d6-f71f-4ffb-a0fa-130f0a9fb524\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "052d420d-3dbc-46d6-a528-e10298269693",
+                    "banners": ["3ec2d2a3-99a8-4906-b501-988143ae7aed"],
+                    "component": "banner-reference",
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"banner-reference\", \"space\": \"291582\", \"uid\": \"052d420d-3dbc-46d6-a528-e10298269693\", \"id\": \"507271391\"}--\u003e"
+                },
+                {
+                    "_uid": "da7f474e-19db-429b-bd0e-650a407ef4b6",
+                    "form": "newsletter",
+                    "lead": "Sign up to our newsletter to receive immediate updates on the coolest new adventures in space.",
+                    "button": [
+                        {
+                            "_uid": "405902b6-1ad3-40ff-b4d2-3c434b4138be",
+                            "link": {
+                                "id": "",
+                                "url": "#",
+                                "linktype": "url",
+                                "fieldtype": "multilink",
+                                "cached_url": "#"
+                            },
+                            "size": "medium",
+                            "label": "Submit",
+                            "style": "default",
+                            "component": "button",
+                            "text_color": "light",
+                            "border_radius": "default",
+                            "background_color": "primary",
+                            "_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"291582\", \"uid\": \"405902b6-1ad3-40ff-b4d2-3c434b4138be\", \"id\": \"507271391\"}--\u003e"
+                        }
+                    ],
+                    "headline": "More News?",
+                    "component": "form-section",
+                    "text_color": "dark",
+                    "background_color": "light",
+                    "_editable": "\u003c!--#storyblok#{\"name\": \"form-section\", \"space\": \"291582\", \"uid\": \"da7f474e-19db-429b-bd0e-650a407ef4b6\", \"id\": \"507271391\"}--\u003e"
+                }
+            ],
+            "component": "default-page",
+            "_editable": "\u003c!--#storyblok#{\"name\": \"default-page\", \"space\": \"291582\", \"uid\": \"4c19da45-ab81-49ff-9705-3da3a670ad26\", \"id\": \"507271391\"}--\u003e"
+        },
+        "slug": "home",
+        "full_slug": "ww/home",
+        "sort_by_date": null,
+        "position": 10,
+        "tag_list": [],
+        "is_startpage": false,
+        "parent_id": 507761013,
+        "meta_data": null,
+        "group_id": "36de9ffe-faa3-454b-bfcf-d41b610e24f2",
+        "first_published_at": "2022-06-30T15:29:45.399Z",
+        "release_id": null,
+        "lang": "default",
+        "path": "",
+        "alternates": [
+            {
+                "id": 507788694,
+                "name": "Home",
+                "slug": "home",
+                "published": false,
+                "full_slug": "us/home",
+                "is_folder": false,
+                "parent_id": 507761006
+            },
+            {
+                "id": 507761025,
+                "name": "Home",
+                "slug": "home",
+                "published": false,
+                "full_slug": "eu/home",
+                "is_folder": false,
+                "parent_id": 507760994
+            }
+        ],
+        "default_full_slug": null,
+        "translated_slugs": null
+    },
+    "cv": 1717763755,
+    "rels": [],
+    "links": []
+}
