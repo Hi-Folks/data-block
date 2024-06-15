@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+    - name: Request a new feature
+      url: https://github.com/hi-folks/data-block/issues/new?labels=enhancement
+      about: Share ideas for new features / functions
+    - name: Report a bug
+      url: https://github.com/hi-folks/data-block/issues/new?labels=bug
+      about: Report a reproducable bug
+    - name: Documentation
+      url: https://github.com/hi-folks/data-block/issues/new?labels=documentation
+      about: Improvements or additions to documentation
