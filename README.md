@@ -211,6 +211,7 @@ $file = "./composer.json";
 $composerContent = Block::fromJsonFile($file);
 echo $composerContent->get("name"); // for example: "hi-folks/data-block"
 echo $composerContent->get("authors.0.name"); // for example: "Roberto B."
+```
 
 ## Testing
 
