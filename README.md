@@ -7,10 +7,21 @@
 </h1>
 
 
-[![Latest Version](https://img.shields.io/packagist/v/hi-folks/data-block.svg?style=for-the-badge)](https://packagist.org/packages/hi-folks/data-block)
-[![PHP Unit Tests](https://img.shields.io/github/actions/workflow/status/hi-folks/data-block/run-tests.yml?branch=main&style=for-the-badge)](https://github.com/Hi-Folks/data-block/actions)
-[![Total Downloads](https://img.shields.io/packagist/dt/hi-folks/data-block.svg?style=for-the-badge)](https://packagist.org/packages/hi-folks/data-block)
-[![Test Coverage](https://raw.githubusercontent.com/Hi-Folks/data-block/main/badge-coverage.svg)](https://packagist.org/packages/hi-folks/data-block)
+<p align=center>
+    <a href="https://packagist.org/packages/hi-folks/data-block">
+        <img src="https://img.shields.io/packagist/v/hi-folks/data-block.svg?style=for-the-badge" alt="Latest Version">
+    </a>
+    <a href="https://packagist.org/packages/hi-folks/data-block">
+        <img src="https://img.shields.io/packagist/dt/hi-folks/data-block.svg?style=for-the-badge" alt="Total Downloads">
+    </a>
+    <br />
+    <img src="https://img.shields.io/packagist/l/hi-folks/data-block?style=for-the-badge" alt="Packagist License">
+    <img src="https://img.shields.io/packagist/php-v/hi-folks/data-block?style=for-the-badge" alt="Supported PHP Versions">
+    <img src="https://img.shields.io/github/last-commit/hi-folks/data-block?style=for-the-badge" alt="GitHub last commit">
+    <br />
+        <img src="https://img.shields.io/github/actions/workflow/status/hi-folks/data-block/run-tests.yml?style=for-the-badge&label=Test" alt="Tests">
+</p>
+
 
 <p align=center>
     <i>
