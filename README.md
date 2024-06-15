@@ -22,11 +22,14 @@ This PHP package provides robust tools for managing, querying, filtering, and se
 
 ## The Block class
 
-The **Block** class exposes methods to create, manage, and access the data structure of the nested structure.
+The **Block** class offers a comprehensive set of methods to create, manage, and access nested data structures.
 
-The Block class provides some methods:
-- Creating structure from Arrays, JSON, and YAML files.
--
+The **Block** class provides various methods, including:
+
+- Creating structures from Arrays, JSON, and YAML files.
+- Querying nested data with ease.
+- Filtering data based on specific criteria.
+- Setting and updating values within deeply nested structures.
 
 ## Installing and using the Block class
 
