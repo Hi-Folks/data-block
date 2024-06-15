@@ -1,14 +1,24 @@
-# Data Block Package
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Hi-Folks/data-block/main/cover-data-block.png" alt="PHP Data Block package">
+</p>
 
-![PHP Data Block package](https://raw.githubusercontent.com/Hi-Folks/data-block/main/cover-data-block.png)
+<h1 align="center">
+    Data Block Package
+</h1>
+
 
 [![Latest Version](https://img.shields.io/packagist/v/hi-folks/data-block.svg?style=for-the-badge)](https://packagist.org/packages/hi-folks/data-block)
 [![PHP Unit Tests](https://img.shields.io/github/actions/workflow/status/hi-folks/data-block/run-tests.yml?branch=main&style=for-the-badge)](https://github.com/Hi-Folks/data-block/actions)
 [![Total Downloads](https://img.shields.io/packagist/dt/hi-folks/data-block.svg?style=for-the-badge)](https://packagist.org/packages/hi-folks/data-block)
 [![Test Coverage](https://raw.githubusercontent.com/Hi-Folks/data-block/main/badge-coverage.svg)](https://packagist.org/packages/hi-folks/data-block)
 
-This package provides the Block class which allows you to manage nested data.
-For example, it allows to simplify the handling of managing nested associative arrays or JSON data.
+<p align=center>
+    <i>
+        PHP Package for Managing Nested Data
+    </i>
+</p>
+
+This PHP package provides robust tools for managing, querying, filtering, and setting nested data structures with ease. Whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays, this package offers a streamlined approach to handle nested data efficiently.
 
 ## The Block class
 
