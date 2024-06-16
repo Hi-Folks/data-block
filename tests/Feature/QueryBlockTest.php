@@ -2,7 +2,7 @@
 
 use HiFolks\DataType\Block;
 
-test('Query Block', function () {
+test('Query Block', function (): void {
     $jsonString = file_get_contents("./tests/data/story.json");
 
     $composerContent = Block::fromJsonString($jsonString);
@@ -29,7 +29,7 @@ test('Query Block', function () {
 
 });
 
-test('Order Block', function () {
+test('Order Block', function (): void {
     $jsonString = file_get_contents("./tests/data/story.json");
 
     $composerContent = Block::fromJsonString($jsonString);

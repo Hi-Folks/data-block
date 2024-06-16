@@ -2,7 +2,7 @@
 
 use HiFolks\DataType\Block;
 
-test('load JSON object HTTP', function () {
+test('load JSON object HTTP', function (): void {
     $jsonString = file_get_contents("./tests/data/story.json");
 
     $composerContent = Block::fromJsonString($jsonString);

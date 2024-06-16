@@ -39,7 +39,7 @@ $fruitsArray = [
 
 test(
     'Block make()',
-    function () use ($fruitsArray) {
+    function () use ($fruitsArray): void {
         $data = Block::make($fruitsArray);
         expect($data)->toBeInstanceOf(Block::class);
         expect($data)->toHaveLength(4);
@@ -55,7 +55,7 @@ test(
 
 test(
     'Block get()',
-    function () use ($fruitsArray) {
+    function () use ($fruitsArray): void {
         $data = Block::make($fruitsArray);
         expect($data->get("avocado"))->toBeArray();
         expect($data->get("avocado"))->toHaveCount(5);
@@ -74,7 +74,7 @@ test(
 
 test(
     'Block getBlock()',
-    function () use ($fruitsArray) {
+    function () use ($fruitsArray): void {
         $data = Block::make($fruitsArray);
         expect($data->getBlock("avocado"))->toBeInstanceOf(Block::class);
         expect($data->getBlock("avocado"))->toHaveCount(5);
@@ -88,7 +88,7 @@ test(
 
 test(
     'Block keys()',
-    function () use ($fruitsArray) {
+    function () use ($fruitsArray): void {
         $data = Block::make($fruitsArray);
         expect($data->getBlock("avocado")->keys())->toHaveCount(5);
         expect($data->getBlock("avocado")->keys())->toBeArray();

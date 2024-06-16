@@ -4,7 +4,7 @@ use HiFolks\DataType\Block;
 
 test(
     'Block set() from empty Block',
-    function () {
+    function (): void {
         $articleText = "Some words as a sample sentence";
         $textField = Block::make();
         $textField->set("type", "doc");
