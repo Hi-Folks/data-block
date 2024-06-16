@@ -312,6 +312,10 @@ final class Block implements Iterator, ArrayAccess, Countable
         return self::make($array);
     }
 
+    /**
+     * Returns the native array
+     * @return array<int|string, mixed>
+     */
     public function toArray(): array
     {
         return $this->data;
