@@ -36,3 +36,15 @@ it('load JSON object', function (): void {
     $composerContent->set("authors.0.name", "Test");
     expect($composerContent->get("authors.0.name"))->toBe("Test");
 });
+
+it('export to array', function (): void {
+    $file = "./composer.json";
+    $composerContent = Block::fromJsonFile($file);
+    $array = $composerContent->toArray();
+    expect($array)->toBeArray();
+    expect($array)->toHaveKeys(["name","authors"]);
+    expect($array["authors"])->toHaveKeys([0]);
+    expect($array["authors"][0])->toHaveKeys(["name"]);
+    expect($array["authors"][0]["name"])->toBe("Roberto B.");
+
+});

@@ -238,6 +238,19 @@ Array
 */
 ```
 
+## Exporting to array with `toArray()`
+In the case you need to access the native array (associative and nester), you can use the `toArray()` method.
+
+This is helpful when you are manipulating data with the Block class and at a certain point need to send the data to your own function or a function from a third-party package that expects to receive a native array as a parameter.
+
+```php
+$file = "./composer.json";
+$composerContent = Block::fromJsonFile($file);
+// here you can manage $composerContent with Block methods
+// end then exports the Block data into a native array
+$array = $composerContent->toArray();
+```
+
 ## Loading Data from JSON file
 
 ```php

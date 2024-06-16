@@ -312,4 +312,9 @@ final class Block implements Iterator, ArrayAccess, Countable
         return self::make($array);
     }
 
+    public function toArray(): array
+    {
+        return $this->data;
+    }
+
 }
