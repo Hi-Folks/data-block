@@ -97,9 +97,10 @@ test(
         expect($data->keys())->toBeArray();
         expect($data->keys())->toMatchArray([0 => "avocado"]);
         expect($data->keys())->toMatchArray([1 => "apple"]);
-        print_r($data->getBlock("avocado")->keys());
 
-    }
+
+
+    },
 );
 
 
