@@ -202,7 +202,7 @@ Once you set the values, you can access them via `get()` (or `getBlock()`) metho
 ```php
 $textField->get("content.0.content.0.text");
 ```
-## Extracting Keys
+### Extracting Keys
 
 Via the `keys()` method you can retrieve the list of the key:
 
@@ -238,7 +238,7 @@ Array
 */
 ```
 
-## Exporting to array with `toArray()`
+### Exporting to array with `toArray()`
 In the case you need to access the native array (associative and nester), you can use the `toArray()` method.
 
 This is helpful when you are manipulating data with the Block class and at a certain point need to send the data to your own function or a function from a third-party package that expects to receive a native array as a parameter.
@@ -251,13 +251,54 @@ $composerContent = Block::fromJsonFile($file);
 $array = $composerContent->toArray();
 ```
 
-## Loading Data from JSON file
+### Loading Data from JSON file
 
 ```php
 $file = "./composer.json";
 $composerContent = Block::fromJsonFile($file);
 echo $composerContent->get("name"); // for example: "hi-folks/data-block"
 echo $composerContent->get("authors.0.name"); // for example: "Roberto B."
+```
+
+## Querying, sorting data
+
+### The `where()` method
+
+You can filter data elements for a specific key with a specific value.
+You can set also the operator
+
+```php
+$composerContent = Block::fromJsonString($jsonString);
+$banners = $composerContent->getBlock("story.content.body")->where(
+    "component",
+    "==",
+    "banner",
+);
+```
+
+With the `where()` method, the filtered data keeps the original keys.
+If you want to avoid preserving the keys and set new integer keys starting from 0 you can set the fourth parameter (`preserveKeys`) as `false`.
+
+```diff
+    $composerContent = Block::fromJsonString($jsonString);
+    $banners = $composerContent->getBlock("story.content.body")->where(
+        "component",
+        "!=",
+        "banner",
++        false
+    );
+```
+
+### The `orderBy()` method
+
+You can order or sort data for a specific key.
+For example, if you want to retrieve the data at `story.content.body` key and sort them by `component` key:
+
+```php
+$composerContent = Block::fromJsonString($jsonString);
+$bodyComponents = $composerContent->getBlock("story.content.body")->orderBy(
+    "component", "asc"
+);
 ```
 
 ## Testing

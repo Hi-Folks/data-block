@@ -6,6 +6,7 @@ namespace HiFolks\DataType;
 
 use ArrayAccess;
 use Countable;
+use HiFolks\DataType\Traits\QueryableBlock;
 use Iterator;
 
 /**
@@ -17,6 +18,7 @@ use Iterator;
  */
 final class Block implements Iterator, ArrayAccess, Countable
 {
+    use QueryableBlock;
     /** @var array<int|string, mixed> */
     private array $data;
 
@@ -272,45 +274,6 @@ final class Block implements Iterator, ArrayAccess, Countable
 
 
 
-    public function where(string|int $field, mixed $operator = null, mixed $value = null): self
-    {
-        if (func_num_args() === 1) {
-            $value = true;
-            $operator = '==';
-        }
-        if (func_num_args() === 2) {
-            $value = $operator;
-            $operator = '===';
-        }
-
-        $function = match ($operator) {
-            '==' => fn($element): bool => $element[$field] == $value,
-            '>' => fn($element): bool => $element->get($field) > $value,
-            '<' => fn($element): bool => $element->get($field) < $value,
-            '>=' => fn($element): bool => $element->get($field) >= $value,
-            '<=' => fn($element): bool => $element->get($field) <= $value,
-            '!=' => fn($element): bool => $element->get($field) != $value,
-            '!==' => fn($element): bool => $element->get($field) !== $value,
-            default => fn($element): bool => $element->get($field) === $value,
-        };
-        $filteredArray = array_filter($this->data, $function);
-        return self::make($filteredArray);
-    }
-
-    public function orderBy(string|int $field, string $order = 'desc'): self
-    {
-        $array = $this->data;
-
-        if ($order !== 'asc') {
-            /** @var callable $closure */
-            $closure = static fn(Block $item1, Block $item2): int => $item2->get($field) <=> $item1->get($field);
-        } else {
-            $closure = static fn($item1, $item2): int => $item1->get($field) <=> $item2->get($field);
-        }
-
-        usort($array, $closure);
-        return self::make($array);
-    }
 
     /**
      * Returns the native array

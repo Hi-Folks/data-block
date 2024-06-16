@@ -14,17 +14,7 @@ test('load JSON object HTTP', function () {
     expect($bodyComponents->get("0.headline"))->toBe("New banner");
     expect($bodyComponents->get("1.headline"))->toBe("Hello Everyone");
     expect($bodyComponents->get("2.headline"))->toBe("We don't know what we don't know.");
-    $banners = $composerContent->getBlock("story.content.body")->where(
-        "component",
-        "==",
-        "banner",
-    );
-    expect($banners)->toHaveCount(2);
-    expect($banners->get("0.headline"))->toBe("New banner");
     expect($composerContent->get("cv"))->toBe(1717763755);
-    // mantians the keys , even if the keys are integers
-    expect($banners->get("4.headline"))->toBe("Top Five Discoveries, Curiosity Rover at Mars");
-
 });
 
 

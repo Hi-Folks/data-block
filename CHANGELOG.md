@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.0.3 - W2024-06-16
+## 0.0.4 - WIP
+- `where()` method supports operators TBC
+- `orderBy()` method allows you to sort Block data (ascending and descending order)
+
+## 0.0.3 - 2024-06-16
 - `toArray()` for exporting data into an array (associative and nested array)
 
 ## 0.0.2 - 2024-06-15
