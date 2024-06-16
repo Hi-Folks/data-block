@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.4 - WIP
+## 0.0.4 - 2024-06-16
 - `where()` method supports operators TBC
 - `orderBy()` method allows you to sort Block data (ascending and descending order)
 
