@@ -23,7 +23,6 @@ test('Query Block', function (): void {
         false,
     );
     expect($banners)->toHaveCount(8);
-    var_dump($banners);
     expect($banners->get("0.component"))->toBe("hero-section");
     expect($banners->get("4.component"))->toBe("grid-section");
 

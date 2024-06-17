@@ -6,6 +6,7 @@ namespace HiFolks\DataType;
 
 use ArrayAccess;
 use Countable;
+use HiFolks\DataType\Traits\EditableBlock;
 use HiFolks\DataType\Traits\QueryableBlock;
 use Iterator;
 
@@ -19,6 +20,8 @@ use Iterator;
 final class Block implements Iterator, ArrayAccess, Countable
 {
     use QueryableBlock;
+    use EditableBlock;
+
     /** @var array<int|string, mixed> */
     private array $data;
 

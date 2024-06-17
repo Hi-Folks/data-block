@@ -68,4 +68,27 @@ trait QueryableBlock
         return self::make($array);
     }
 
+    public function select(int|string ...$columns): self
+    {
+        $table = self::make();
+
+        foreach ($this->data as $row) {
+            if (is_array($row)) {
+                /** @var Block $row */
+                $row = self::make($row);
+            }
+            /** @var Block $row */
+
+            $newRow = [];
+            foreach ($columns as $column) {
+                $value = $row->get($column);
+                $newRow[$column] = $value;
+            }
+
+            $table->append($newRow);
+        }
+
+        return $table;
+    }
+
 }

@@ -301,6 +301,27 @@ $bodyComponents = $composerContent->getBlock("story.content.body")->orderBy(
 );
 ```
 
+### The `select()` method
+The `select()` method allows you to select only the needed fields.
+You can list the field names you need as parameters for the `select()` method.
+For example:
+
+```php
+use HiFolks\DataType\Block;
+$dataTable = [
+    ['product' => 'Desk', 'price' => 200, 'active' => true],
+    ['product' => 'Chair', 'price' => 100, 'active' => true],
+    ['product' => 'Door', 'price' => 300, 'active' => false],
+    ['product' => 'Bookcase', 'price' => 150, 'active' => true],
+    ['product' => 'Door', 'price' => 100, 'active' => true],
+];
+$table = Block::make($dataTable);
+$data = $table
+    ->select('product' , 'price')
+    ->where('price', ">", 100)
+```
+
+
 ## Testing
 
 ```bash

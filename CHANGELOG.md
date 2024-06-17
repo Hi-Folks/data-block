@@ -1,6 +1,7 @@
 # Changelog
 
-## 0.0.5 - WIP
+## 0.0.5 - 2024-06-17
+- `select()` method for selecting fields
 
 ## 0.0.4 - 2024-06-16
 - `where()` method supports operators
