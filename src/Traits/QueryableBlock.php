@@ -77,10 +77,9 @@ trait QueryableBlock
                 /** @var Block $row */
                 $row = self::make($row);
             }
-            /** @var Block $row */
-
             $newRow = [];
             foreach ($columns as $column) {
+                /** @var Block $row */
                 $value = $row->get($column);
                 $newRow[$column] = $value;
             }

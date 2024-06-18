@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.6 - WIP
+- Improve the documentation and the unit tests for "query" methods like `select()`, `where()` and `orderBy()`
+
 ## 0.0.5 - 2024-06-17
 - `select()` method for selecting fields
 

@@ -317,10 +317,44 @@ $dataTable = [
 ];
 $table = Block::make($dataTable);
 $data = $table
-    ->select('product' , 'price')
-    ->where('price', ">", 100)
+    ->select('product' , 'price');
+print_r($data->toArray());
 ```
 
+You can combine the `select()`, the `where()` and the `orderBy()` method.
+If you want to retrieve elements with `product` and `price` keys, with the price greater than 100 and ordered by `price`:
+
+```php
+$table = Block::make($dataTable);
+$data = $table
+    ->select('product' , 'price')
+    ->where('price', ">", 100)
+    ->orderBy("price");
+print_r($data->toArray());
+/*
+Array
+(
+    [0] => Array
+        (
+            [product] => Bookcase
+            [price] => 150
+        )
+
+    [1] => Array
+        (
+            [product] => Desk
+            [price] => 200
+        )
+
+    [2] => Array
+        (
+            [product] => Door
+            [price] => 300
+        )
+
+)
+*/
+```
 
 ## Testing
 
