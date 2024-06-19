@@ -322,7 +322,7 @@ print_r($data->toArray());
 ```
 
 You can combine the `select()`, the `where()` and the `orderBy()` method.
-If you want to retrieve elements with `product` and `price` keys, with the price greater than 100 and ordered by `price`:
+If you want to retrieve elements with `product` and `price` keys, with a price greater than 100 and ordered by `price`:
 
 ```php
 $table = Block::make($dataTable);
@@ -354,6 +354,34 @@ Array
 
 )
 */
+```
+## Looping Data
+The Block class implements the Iterator interface.
+While you are looping an array via Block, by default the element in the loop has the same type of the original data.
+For example with the previous code, if you loop through `$data` (that is a `Block` object), each element in each iteration in the loop will be an array with two elements, with the keys `product` and `price`.
+If in the loop you need to manage the current element via Block class, you should manually call the `Block::make` for example:
+
+```php
+$table = Block::make($dataTable);
+
+$data = $table
+    ->select('product', 'price')
+    ->where('price', ">", 100, false);
+foreach ($data as $key => $item) {
+    // $item is an array
+    //if you need a Block to manage item you should do:
+    $item = Block::make($item);
+    echo $item->get("price"); // returns an integer
+}
+```
+
+If you want to loop through `$data` and obtain the current $item as Block you should use the method `iterateBlock()`:
+
+```php
+foreach ($data->iterateBlock() as $key => $item) {
+    // $item is a Block object
+    echo $item->get("price"); // returns an integer
+}
 ```
 
 ## Testing

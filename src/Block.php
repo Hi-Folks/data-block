@@ -25,15 +25,29 @@ final class Block implements Iterator, ArrayAccess, Countable
     /** @var array<int|string, mixed> */
     private array $data;
 
+    private bool $iteratorReturnsBlock = false;
+
     /** @param array<int|string, mixed> $data */
     public function __construct(array $data = [])
     {
         $this->data = $data;
     }
 
+    public function iterateBlock(bool $returnsBlock = true): self
+    {
+        $this->iteratorReturnsBlock = $returnsBlock;
+        return $this;
+    }
+
     public function current(): mixed
     {
-        return current($this->data);
+        $current = current($this->data);
+        if ($this->iteratorReturnsBlock) {
+            if (is_array($current)) {
+                return self::make($current);
+            }
+        }
+        return $current;
     }
 
     public function next(): void
