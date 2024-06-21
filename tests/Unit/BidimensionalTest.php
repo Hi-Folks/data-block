@@ -67,29 +67,35 @@ test(
         $data = $table
             ->select('product', 'price')
             ->where('price', ">", 100, false);
+
         //->calc('new_field', fn ($item) => $item['price'] * 2)
-        foreach ($data->iterateBlock(true) as $key => $item) {
+        foreach ($data as $key => $item) {
             expect($item)->toBeInstanceOf(Block::class);
             expect($key)->toBeInt();
             expect($item->get("price"))->toBeGreaterThan(100);
         }
+
         expect($data->get("0.price"))->toBe(200);
         expect($data->get("1.price"))->toBe(300);
 
-        $table->iterateBlock(true);
+
         expect($table->get("0.price"))->toBe(200);
         expect($table->get("1.price"))->toBe(100);
 
+        $table = Block::make($dataTable, false);
         $data = $table
             ->select('product', 'price')
             ->where('price', ">", 100, false);
+
         //->calc('new_field', fn ($item) => $item['price'] * 2)
-        foreach ($data->iterateBlock(false) as $key => $item) {
+        foreach ($data as $key => $item) {
             expect($item)->toBeArray();
             expect($key)->toBeInt();
             expect($item["price"])->toBeGreaterThan(100);
             expect($data[$key]["price"])->toBeGreaterThan(100);
         }
+
+
         // re-using the $data object with the previous state
         foreach ($data as $key => $item) {
             expect($item)->toBeArray();
@@ -97,12 +103,36 @@ test(
             expect($item["price"])->toBeGreaterThan(100);
             expect($data[$key]["price"])->toBeGreaterThan(100);
         }
-        // resetting the default behaviour (so returns Block in case of iterators/array)
-        $data->iterateBlock();
-        foreach ($data as $key => $item) {
+
+        $table = Block::make($dataTable, true);
+        foreach ($table as $key => $item) {
             expect($item)->toBeInstanceOf(Block::class);
             expect($key)->toBeInt();
-            expect($item->get("price"))->toBeGreaterThan(100);
+            expect($item->get("price"))->toBeGreaterThan(10);
+        }
+
+        foreach ($table->iterateBlock(false) as $key => $item) {
+            expect($item)->toBeArray();
+            expect($key)->toBeInt();
+            expect($item["price"])->toBeGreaterThan(10);
+        }
+        // keep the previous state iterateBlock(false)
+        foreach ($table as $key => $item) {
+            expect($item)->toBeArray();
+            expect($key)->toBeInt();
+            expect($item["price"])->toBeGreaterThan(10);
+        }
+
+
+        foreach ($table->iterateBlock(true) as $key => $item) {
+            expect($item)->toBeInstanceOf(Block::class);
+            expect($key)->toBeInt();
+            expect($item->get("price"))->toBeGreaterThan(10);
+        }
+        foreach ($table->iterateBlock(false) as $key => $item) {
+            expect($item)->toBeArray();
+            expect($key)->toBeInt();
+            expect($item["price"])->toBeGreaterThan(10);
         }
 
     },

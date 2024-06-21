@@ -357,30 +357,60 @@ Array
 ```
 ## Looping Data
 The Block class implements the Iterator interface.
-While you are looping an array via Block, by default the element in the loop has the same type of the original data.
+While you are looping an array via Block, by default if the current element should be an array, a Block is returned. So that you can access the Block method for handling the current array item in the loop.
 For example with the previous code, if you loop through `$data` (that is a `Block` object), each element in each iteration in the loop will be an array with two elements, with the keys `product` and `price`.
 If in the loop you need to manage the current element via Block class, you should manually call the `Block::make` for example:
 
 ```php
 $table = Block::make($dataTable);
+foreach ($table as $key => $item) {
+    echo $item->get("price");
+}
+```
 
+You can apply filters and then loop into the result:
+
+```php
+$table = Block::make($dataTable);
 $data = $table
     ->select('product', 'price')
     ->where('price', ">", 100, false);
 foreach ($data as $key => $item) {
-    // $item is an array
-    //if you need a Block to manage item you should do:
-    $item = Block::make($item);
     echo $item->get("price"); // returns an integer
+}
+
+```
+
+
+If you want to loop through `$data` and obtain the current `$item` variable as an array you should set `false` as a second parameter in the static `make()` method:
+
+```php
+$table = Block::make($dataTable, false);
+$data = $table->select('product', 'price')->where('price', ">", 100, false);
+foreach ($data as $key => $item) {
+    print_r($item); // $item is an array
 }
 ```
 
-If you want to loop through `$data` and obtain the current $item as Block you should use the method `iterateBlock()`:
+### The `iterateBlock()` method
+With the `iterateBlock()` method, you can decide to switch from array or Block for nested lists inside the main Block object in the case you already instanced as a Block object.
+In the example above, you have the `$table`  Block object.
+You can loop across the items of the `$table` object.
+If each item in the loop is itself an array (so an array of arrays), you can retrieve it as an array or a Block, depending on your needs:
 
 ```php
-foreach ($data->iterateBlock() as $key => $item) {
-    // $item is a Block object
-    echo $item->get("price"); // returns an integer
+$table = Block::make($dataTable);
+foreach ($table as $key => $item) {
+    expect($item)->toBeInstanceOf(Block::class);
+    expect($key)->toBeInt();
+    expect($item->get("price"))->toBeGreaterThan(10);
+}
+
+// iterateBlock(false if you need array instad of a nested Block)
+foreach ($table->iterateBlock(false) as $key => $item) {
+    expect($item)->toBeArray();
+    expect($key)->toBeInt();
+    expect($item["price"])->toBeGreaterThan(10);
 }
 ```
 

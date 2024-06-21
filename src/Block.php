@@ -25,12 +25,13 @@ final class Block implements Iterator, ArrayAccess, Countable
     /** @var array<int|string, mixed> */
     private array $data;
 
-    private bool $iteratorReturnsBlock = false;
+    private bool $iteratorReturnsBlock = true;
 
     /** @param array<int|string, mixed> $data */
-    public function __construct(array $data = [])
+    public function __construct(array $data = [], bool $iteratorReturnsBlock = true)
     {
         $this->data = $data;
+        $this->iteratorReturnsBlock = $iteratorReturnsBlock;
     }
 
     public function iterateBlock(bool $returnsBlock = true): self
@@ -38,6 +39,7 @@ final class Block implements Iterator, ArrayAccess, Countable
         $this->iteratorReturnsBlock = $returnsBlock;
         return $this;
     }
+
 
     public function current(): mixed
     {
@@ -103,10 +105,12 @@ final class Block implements Iterator, ArrayAccess, Countable
     }
 
     /** @param array<int|string, mixed> $data */
-    public static function make(array $data = []): self
+    public static function make(array $data = [], bool $iteratorReturnsBlock = true): self
     {
-        return new self($data);
+        return new self($data, $iteratorReturnsBlock);
     }
+
+
 
     public function count(): int
     {
@@ -162,6 +166,8 @@ final class Block implements Iterator, ArrayAccess, Countable
                 foreach (explode($charNestedKey, $keyString) as $nestedKey) {
                     if (is_array($nestedValue) && array_key_exists($nestedKey, $nestedValue)) {
                         $nestedValue = $nestedValue[$nestedKey];
+                    } elseif ($nestedValue instanceof Block) {
+                        $nestedValue = $nestedValue->get($nestedKey);
                     } else {
                         return $defaultValue;
                     }

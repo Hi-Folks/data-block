@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.0 - 2024-06-21
+- Cleaning and refactoring the behavior of returning Block or native array in loops
+
 ## 0.0.6 - 2024-06-19
 - Add the `iterateBlock()` method, which allows to return of current elements as Block while looping.
 - Improve the documentation and the unit tests for "query" methods like `select()`, `where()` and `orderBy()`

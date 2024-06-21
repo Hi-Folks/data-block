@@ -25,10 +25,10 @@ trait QueryableBlock
         foreach ($this as $key => $element) {
             $elementToCheck = $element;
             if (is_array($element)) {
-                $elementToCheck = Block::make($element);
+                $elementToCheck = Block::make($element, $this->iteratorReturnsBlock);
             }
             if (! $elementToCheck instanceof Block) {
-                return Block::make();
+                return Block::make([], $this->iteratorReturnsBlock);
             }
             $found = match ($operator) {
                 '==' => ($elementToCheck->get($field) == $value),
@@ -50,7 +50,7 @@ trait QueryableBlock
             }
         }
 
-        return self::make($returnData);
+        return self::make($returnData, $this->iteratorReturnsBlock);
     }
 
     public function orderBy(string|int $field, string $order = 'asc'): self
@@ -65,17 +65,17 @@ trait QueryableBlock
         }
 
         usort($array, $closure);
-        return self::make($array);
+        return self::make($array, $this->iteratorReturnsBlock);
     }
 
     public function select(int|string ...$columns): self
     {
-        $table = self::make();
+        $table = self::make([], $this->iteratorReturnsBlock);
 
         foreach ($this->data as $row) {
             if (is_array($row)) {
                 /** @var Block $row */
-                $row = self::make($row);
+                $row = self::make($row, $this->iteratorReturnsBlock);
             }
             $newRow = [];
             foreach ($columns as $column) {
