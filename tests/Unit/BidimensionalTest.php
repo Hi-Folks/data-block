@@ -68,30 +68,41 @@ test(
             ->select('product', 'price')
             ->where('price', ">", 100, false);
         //->calc('new_field', fn ($item) => $item['price'] * 2)
-        foreach ($data as $key => $item) {
-            expect($item)->toBeArray();
+        foreach ($data->iterateBlock(true) as $key => $item) {
+            expect($item)->toBeInstanceOf(Block::class);
             expect($key)->toBeInt();
+            expect($item->get("price"))->toBeGreaterThan(100);
         }
+        expect($data->get("0.price"))->toBe(200);
+        expect($data->get("1.price"))->toBe(300);
+
+        $table->iterateBlock(true);
+        expect($table->get("0.price"))->toBe(200);
+        expect($table->get("1.price"))->toBe(100);
+
         $data = $table
             ->select('product', 'price')
             ->where('price', ">", 100, false);
         //->calc('new_field', fn ($item) => $item['price'] * 2)
-        foreach ($data->iterateBlock() as $key => $item) {
-            expect($item)->toBeInstanceOf(Block::class);
+        foreach ($data->iterateBlock(false) as $key => $item) {
+            expect($item)->toBeArray();
             expect($key)->toBeInt();
-            expect($item->get("price"))->toBeGreaterThan(100);
+            expect($item["price"])->toBeGreaterThan(100);
+            expect($data[$key]["price"])->toBeGreaterThan(100);
         }
         // re-using the $data object with the previous state
         foreach ($data as $key => $item) {
+            expect($item)->toBeArray();
+            expect($key)->toBeInt();
+            expect($item["price"])->toBeGreaterThan(100);
+            expect($data[$key]["price"])->toBeGreaterThan(100);
+        }
+        // resetting the default behaviour (so returns Block in case of iterators/array)
+        $data->iterateBlock();
+        foreach ($data as $key => $item) {
             expect($item)->toBeInstanceOf(Block::class);
             expect($key)->toBeInt();
             expect($item->get("price"))->toBeGreaterThan(100);
-        }
-        // resetting the default behaviour
-        $data->iterateBlock(false);
-        foreach ($data as $key => $item) {
-            expect($item)->toBeArray();
-            expect($key)->toBeInt();
         }
 
     },

@@ -41,13 +41,14 @@ final class Block implements Iterator, ArrayAccess, Countable
 
     public function current(): mixed
     {
-        $current = current($this->data);
         if ($this->iteratorReturnsBlock) {
+            $current = current($this->data);
             if (is_array($current)) {
                 return self::make($current);
             }
+            return $current;
         }
-        return $current;
+        return current($this->data);
     }
 
     public function next(): void
