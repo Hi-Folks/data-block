@@ -263,6 +263,16 @@ $data = Block::make($fruitsArray);
 $jsonString = $data->toJson(); // JSON string with "pretty print"
 ```
 
+### Exporting to YAML string with `toYaml()`
+In the case you need to generate a valid YAML string with the content of the Block object, you can use the `toYaml()` method.
+
+This is helpful when you are manipulating data with the Block class and at a certain point need to send the data in YAML string format to your own function or a function from a third-party package that expects to receive a YAML string as a parameter.
+
+```php
+$data = Block::make($fruitsArray);
+$yamlString = $data->toYaml(); // YAML string
+```
+
 ## Loading Data
 
 ### Loading Data from JSON file
@@ -273,6 +283,17 @@ $composerContent = Block::fromJsonFile($file);
 echo $composerContent->get("name"); // for example: "hi-folks/data-block"
 echo $composerContent->get("authors.0.name"); // for example: "Roberto B."
 ```
+
+### Loading Data from YAML file
+
+```php
+$file = "./.github/workflows/run-tests.yml";
+$workflow = Block::fromYamlFile($file);
+echo $workflow->get("name"); // Name of the GitHub Action Workflow
+echo $workflow->get("jobs.test.runs-on");
+echo $workflow->get("on.0"); // push , the first event
+```
+
 
 ## Querying, sorting data
 

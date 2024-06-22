@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.0 - 2024-06-22
+- Add Yaml capabilities (loading from Yaml and exporting to Yaml)
+
 ## 0.1.1 - 2024-06-22
 - Add toJson() method for exporting JSON string
 

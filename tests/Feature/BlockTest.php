@@ -38,3 +38,28 @@ it('export to array', function (): void {
     expect($array["authors"][0]["name"])->toBe("Roberto B.");
 
 });
+
+
+it('load YAML object', function (): void {
+    $file = "./.github/workflows/run-tests.yml";
+    $workflow = Block::fromYamlFile($file);
+    expect($workflow->get("on"))->toBeArray();
+    expect($workflow->get("on"))->toHaveCount(2);
+    expect($workflow->get("on.0"))->toBe("push");
+    expect($workflow->get("on.1"))->toBe("pull_request");
+    expect($workflow->get("jobs.test.runs-on"))->toBe('${{ matrix.os }}');
+
+
+});
+
+it('Convert Json to Yaml', function (): void {
+    $file = "./composer.json";
+    $composer1 = Block::fromJsonFile($file);
+    $yaml = $composer1->toYaml();
+    $composer2 = Block::fromYamlString($yaml);
+    expect($composer2->get("name"))->toBe("hi-folks/data-block");
+    expect($composer2->get("authors.0.name"))->toBe("Roberto B.");
+    echo $yaml;
+
+
+});

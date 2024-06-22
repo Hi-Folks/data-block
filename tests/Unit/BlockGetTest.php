@@ -218,11 +218,11 @@ it('generates JSON', function (): void {
         'C' => [ 'nested-item-1' => 10, 'nested-item-2' => 20],
         'D' => [],
     ]);
-    expect($block->json())->toBeString();
-    expect(json_decode($block->json(), associative: false))->toBeInstanceOf(stdClass::class);
+    expect($block->toJson())->toBeString();
+    expect(json_decode($block->toJson(), associative: false))->toBeInstanceOf(stdClass::class);
 
-    expect(json_decode($block->json(), associative: false))->toHaveProperty("C");
-    expect(json_decode($block->json(), associative: false)->C)->toHaveProperty("nested-item-1");
+    expect(json_decode($block->toJson(), associative: false))->toHaveProperty("C");
+    expect(json_decode($block->toJson(), associative: false)->C)->toHaveProperty("nested-item-1");
 });
 
 it('generates JSON object', function (): void {
@@ -232,7 +232,7 @@ it('generates JSON object', function (): void {
         'C' => ['nested-item-1' => 10, 'nested-item-2' => 20],
         'D' => [],
     ]);
-    expect($block->jsonObject())->toBeInstanceOf(stdClass::class);
-    expect($block->jsonObject())->toHaveProperty("C");
-    expect($block->jsonObject()->C)->toHaveProperty("nested-item-1");
+    expect($block->toJsonObject())->toBeInstanceOf(stdClass::class);
+    expect($block->toJsonObject())->toHaveProperty("C");
+    expect($block->toJsonObject()->C)->toHaveProperty("nested-item-1");
 });
