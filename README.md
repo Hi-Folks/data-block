@@ -238,6 +238,8 @@ Array
 */
 ```
 
+## Exporting data
+
 ### Exporting to array with `toArray()`
 In the case you need to access the native array (associative and nester), you can use the `toArray()` method.
 
@@ -250,6 +252,18 @@ $composerContent = Block::fromJsonFile($file);
 // end then exports the Block data into a native array
 $array = $composerContent->toArray();
 ```
+
+### Exporting to JSON string with `toJson()`
+In the case you need to generate a valid JSON string with the content of the Block object, you can use the `toJson()` method.
+
+This is helpful when you are manipulating data with the Block class and at a certain point need to send the data in JSON string format to your own function or a function from a third-party package that expects to receive a JSON string as a parameter.
+
+```php
+$data = Block::make($fruitsArray);
+$jsonString = $data->toJson(); // JSON string with "pretty print"
+```
+
+## Loading Data
 
 ### Loading Data from JSON file
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.1 - 2024-06-22
+- Add toJson() method for exporting JSON string
+
 ## 0.1.0 - 2024-06-21
 - Cleaning and refactoring the behavior of returning Block or native array in loops
 
