@@ -8,6 +8,7 @@ use ArrayAccess;
 use Countable;
 use HiFolks\DataType\Traits\EditableBlock;
 use HiFolks\DataType\Traits\QueryableBlock;
+use HiFolks\DataType\Traits\ExportableBlock;
 use Iterator;
 
 /**
@@ -21,6 +22,7 @@ final class Block implements Iterator, ArrayAccess, Countable
 {
     use QueryableBlock;
     use EditableBlock;
+    use ExportableBlock;
 
     /** @var array<int|string, mixed> */
     private array $data;
@@ -299,13 +301,6 @@ final class Block implements Iterator, ArrayAccess, Countable
 
 
 
-    /**
-     * Returns the native array
-     * @return array<int|string, mixed>
-     */
-    public function toArray(): array
-    {
-        return $this->data;
-    }
+
 
 }
