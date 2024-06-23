@@ -59,7 +59,6 @@ it('Convert Json to Yaml', function (): void {
     $composer2 = Block::fromYamlString($yaml);
     expect($composer2->get("name"))->toBe("hi-folks/data-block");
     expect($composer2->get("authors.0.name"))->toBe("Roberto B.");
-    echo $yaml;
 
 
 });
