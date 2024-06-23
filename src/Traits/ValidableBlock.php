@@ -23,4 +23,17 @@ trait ValidableBlock
     {
         return $this->validateJsonViaUrl('https://json.schemastore.org/github-workflow');
     }
+
+    public function validateJsonWithSchema(string $schemaJson): bool
+    {
+        try {
+            $schema =
+                Schema::import(json_decode($schemaJson));
+            $schema->in($this->toJsonObject());
+        } catch (\Exception $e) {
+            var_dump($e);
+            return false;
+        }
+        return true;
+    }
 }
