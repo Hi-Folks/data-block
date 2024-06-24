@@ -30,8 +30,8 @@ trait ValidableBlock
             $schema =
                 Schema::import(json_decode($schemaJson));
             $schema->in($this->toJsonObject());
-        } catch (\Exception $e) {
-            var_dump($e);
+        } catch (\Exception) {
+            //echo $e->getMessage();
             return false;
         }
         return true;

@@ -64,5 +64,9 @@ test(
     function () use ($fruitsArray, $schemaJson): void {
         $data = Block::make($fruitsArray);
         expect($data->validateJsonWithSchema($schemaJson))->toBeTrue();
+
+        $schemaBlock = Block::fromJsonString($schemaJson);
+        $schemaBlock->set("items.properties.rating.type", "integer");
+        expect($data->validateJsonWithSchema($schemaBlock->toJson()))->toBeFalse();
     },
 );
