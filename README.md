@@ -449,6 +449,113 @@ foreach ($table->iterateBlock(false) as $key => $item) {
 }
 ```
 
+## Validating Data 🆕
+
+You can validate the data in the Block object with JSON schema.
+JSON Schema is a vocabulary that you can use to annotate and validate JSON documents.
+> Mre info about JSON Schema: https://json-schema.org/learn/getting-started-step-by-step
+
+If you need a "common schema", you can find some schemas here: https://www.schemastore.org/json/
+For example:
+- Schema for validating the `composer.json` file: https://getcomposer.org/schema.json
+- Schema for validating the GitHub Actions workflows: https://json.schemastore.org/github-workflow.json
+
+Or you can build your own schema according to the JSON schema specifications: https://json-schema.org/learn/getting-started-step-by-step#create-a-schema-definition
+
+
+```php
+$file = "./.github/workflows/run-tests.yml";
+$workflow = Block::fromYamlFile($file);
+$workflow->validateJsonViaUrl(
+    'https://json.schemastore.org/github-workflow'
+    ); // TRUE if the Block is a valid GitHub Actions Workflow
+```
+
+Or you can define your own schema:
+
+```php
+$schemaJson = <<<'JSON'
+{
+    "type": "array",
+    "items" : {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "fruit": {
+                "type": "string"
+            },
+            "wikipedia": {
+                "type": "string"
+            },
+            "color": {
+                "type": "string"
+            },
+            "rating": {
+                "type": "number"
+            }
+        }
+    }
+}
+JSON;
+```
+And then validate it with your Block object:
+
+```php
+$fruitsArray = [
+    [
+        'name' => 'Avocado',
+        'fruit' => '🥑',
+        'wikipedia' => 'https://en.wikipedia.org/wiki/Avocado',
+        'color' => 'green',
+        'rating' => 8,
+    ],
+    [
+        'name' => 'Apple',
+        'fruit' => '🍎',
+        'wikipedia' => 'https://en.wikipedia.org/wiki/Apple',
+        'color' => 'red',
+        'rating' => 7,
+    ],
+    [
+        'name' => 'Banana',
+        'fruit' => '🍌',
+        'wikipedia' => 'https://en.wikipedia.org/wiki/Banana',
+        'color' => 'yellow',
+        'rating' => 8.5,
+    ],
+    [
+        'name' => 'Cherry',
+        'fruit' => '🍒',
+        'wikipedia' => 'https://en.wikipedia.org/wiki/Cherry',
+        'color' => 'red',
+        'rating' => 9,
+    ],
+];
+
+$data = Block::make($fruitsArray);
+$data->validateJsonWithSchema($schemaJson);
+// true if the Block is valid.
+```
+
+If you are starting to use the Data Block and you are testing it just to gain confidence, and you are trying to implement different scenarios and you want to test a not valid JSON, try to change the "rating" type from number to integer (the validation should fail because in the JSON we have ratings with decimals).
+And, yes, to change on the fly the schema you can use the Block object :)
+
+```php
+// load the schema as Block object...
+$schemaBlock = Block::fromJsonString($schemaJson);
+// so that you can change the type
+$schemaBlock->set(
+    "items.properties.rating.type",
+    "integer"
+);
+// the validation should be false because integer vs number
+$data->validateJsonWithSchema(
+    $schemaBlock->toJson()
+);
+```
+
 ## Testing
 
 ```bash
