@@ -1,8 +1,10 @@
 # Changelog
 
+## 0.3.1 - 2024-06-26
+- Add `has()` and `hasKey()` method
+
 ## 0.3.0 - 2024-06-24
 - Add validation with JSON Schema https://json-schema.org/
-
 
 ## 0.2.0 - 2024-06-22
 - Add Yaml capabilities (loading from Yaml and exporting to Yaml)
