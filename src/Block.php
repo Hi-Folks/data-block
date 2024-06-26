@@ -186,6 +186,15 @@ final class Block implements Iterator, ArrayAccess, Countable
     }
 
     /**
+     * @return Block object that contains the key/value pairs for each index in the array
+     */
+    public function values(): self
+    {
+        $pairs = $this->data;
+        return self::make($pairs);
+    }
+
+    /**
      * Returns a new array [] or a new Blcok object that contains the keys
      * for each index in the Block object
      * It returns Block or [] depending on $returnArrClass value
@@ -202,6 +211,17 @@ final class Block implements Iterator, ArrayAccess, Countable
         return array_keys($this->data);
     }
 
+    public function has(mixed $value): bool
+    {
+        return in_array($value, $this->values()->toArray());
+    }
+
+    public function hasKey(string|int $key): bool
+    {
+        /** @var array<int, int|string> $keys */
+        $keys = $this->keys();
+        return in_array($key, $keys);
+    }
 
 
 
