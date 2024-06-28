@@ -284,6 +284,21 @@ echo $composerContent->get("name"); // for example: "hi-folks/data-block"
 echo $composerContent->get("authors.0.name"); // for example: "Roberto B."
 ```
 
+### Loading Data from JSON URL
+
+You can build your Block data from a remote JSON (like an API).
+For example for building a Block from the latest commit via GitHub API, you can use the `fromJsonUrl()` method.
+Retrieving JSON API into a Block object is useful for applying the methods provided by the Block class, for example, filtering the data. In the example I'm going to filter the commit based on the name of the author of the commit:
+
+```php
+$url = "https://api.github.com/repos/hi-folks/data-block/commits";
+$commits = Block::fromJsonUrl($url);
+$myCommits = $commits->where("commit.author.name", "like", "Roberto");
+foreach ($myCommits as $value) {
+    echo $value->get("commit.message") . PHP_EOL;
+}
+```
+
 ### Loading Data from YAML file
 
 ```php
