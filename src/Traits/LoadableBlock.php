@@ -25,6 +25,27 @@ trait LoadableBlock
         return self::make([]);
     }
 
+    public static function fromJsonUrl(string $jsonUrl): self
+    {
+
+        $options = [
+            'http' => [
+                'method' => "GET",
+                'header' => 'Accept-language: en
+' .
+                    "User-Agent: hi-folks/data-block",
+            ],
+        ];
+        $context = stream_context_create($options);
+        $content = file_get_contents($jsonUrl, context: $context);
+        //var_dump($jsonUrl, $content);
+        if ($content === false) {
+            return self::make([]);
+        }
+        return self::fromJsonString($content);
+
+    }
+
     public static function fromYamlFile(string $yamlFile): self
     {
         if (file_exists($yamlFile)) {
