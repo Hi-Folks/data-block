@@ -6,6 +6,16 @@ use HiFolks\DataType\Block;
 
 trait QueryableBlock
 {
+    public static function like(mixed $value1, mixed $value2): bool
+    {
+        /* @var string $strValue1 */
+        /* @var string $value1 */
+        $strValue1 = strval($value1);
+        /* @var string $strValue2 */
+        $strValue2 = strval($value2);
+        return str_contains($strValue1, $strValue2);
+    }
+
     public function where(
         string|int $field,
         mixed $operator = null,
@@ -38,6 +48,7 @@ trait QueryableBlock
                 '<=' => $elementToCheck->get($field) <= $value,
                 '!=' => $elementToCheck->get($field) != $value,
                 '!==' => $elementToCheck->get($field) !== $value,
+                'like' => self::like($elementToCheck->get($field), $value),
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {
