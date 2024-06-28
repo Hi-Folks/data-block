@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.2 - WIP
+## 0.3.2 - 2024-06-28
 - Add `fromJsonUrl()` method for loading Block data from a remote JSON (like APIs)
 - Add `like` operator for `where()` method, so you can filter for a substring
 - add more tests
