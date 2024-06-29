@@ -1,0 +1,792 @@
+[
+  {
+    "sha": "58be8df4d0d455e618c15917fa2bfe053e2513ab",
+    "node_id": "C_kwDOMJrRd9oAKDU4YmU4ZGY0ZDBkNDU1ZTYxOGMxNTkxN2ZhMmJmZTA1M2UyNTEzYWI",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-21T07:37:04Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-21T07:37:04Z"
+      },
+      "message": "More tests for looping Block",
+      "tree": {
+        "sha": "25d22fb44fa43a74ad4364c96baed673772de572",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/25d22fb44fa43a74ad4364c96baed673772de572"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/58be8df4d0d455e618c15917fa2bfe053e2513ab",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/58be8df4d0d455e618c15917fa2bfe053e2513ab",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/58be8df4d0d455e618c15917fa2bfe053e2513ab",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/58be8df4d0d455e618c15917fa2bfe053e2513ab/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "c92d7a265d935ff4b7fcbb5a4b41aa3fde4ae4ad",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/c92d7a265d935ff4b7fcbb5a4b41aa3fde4ae4ad",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/c92d7a265d935ff4b7fcbb5a4b41aa3fde4ae4ad"
+      }
+    ]
+  },
+  {
+    "sha": "c92d7a265d935ff4b7fcbb5a4b41aa3fde4ae4ad",
+    "node_id": "C_kwDOMJrRd9oAKGM5MmQ3YTI2NWQ5MzVmZjRiN2ZjYmI1YTRiNDFhYTNmZGU0YWU0YWQ",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-19T21:41:37Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-19T21:41:37Z"
+      },
+      "message": "Add the `iterateBlock()` method\n\nAdd the `iterateBlock()` method, which allows to return of current elements as Block while looping.",
+      "tree": {
+        "sha": "ba633dd850cc9484b4a91ee5e34364d63b867f8c",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/ba633dd850cc9484b4a91ee5e34364d63b867f8c"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/c92d7a265d935ff4b7fcbb5a4b41aa3fde4ae4ad",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/c92d7a265d935ff4b7fcbb5a4b41aa3fde4ae4ad",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/c92d7a265d935ff4b7fcbb5a4b41aa3fde4ae4ad",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/c92d7a265d935ff4b7fcbb5a4b41aa3fde4ae4ad/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "d6f5c118e2bdffbaa8a145c8179f8a81b27d4f38",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/d6f5c118e2bdffbaa8a145c8179f8a81b27d4f38",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/d6f5c118e2bdffbaa8a145c8179f8a81b27d4f38"
+      }
+    ]
+  },
+  {
+    "sha": "d6f5c118e2bdffbaa8a145c8179f8a81b27d4f38",
+    "node_id": "C_kwDOMJrRd9oAKGQ2ZjVjMTE4ZTJiZGZmYmFhOGExNDVjODE3OWY4YTgxYjI3ZDRmMzg",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-19T17:14:52Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-19T17:14:52Z"
+      },
+      "message": "Update CONTRIBUTING.md",
+      "tree": {
+        "sha": "f0d1849345a0615872528bf8500144f5bc1d88d3",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/f0d1849345a0615872528bf8500144f5bc1d88d3"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/d6f5c118e2bdffbaa8a145c8179f8a81b27d4f38",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/d6f5c118e2bdffbaa8a145c8179f8a81b27d4f38",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/d6f5c118e2bdffbaa8a145c8179f8a81b27d4f38",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/d6f5c118e2bdffbaa8a145c8179f8a81b27d4f38/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "08e5b18f463dd818ab35d2be79ef821e4e93ee07",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/08e5b18f463dd818ab35d2be79ef821e4e93ee07",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/08e5b18f463dd818ab35d2be79ef821e4e93ee07"
+      }
+    ]
+  },
+  {
+    "sha": "08e5b18f463dd818ab35d2be79ef821e4e93ee07",
+    "node_id": "C_kwDOMJrRd9oAKDA4ZTViMThmNDYzZGQ4MThhYjM1ZDJiZTc5ZWY4MjFlNGU5M2VlMDc",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-18T05:44:13Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-18T05:44:13Z"
+      },
+      "message": "Improve the documentation and the unit tests for \"query\" methods",
+      "tree": {
+        "sha": "03b79552aae716a80456590c8a546659072399e7",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/03b79552aae716a80456590c8a546659072399e7"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/08e5b18f463dd818ab35d2be79ef821e4e93ee07",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/08e5b18f463dd818ab35d2be79ef821e4e93ee07",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/08e5b18f463dd818ab35d2be79ef821e4e93ee07",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/08e5b18f463dd818ab35d2be79ef821e4e93ee07/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "1b0042647f730a79442b06eefefe9dc7e9c2a771",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/1b0042647f730a79442b06eefefe9dc7e9c2a771",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/1b0042647f730a79442b06eefefe9dc7e9c2a771"
+      }
+    ]
+  },
+  {
+    "sha": "1b0042647f730a79442b06eefefe9dc7e9c2a771",
+    "node_id": "C_kwDOMJrRd9oAKDFiMDA0MjY0N2Y3MzBhNzk0NDJiMDZlZWZlZmU5ZGM3ZTljMmE3NzE",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-17T21:18:43Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-17T21:18:43Z"
+      },
+      "message": "Welcome to `select()` method\n\nThe `select()` method allows you to select only the needed fields.",
+      "tree": {
+        "sha": "50c7842640ecb1e0471fc1ab8ff6d279b74eafa6",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/50c7842640ecb1e0471fc1ab8ff6d279b74eafa6"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/1b0042647f730a79442b06eefefe9dc7e9c2a771",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/1b0042647f730a79442b06eefefe9dc7e9c2a771",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/1b0042647f730a79442b06eefefe9dc7e9c2a771",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/1b0042647f730a79442b06eefefe9dc7e9c2a771/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "d99b1cb6aa4f5e79595a6c2dbbd06a8896b9e355",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/d99b1cb6aa4f5e79595a6c2dbbd06a8896b9e355",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/d99b1cb6aa4f5e79595a6c2dbbd06a8896b9e355"
+      }
+    ]
+  },
+  {
+    "sha": "d99b1cb6aa4f5e79595a6c2dbbd06a8896b9e355",
+    "node_id": "C_kwDOMJrRd9oAKGQ5OWIxY2I2YWE0ZjVlNzk1OTVhNmMyZGJiZDA2YTg4OTZiOWUzNTU",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T20:16:54Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T20:16:54Z"
+      },
+      "message": "Update CHANGELOG.md",
+      "tree": {
+        "sha": "fd577ff423894a2b29f118073942a38f0cb1e0a6",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/fd577ff423894a2b29f118073942a38f0cb1e0a6"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/d99b1cb6aa4f5e79595a6c2dbbd06a8896b9e355",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/d99b1cb6aa4f5e79595a6c2dbbd06a8896b9e355",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/d99b1cb6aa4f5e79595a6c2dbbd06a8896b9e355",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/d99b1cb6aa4f5e79595a6c2dbbd06a8896b9e355/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "e480e8c6bbbbb0b9d875537b67e3a9f41e524651",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/e480e8c6bbbbb0b9d875537b67e3a9f41e524651",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/e480e8c6bbbbb0b9d875537b67e3a9f41e524651"
+      }
+    ]
+  },
+  {
+    "sha": "e480e8c6bbbbb0b9d875537b67e3a9f41e524651",
+    "node_id": "C_kwDOMJrRd9oAKGU0ODBlOGM2YmJiYmIwYjlkODc1NTM3YjY3ZTNhOWY0MWU1MjQ2NTE",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T20:08:10Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T20:08:10Z"
+      },
+      "message": "Update CHANGELOG.md",
+      "tree": {
+        "sha": "c3bf712cb48d8ea3ca89809ea9dde3c03176ad6a",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/c3bf712cb48d8ea3ca89809ea9dde3c03176ad6a"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/e480e8c6bbbbb0b9d875537b67e3a9f41e524651",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/e480e8c6bbbbb0b9d875537b67e3a9f41e524651",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/e480e8c6bbbbb0b9d875537b67e3a9f41e524651",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/e480e8c6bbbbb0b9d875537b67e3a9f41e524651/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "3da97a32aac452f8885e88b05bee1ccbfcc624d8",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/3da97a32aac452f8885e88b05bee1ccbfcc624d8",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/3da97a32aac452f8885e88b05bee1ccbfcc624d8"
+      }
+    ]
+  },
+  {
+    "sha": "3da97a32aac452f8885e88b05bee1ccbfcc624d8",
+    "node_id": "C_kwDOMJrRd9oAKDNkYTk3YTMyYWFjNDUyZjg4ODVlODhiMDViZWUxY2NiZmNjNjI0ZDg",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T20:06:10Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T20:06:10Z"
+      },
+      "message": "Create BidimensionalTest.php",
+      "tree": {
+        "sha": "13dd52abb4b35f68524ce1e5ca7057bf3a157485",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/13dd52abb4b35f68524ce1e5ca7057bf3a157485"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/3da97a32aac452f8885e88b05bee1ccbfcc624d8",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/3da97a32aac452f8885e88b05bee1ccbfcc624d8",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/3da97a32aac452f8885e88b05bee1ccbfcc624d8",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/3da97a32aac452f8885e88b05bee1ccbfcc624d8/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "b8a60a4b06a6a5bc860b803b3b384a24f9321231",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/b8a60a4b06a6a5bc860b803b3b384a24f9321231",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/b8a60a4b06a6a5bc860b803b3b384a24f9321231"
+      }
+    ]
+  },
+  {
+    "sha": "b8a60a4b06a6a5bc860b803b3b384a24f9321231",
+    "node_id": "C_kwDOMJrRd9oAKGI4YTYwYTRiMDZhNmE1YmM4NjBiODAzYjNiMzg0YTI0ZjkzMjEyMzE",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T19:58:44Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T19:58:44Z"
+      },
+      "message": "Running Rector",
+      "tree": {
+        "sha": "3340120a6237ca45170ba1b46dabaffb0d7dd79b",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/3340120a6237ca45170ba1b46dabaffb0d7dd79b"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/b8a60a4b06a6a5bc860b803b3b384a24f9321231",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/b8a60a4b06a6a5bc860b803b3b384a24f9321231",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/b8a60a4b06a6a5bc860b803b3b384a24f9321231",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/b8a60a4b06a6a5bc860b803b3b384a24f9321231/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "fbef6edcb49a10621f337a4b3eef8234a70ccab3",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/fbef6edcb49a10621f337a4b3eef8234a70ccab3",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/fbef6edcb49a10621f337a4b3eef8234a70ccab3"
+      }
+    ]
+  },
+  {
+    "sha": "fbef6edcb49a10621f337a4b3eef8234a70ccab3",
+    "node_id": "C_kwDOMJrRd9oAKGZiZWY2ZWRjYjQ5YTEwNjIxZjMzN2E0YjNlZWY4MjM0YTcwY2NhYjM",
+    "commit": {
+      "author": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T19:56:42Z"
+      },
+      "committer": {
+        "name": "Roberto Butti",
+        "email": "roberto.butti@gmail.com",
+        "date": "2024-06-16T19:56:42Z"
+      },
+      "message": "Make the Block Queryable",
+      "tree": {
+        "sha": "7b18bfda4494ffc445c6001a4ece0ebecce9353b",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/git/trees/7b18bfda4494ffc445c6001a4ece0ebecce9353b"
+      },
+      "url": "https://api.github.com/repos/Hi-Folks/data-block/git/commits/fbef6edcb49a10621f337a4b3eef8234a70ccab3",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/fbef6edcb49a10621f337a4b3eef8234a70ccab3",
+    "html_url": "https://github.com/Hi-Folks/data-block/commit/fbef6edcb49a10621f337a4b3eef8234a70ccab3",
+    "comments_url": "https://api.github.com/repos/Hi-Folks/data-block/commits/fbef6edcb49a10621f337a4b3eef8234a70ccab3/comments",
+    "author": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "roberto-butti",
+      "id": 678434,
+      "node_id": "MDQ6VXNlcjY3ODQzNA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/678434?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/roberto-butti",
+      "html_url": "https://github.com/roberto-butti",
+      "followers_url": "https://api.github.com/users/roberto-butti/followers",
+      "following_url": "https://api.github.com/users/roberto-butti/following{/other_user}",
+      "gists_url": "https://api.github.com/users/roberto-butti/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/roberto-butti/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/roberto-butti/subscriptions",
+      "organizations_url": "https://api.github.com/users/roberto-butti/orgs",
+      "repos_url": "https://api.github.com/users/roberto-butti/repos",
+      "events_url": "https://api.github.com/users/roberto-butti/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/roberto-butti/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "f7adef2161c20804de6ff2dc4cf8b7693d5e4026",
+        "url": "https://api.github.com/repos/Hi-Folks/data-block/commits/f7adef2161c20804de6ff2dc4cf8b7693d5e4026",
+        "html_url": "https://github.com/Hi-Folks/data-block/commit/f7adef2161c20804de6ff2dc4cf8b7693d5e4026"
+      }
+    ]
+  }
+]

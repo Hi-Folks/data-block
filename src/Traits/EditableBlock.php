@@ -12,7 +12,24 @@ trait EditableBlock
      */
     public function append(array|Block $data, string|null $key = null): self
     {
-        $this->data[] = $data;
+        if ($data instanceof Block) {
+            $this->data = array_merge($this->data, $data->toArray());
+        } else {
+            $this->data = array_merge($this->data, $data);
+        }
+
+        return $this;
+    }
+
+    public function appendItem(mixed $data, string|null $key = null): self
+    {
+        if (is_null($key)) {
+            $this->data[] =  $data;
+        } else {
+            $this->data[$key] = $data;
+        }
+
+
         return $this;
     }
 

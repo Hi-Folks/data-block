@@ -8,10 +8,8 @@ trait QueryableBlock
 {
     public static function like(mixed $value1, mixed $value2): bool
     {
-        /* @var string $strValue1 */
-        /* @var string $value1 */
+
         $strValue1 = strval($value1);
-        /* @var string $strValue2 */
         $strValue2 = strval($value2);
         return str_contains($strValue1, $strValue2);
     }
@@ -95,7 +93,7 @@ trait QueryableBlock
                 $newRow[$column] = $value;
             }
 
-            $table->append($newRow);
+            $table->appendItem($newRow);
         }
 
         return $table;

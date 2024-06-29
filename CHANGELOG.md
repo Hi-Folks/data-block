@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 - 2024-06-29
+- Add `append()` for elements of Block and array
+- Add `appendItem()` for adding a single element to a Block object
+
 ## 0.3.2 - 2024-06-28
 - Add `fromJsonUrl()` method for loading Block data from a remote JSON (like APIs)
 - Add `like` operator for `where()` method, so you can filter for a substring
