@@ -32,8 +32,7 @@ trait LoadableBlock
             'http' => [
                 'method' => "GET",
                 'header' => 'Accept-language: en
-' .
-                    "User-Agent: hi-folks/data-block",
+User-Agent: hi-folks/data-block',
             ],
         ];
         $context = stream_context_create($options);
