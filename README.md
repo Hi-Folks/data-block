@@ -309,11 +309,60 @@ echo $workflow->get("jobs.test.runs-on");
 echo $workflow->get("on.0"); // push , the first event
 ```
 
+## Adding and appending elements
+
+### Appending the elements of a Block object to another Block object
+If you have a Block object you can add elements from another Block object.
+One of the use cases is for example if you have a multiple JSON file for example retrieving paginated content from an API, you want to create one Block object with all the elements from every JSON file.
+
+```php
+$data1 = Block::fromJsonFile("./data/commits-10-p1.json");
+$data2 = Block::fromJsonFile("./data/commits-10-p2.json");
+$data1->count(); // 10
+$data2->count(); // 10
+$data1->append($data2);
+$data1->count(); // 20
+$data2->count(); // 10
+```
+
+### Appending the elements of an array to a Block object
+
+If you have an array you can add elements to a Block object.
+Under the hood, a Block object is an array (that potentially can be a nested array). Appending an array will add elements at the root level:
+
+
+```php
+$data1 = Block::make(["a","b"]);
+$arrayData2 = ["c","d"];
+$data1->count(); // 2
+$data1->append($arrayData2);
+$data1->count(); // 4
+```
+
+### Appending an element
+If you need to append an element as a single element (even if is an array or a Block object) you can use the `appendItem()` function:
+
+```php
+$data1 = Block::make(["a", "b"]);
+$arrayData2 = ["c", "d"];
+$data1->appendItem($arrayData2);
+$data1->count(); // 3 because a, b, and the whole array c,d as single element
+$data1->toArray();
+/*
+[
+    'a',
+    'b',
+    [
+        'c',
+        'd',
+    ],
+]
+*/
+```
 
 ## Querying, sorting data
 
 ### The `where()` method
-
 You can filter data elements for a specific key with a specific value.
 You can set also the operator
 
@@ -340,7 +389,6 @@ If you want to avoid preserving the keys and set new integer keys starting from 
 ```
 
 ### The `orderBy()` method
-
 You can order or sort data for a specific key.
 For example, if you want to retrieve the data at `story.content.body` key and sort them by `component` key:
 
