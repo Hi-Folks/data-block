@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4 - WIP
+- Add `dump()` and `dumpJson()` method to Block class
+
+
 ## 0.3.3 - 2024-06-29
 - Add `append()` for elements of Block and array
 - Add `appendItem()` for adding a single element to a Block object

@@ -25,6 +25,15 @@ trait ExportableBlock
         return json_encode($this->data, JSON_PRETTY_PRINT);
     }
 
+    public function dumpJson(): void
+    {
+        echo $this->toJson();
+    }
+    public function dump(): void
+    {
+        var_dump($this);
+    }
+
     public function toJsonObject(): mixed
     {
         $jsonString = json_encode($this->data);

@@ -50,6 +50,7 @@ trait QueryableBlock
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {
+
                 if ($preseveKeys) {
                     $returnData[$key] = $element;
                 } else {
@@ -58,7 +59,6 @@ trait QueryableBlock
 
             }
         }
-
         return self::make($returnData, $this->iteratorReturnsBlock);
     }
 
