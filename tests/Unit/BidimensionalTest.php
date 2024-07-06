@@ -137,3 +137,38 @@ test(
 
     },
 );
+
+test(
+    'extract json by attribute',
+    function (): void {
+        $file = "./tests/data/stories.json";
+        $block = Block::fromJsonFile($file);
+        //$block->getBlock("rels")->dumpJson();
+        $rel = $block->getBlock("rels")->where("uuid", "==", "a6af7728-eadf-4428-8cf5-343304857374");
+        expect($rel)->toHaveCount(1);
+        expect($rel->get("4.name"))->toBe("Category C");
+        expect($rel->get("4"))->toHaveCount(22);
+
+        $rel = $block->getBlock("rels")->where(
+            field: "uuid",
+            operator: "==",
+            value: "a6af7728-eadf-4428-8cf5-343304857374",
+            preseveKeys: false,
+        );
+        expect($rel)->toHaveCount(1);
+        expect($rel->get("0.name"))->toBe("Category C");
+        expect($rel->get("0"))->toHaveCount(22);
+
+        $rel = $block->getBlock("rels")
+            ->select("uuid", "name")
+            ->where(
+                field: "uuid",
+                operator: "==",
+                value: "a6af7728-eadf-4428-8cf5-343304857374",
+                preseveKeys: false,
+            );
+        expect($rel)->toHaveCount(1);
+        expect($rel->get("0.name"))->toBe("Category C");
+        expect($rel->get("0"))->toHaveCount(2);
+    },
+);
