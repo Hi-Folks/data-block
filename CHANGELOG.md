@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.5 - 2024-07-07
+- Fix returning nested array type after `where()`
+
 ## 0.3.4 - 2024-07-07
 - Add `orderBy` for nestable attributes
 - Add filtering for array values (`in` parameter for `where()` method)
