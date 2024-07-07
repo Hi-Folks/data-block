@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HiFolks\DataType\Traits;
 
 use Symfony\Component\Yaml\Yaml;
