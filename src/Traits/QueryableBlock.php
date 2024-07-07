@@ -75,7 +75,7 @@ trait QueryableBlock
         foreach ($this as $key => $item) {
             $map[$key] = $item->get($field);
         }
-        if ($order == 'desc') {
+        if ($order === 'desc') {
             array_multisort(
                 $map,
                 SORT_DESC,
