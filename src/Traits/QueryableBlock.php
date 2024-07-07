@@ -55,9 +55,10 @@ trait QueryableBlock
             if ($found) {
 
                 if ($preseveKeys) {
-                    $returnData[$key] = $element;
+                    $returnData[$key] = $element instanceof Block ? $element->toArray() : $element;
                 } else {
-                    $returnData[] = $element;
+                    $returnData[] = $element instanceof Block ? $element->toArray() : $element;
+                    ;
                 }
 
             }
