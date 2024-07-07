@@ -106,11 +106,11 @@ $data = Block::make($fruitsArray);
 ```
 The `$data` object is an instance of the `Block` class.
 
-In the case you want to initialize an empty `Block` object you can call the `make()` method with no parameters:
+In the case you want to initialize an empty `Block` object, you can call the `make()` method with no parameters:
 ```php
 $data = Block::make();
 ```
-Once you have initialized the Block object you can start using its methods.
+Once you initialize the Block object, you can use its methods.
 
 ### The `get()` method
 The `get()` method supports keys/indexes with the dot (or custom) notation for retrieving values from nested arrays.
@@ -169,8 +169,7 @@ $value = $data->get(
 ```
 
 ### The `getBlock()` method
-If you need to manage a complex array (nested array), or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object.
-Just because in the case of a complex array the `get()` method could return a classic array.
+If you need to manage a complex array (nested array) or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object via the `getBlock()` method.
 
 Let's see an example:
 
@@ -181,17 +180,17 @@ $appleData = $data->getBlock("apple")
 $data->getBlock("apple")->count();
 ```
 
-If the element accessed via `getBlock()` is a scalar type (integer, float, string...), using `getBlock()` a Block object (with just 1 element) will be returned.
+If the element accessed via `getBlock()` is a scalar type (integer, float, string, etc.), a Block object (with just one element) will be returned using `getBlock()`.
 
-For example, `$data->getBlock("avocado")` returns a Block object, with 5 elements.
+For example, `$data->getBlock("avocado")` returns a Block object with five elements.
 
-For example, `$data->getBlock("avocado.color")` returns a Block object with just 1 element.
+For example, `$data->getBlock("avocado.color")` returns a Block object with just one element.
 
-In the case you are going to access a not valid key, an empty Block object is returned, so that the `$data->getBlock("avocado.notexists")` returns: a Block object with a length equal to 0.
+If you are going to access a non-valid key, an empty Block object is returned, so the `$data->getBlock("avocado.notexists")` returns a Block object with a length equal to 0.
 
 ### The `set()` method
 The `set()` method supports keys with the dot (or custom) notation for setting values for nested data.
-If a key doesn't exist, the `set()` method will create a new key and will set the value.
+If a key doesn't exist, the `set()` method creates one and sets the value.
 If a key already exists, the `set()` method will replace the value related to the key.
 
 For example:
@@ -215,7 +214,7 @@ $textField->get("content.0.content.0.text");
 
 ### Extracting Keys
 
-Via the `keys()` method you can retrieve the list of the key:
+Via the `keys()` method, you can retrieve the list of the keys:
 
 ```php
 $data = Block::make($fruitsArray);
@@ -252,9 +251,9 @@ Array
 ## Exporting data
 
 ### Exporting to array with `toArray()`
-In the case you need to access the native array (associative and nester), you can use the `toArray()` method.
+The `toArray()` method can access the native array (associative and nested).
 
-This is helpful when you are manipulating data with the Block class and at a certain point need to send the data to your own function or a function from a third-party package that expects to receive a native array as a parameter.
+This is helpful when manipulating data with the Block class, and at a certain point, you need to send the data to your function or a function from a third-party package that expects to receive a native array as a parameter.
 
 ```php
 $file = "./composer.json";
@@ -265,7 +264,7 @@ $array = $composerContent->toArray();
 ```
 
 ### Exporting to JSON string with `toJson()`
-In the case you need to generate a valid JSON string with the content of the Block object, you can use the `toJson()` method.
+If you need to generate a valid JSON string using the content of the Block object, you can use the `toJson()` method.
 
 This is helpful when you are manipulating data with the Block class and at a certain point need to send the data in JSON string format to your own function or a function from a third-party package that expects to receive a JSON string as a parameter.
 
@@ -275,9 +274,9 @@ $jsonString = $data->toJson(); // JSON string with "pretty print"
 ```
 
 ### Exporting to YAML string with `toYaml()`
-In the case you need to generate a valid YAML string with the content of the Block object, you can use the `toYaml()` method.
+If you need to generate a valid YAML string using the content of the Block object, you can use the `toYaml()` method.
 
-This is helpful when you are manipulating data with the Block class and at a certain point need to send the data in YAML string format to your own function or a function from a third-party package that expects to receive a YAML string as a parameter.
+This is helpful when manipulating data with the Block class and, at a certain point, need to send the data in YAML string format to your function or a function from a third-party package that expects to receive a YAML string as a parameter.
 
 ```php
 $data = Block::make($fruitsArray);
@@ -298,8 +297,8 @@ echo $composerContent->get("authors.0.name"); // for example: "Roberto B."
 ### Loading Data from JSON URL
 
 You can build your Block data from a remote JSON (like an API).
-For example for building a Block from the latest commit via GitHub API, you can use the `fromJsonUrl()` method.
-Retrieving JSON API into a Block object is useful for applying the methods provided by the Block class, for example, filtering the data. In the example I'm going to filter the commit based on the name of the author of the commit:
+For example, you can use the `fromJsonUrl()` method to build a Block object from the latest commits via GitHub API.
+Retrieving JSON API into a Block object is useful for applying the methods provided by the Block class, for example, filtering the data. In the example, I'm going to filter the commit based on the name of the author of the commit:
 
 ```php
 $url = "https://api.github.com/repos/hi-folks/data-block/commits";
@@ -323,8 +322,8 @@ echo $workflow->get("on.0"); // push , the first event
 ## Adding and appending elements
 
 ### Appending the elements of a Block object to another Block object
-If you have a Block object you can add elements from another Block object.
-One of the use cases is for example if you have a multiple JSON file for example retrieving paginated content from an API, you want to create one Block object with all the elements from every JSON file.
+If you have a Block object, you can add elements from another Block object.
+One use case is if you have multiple JSON files and want to retrieve paginated content from an API. In this case, you want to create one Block object with all the elements from every JSON file.
 
 ```php
 $data1 = Block::fromJsonFile("./data/commits-10-p1.json");
@@ -338,7 +337,7 @@ $data2->count(); // 10
 
 ### Appending the elements of an array to a Block object
 
-If you have an array you can add elements to a Block object.
+If you have an array, you can add elements to a Block object.
 Under the hood, a Block object is an array (that potentially can be a nested array). Appending an array will add elements at the root level:
 
 
@@ -351,7 +350,7 @@ $data1->count(); // 4
 ```
 
 ### Appending an element
-If you need to append an element as a single element (even if is an array or a Block object) you can use the `appendItem()` function:
+If you need to append an element as a single element (even if it is an array or a Block object), you can use the `appendItem()` function:
 
 ```php
 $data1 = Block::make(["a", "b"]);
@@ -375,7 +374,7 @@ $data1->toArray();
 
 ### The `where()` method
 You can filter data elements for a specific key with a specific value.
-You can set also the operator
+You can also set the operator
 
 ```php
 $composerContent = Block::fromJsonString($jsonString);
@@ -387,7 +386,7 @@ $banners = $composerContent->getBlock("story.content.body")->where(
 ```
 
 With the `where()` method, the filtered data keeps the original keys.
-If you want to avoid preserving the keys and set new integer keys starting from 0 you can set the fourth parameter (`preserveKeys`) as `false`.
+If you want to avoid preserving the keys and set new integer keys starting from 0, you can set the fourth parameter (`preserveKeys`) as `false`.
 
 ```diff
     $composerContent = Block::fromJsonString($jsonString);
@@ -399,6 +398,19 @@ If you want to avoid preserving the keys and set new integer keys starting from 
     );
 ```
 
+With `where()` method you can use different operators, like "==", ">", "<" etc.
+You can use also the `in` operator in the case your nested data contains arrays.
+For example if you have posts and each post can have multiple tags, you can filter posts with a specific tag:
+
+```php
+$url = "https://dummyjson.com/posts";
+$posts = Block
+    ::fromJsonUrl($url)
+    ->getBlock("posts");
+
+$lovePosts = $posts->where("tags", "in", "love");
+```
+
 ### The `orderBy()` method
 You can order or sort data for a specific key.
 For example, if you want to retrieve the data at `story.content.body` key and sort them by `component` key:
@@ -408,6 +420,20 @@ $composerContent = Block::fromJsonString($jsonString);
 $bodyComponents = $composerContent->getBlock("story.content.body")->orderBy(
     "component", "asc"
 );
+```
+
+You can also order data for a nested attribute.
+Consider retrieving a remote JSON like the dummy JSON posts and then ordering the posts via the `reactions.likes` nested field in descending order:
+
+```php
+use HiFolks\DataType\Block;
+
+$posts = Block
+    ::fromJsonUrl("https://dummyjson.com/posts")
+    ->getBlock("posts");
+echo $posts->count(); // 30
+$mostLikedPosts = $posts->orderBy("reactions.likes", "desc");
+$mostLikedPosts->dump();
 ```
 
 ### The `select()` method
@@ -430,7 +456,7 @@ $data = $table
 print_r($data->toArray());
 ```
 
-You can combine the `select()`, the `where()` and the `orderBy()` method.
+You can combine the `select()`, the `where()`, and the `orderBy()` method.
 If you want to retrieve elements with `product` and `price` keys, with a price greater than 100 and ordered by `price`:
 
 ```php
@@ -466,9 +492,9 @@ Array
 ```
 ## Looping Data
 The Block class implements the Iterator interface.
-While you are looping an array via Block, by default if the current element should be an array, a Block is returned. So that you can access the Block method for handling the current array item in the loop.
-For example with the previous code, if you loop through `$data` (that is a `Block` object), each element in each iteration in the loop will be an array with two elements, with the keys `product` and `price`.
-If in the loop you need to manage the current element via Block class, you should manually call the `Block::make` for example:
+While looping an array via Block, by default, if the current element should be an array, a Block is returned so that you can access the Block method for handling the current array item in the loop.
+For example, with the previous code, if you loop through `$data` (which is a Block object), each element in each iteration of the loop will be an array with two elements, with the keys `product` and `price`.
+If in the loop you need to manage the current element via Block class, you should manually call the `Block::make`, for example:
 
 ```php
 $table = Block::make($dataTable);
@@ -502,7 +528,7 @@ foreach ($data as $key => $item) {
 ```
 
 ### The `iterateBlock()` method
-With the `iterateBlock()` method, you can decide to switch from array or Block for nested lists inside the main Block object in the case you already instanced as a Block object.
+With the `iterateBlock()` method, you can switch from array or Block for nested lists inside the main Block object if you already instanced it as a Block object.
 In the example above, you have the `$table`  Block object.
 You can loop across the items of the `$table` object.
 If each item in the loop is itself an array (so an array of arrays), you can retrieve it as an array or a Block, depending on your needs:
@@ -526,11 +552,13 @@ foreach ($table->iterateBlock(false) as $key => $item) {
 ## Validating Data 🆕
 
 You can validate the data in the Block object with JSON schema.
-JSON Schema is a vocabulary that you can use to annotate and validate JSON documents.
-> Mre info about JSON Schema: https://json-schema.org/learn/getting-started-step-by-step
+JSON Schema is a vocabulary used to annotate and validate JSON documents.
 
-If you need a "common schema", you can find some schemas here: https://www.schemastore.org/json/
+> More info about JSON Schema: https://json-schema.org/learn/getting-started-step-by-step
+
+If you need some common/popular schemas, you can find some schemas here: https://www.schemastore.org/json/
 For example:
+
 - Schema for validating the `composer.json` file: https://getcomposer.org/schema.json
 - Schema for validating the GitHub Actions workflows: https://json.schemastore.org/github-workflow.json
 
@@ -613,7 +641,7 @@ $data->validateJsonWithSchema($schemaJson);
 // true if the Block is valid.
 ```
 
-If you are starting to use the Data Block and you are testing it just to gain confidence, and you are trying to implement different scenarios and you want to test a not valid JSON, try to change the "rating" type from number to integer (the validation should fail because in the JSON we have ratings with decimals).
+If you are starting to use the Data Block and testing it just to gain confidence, implementing different scenarios, or testing a non-valid JSON, try changing the "rating" type from number to integer (the validation should fail because in the JSON, we have ratings with decimals).
 And, yes, to change on the fly the schema you can use the Block object :)
 
 ```php
@@ -646,7 +674,7 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 ## Security Vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+Please review [our security policy](../../security/policy) on reporting security vulnerabilities.
 
 ## Credits
 

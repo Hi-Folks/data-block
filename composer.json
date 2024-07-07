@@ -42,7 +42,11 @@
         "all": [
             "@test", "@format", "@phpstan"
         ],
-        "test": "vendor/bin/pest",
+        "complete": [
+            "@test-with-url", "@format", "@phpstan"
+        ],
+        "test": "vendor/bin/pest  --exclude-group=url",
+        "test-with-url": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
         "phpstan": "vendor/bin/phpstan",
         "format": "vendor/bin/pint"

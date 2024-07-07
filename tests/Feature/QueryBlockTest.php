@@ -76,3 +76,40 @@ test('Order Block', function (): void {
     expect($bodyComponents->get("0.component"))->toBe("text-section");
 
 });
+
+
+it('local dummyjson post', function (): void {
+
+    $response = Block::fromJsonFile("./tests/data/dummy-posts-30.json");
+    expect($response)->toBeInstanceOf(Block::class);
+    expect($response)->toHaveCount(4);
+
+    $posts = $response->getBlock("posts");
+
+    expect($posts)->toBeInstanceOf(Block::class);
+    expect($posts)->toHaveCount(30);
+    $lovePosts = $posts->where("tags", "in", "love");
+    expect($lovePosts)->toHaveCount(9);
+
+    $mostViewedPosts = $posts->orderBy("views", "desc");
+    //$mostViewedPosts->dumpJson();
+    expect($mostViewedPosts)->toHaveCount(30);
+    expect($mostViewedPosts->get("0.id"))->toBe(2);
+    expect($mostViewedPosts->get("0.views"))->toBe(4884);
+
+    $lessViewedPosts = $posts->orderBy("views"); //by default ascending
+    //$lessViewedPosts->dumpJson();
+    expect($lessViewedPosts)->toHaveCount(30);
+    expect($lessViewedPosts->get("0.id"))->toBe(6);
+    expect($lessViewedPosts->get("0.views"))->toBe(38);
+
+    $mostLikedPosts = $posts->orderBy("reactions.likes", "desc");
+    //$mostLikedPosts->dumpJson();
+    expect($mostLikedPosts)->toHaveCount(30);
+    expect($mostLikedPosts->get("0.id"))->toBe(3);
+    expect($mostLikedPosts->get("0.reactions.likes"))->toBe(1448);
+
+    expect($posts)->toHaveCount(30);
+    expect($posts->get("0.id"))->toBe(1);
+    expect($posts->get("0.reactions.likes"))->toBe(192);
+});

@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.3.4 - WIP
+## 0.3.4 - 2024-07-07
+- Add `orderBy` for nestable attributes
+- Add filtering for array values (`in` parameter for `where()` method)
 - Add `dump()` and `dumpJson()` method to Block class
 
 

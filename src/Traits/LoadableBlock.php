@@ -27,14 +27,23 @@ trait LoadableBlock
         return self::make([]);
     }
 
-    public static function fromJsonUrl(string $jsonUrl): self
+    /**
+     * Load Block object from a remote JSON.
+     * @param $jsonUrl the URL for loading the JSON, for example https://dummyjson.com/posts
+     * @param null|array<int, string> $headers the optional headers, set [] if you want to avoid headers
+     */
+    public static function fromJsonUrl(string $jsonUrl, ?array $headers = null): self
     {
-
+        if (is_null($headers)) {
+            $headers = [
+                'Accept-language: en',
+                'User-Agent: hi-folks/data-block',
+            ];
+        }
         $options = [
             'http' => [
                 'method' => "GET",
-                'header' => 'Accept-language: en
-User-Agent: hi-folks/data-block',
+                'header' => $headers,
             ],
         ];
         $context = stream_context_create($options);

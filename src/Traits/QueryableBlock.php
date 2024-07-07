@@ -49,6 +49,7 @@ trait QueryableBlock
                 '!=' => $elementToCheck->get($field) != $value,
                 '!==' => $elementToCheck->get($field) !== $value,
                 'like' => self::like($elementToCheck->get($field), $value),
+                'in' => in_array($value, $elementToCheck->get($field)),
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {
@@ -64,18 +65,26 @@ trait QueryableBlock
         return self::make($returnData, $this->iteratorReturnsBlock);
     }
 
+
     public function orderBy(string|int $field, string $order = 'asc'): self
     {
+        $map = [];
         $array = $this->data;
 
-        if ($order !== 'asc') {
-            /** @var callable $closure */
-            $closure = static fn($item1, $item2): int => $item2[$field] <=> $item1[$field];
+        foreach ($this as $key => $item) {
+            $map[$key] = $item->get($field);
+        }
+        if ($order == 'desc') {
+            array_multisort(
+                $map,
+                SORT_DESC,
+                $array,
+            );
+
         } else {
-            $closure = static fn($item1, $item2): int => $item1[$field] <=> $item2[$field];
+            array_multisort($map, $array) ;
         }
 
-        usort($array, $closure);
         return self::make($array, $this->iteratorReturnsBlock);
     }
 

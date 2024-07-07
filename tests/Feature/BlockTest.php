@@ -84,16 +84,3 @@ it('tests some value for composer.lock', function (): void {
     expect($composer->getBlock("packages")->where("dist.type", "zip"))->toHaveCount(6);
     expect($composer->getBlock("packages")->where("source.type", "git"))->toHaveCount(6);
 });
-
-it('remote json', function (): void {
-
-    $url = "https://api.github.com/repos/hi-folks/data-block/commits";
-    $commits = Block::fromJsonUrl($url);
-    expect($commits)->toBeInstanceOf(Block::class);
-    expect($commits)->toHaveCount(30);
-    $myCommits = $commits->where("commit.author.name", "like", "Roberto");
-    foreach ($myCommits as $value) {
-        expect($value->get("commit.message"))->toBeString();
-    }
-
-});
