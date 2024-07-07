@@ -29,7 +29,8 @@
     </i>
 </p>
 
-This PHP package provides robust tools for managing, querying, filtering, and setting nested data structures with ease. Whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays, this package offers a streamlined approach to handling nested data efficiently.
+This PHP package provides classes and methods for managing, querying, filtering, and setting nested data structures with ease.
+Whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays, this package offers a streamlined approach to handling nested data easly.
 
 ## The Block class
 
@@ -52,7 +53,7 @@ composer require hi-folks/data-block
 
 > For supporting the development you can star the repository: https://github.com/Hi-Folks/data-block
 
-Then in your PHP files, you can import the right Namespace:
+Then in your PHP files, you can import the `HiFolks\DataType\Block` Namespace:
 
 ```php
 use HiFolks\DataType\Block;
@@ -138,7 +139,6 @@ The `$data->get("banana.rating")` is:
 - specifically a float;
 
 
-
 You can customize the notation with a different character:
 
 ```php
@@ -153,10 +153,20 @@ $value = $data->get('apple.notexists'); // null
 You can define a default value in the case the key doesn't exist:
 
 ```php
-$value = $data->get('apple#notexists',
-'🫠', '#'); // 🫠
+$value = $data->get(
+    'apple.notexists',
+    '🫠'
+); // 🫠
 ```
 
+And you can combine the default value and the nested character:
+```php
+$value = $data->get(
+    'apple#notexists',
+    '🫠',
+    '#'
+); // 🫠
+```
 
 ### The `getBlock()` method
 If you need to manage a complex array (nested array), or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object.
@@ -171,7 +181,7 @@ $appleData = $data->getBlock("apple")
 $data->getBlock("apple")->count();
 ```
 
-If the element accessed via getBlock is a scalar type (integer, float, string...), using `getBlock()` a Block object (with just 1 element) will be returned.
+If the element accessed via `getBlock()` is a scalar type (integer, float, string...), using `getBlock()` a Block object (with just 1 element) will be returned.
 
 For example, `$data->getBlock("avocado")` returns a Block object, with 5 elements.
 
@@ -202,6 +212,7 @@ Once you set the values, you can access them via `get()` (or `getBlock()`) metho
 ```php
 $textField->get("content.0.content.0.text");
 ```
+
 ### Extracting Keys
 
 Via the `keys()` method you can retrieve the list of the key:
