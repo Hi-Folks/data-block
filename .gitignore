@@ -11,3 +11,4 @@ docs
 psalm.xml
 vendor
 .php-cs-fixer.cache
+.zed
