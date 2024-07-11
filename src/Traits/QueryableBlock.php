@@ -112,15 +112,15 @@ trait QueryableBlock
     }
 
     /**
-     * Groups the elements of the DataBlock by a specified field.
+     * Groups the elements of the Block by a specified field.
      *
      * This method takes a field name as an argument and groups the elements of the
-     * DataBlock collection based on the values of that field. Each element is grouped into
+     * Block object based on the values of that field. Each element is grouped into
      * an associative array where the keys are the values of the specified field
      * and the values are arrays of elements that share that key.
      *
      * @param string|int $field The field name to group by.
-     * @return self A new DataBlock instance with the grouped elements.
+     * @return self A new Block instance with the grouped elements.
      *
      */
     public function groupBy(string|int $field): self

@@ -493,9 +493,9 @@ Array
 
 ### The `groupBy()` method
 
-Groups the elements of the DataBlock collection by a specified field.
+Groups the elements of the `Block` object by a specified field.
 
-This method takes a field name as an argument and groups the elements of the DataBlock collection based on the values of that field. Each element is grouped into an associative array where the keys are the values of the specified field and the values are arrays of elements that share that key.
+This method takes a field name as an argument and groups the elements of the `Block` object based on the values of that field. Each element is grouped into an associative array where the keys are the values of the specified field and the values are arrays of elements that share that key.
 
 ```php
 use HiFolks\DataType\Block;
