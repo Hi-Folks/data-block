@@ -490,6 +490,45 @@ Array
 )
 */
 ```
+
+### The `groupBy()` method
+
+Groups the elements of the DataBlock collection by a specified field.
+
+This method takes a field name as an argument and groups the elements of the DataBlock collection based on the values of that field. Each element is grouped into an associative array where the keys are the values of the specified field and the values are arrays of elements that share that key.
+
+```php
+use HiFolks\DataType\Block;
+$data = Block::make([
+    ['type' => 'fruit', 'name' => 'apple'],
+    ['type' => 'fruit', 'name' => 'banana'],
+    ['type' => 'vegetable', 'name' => 'carrot'],
+]);
+$grouped = $data->groupBy('type');
+$grouped->dumpJson();
+/*
+{
+    "fruit": [
+        {
+            "type": "fruit",
+            "name": "apple"
+        },
+        {
+            "type": "fruit",
+            "name": "banana"
+        }
+    ],
+    "vegetable": [
+        {
+            "type": "vegetable",
+            "name": "carrot"
+        }
+    ]
+}
+*/
+```
+
+
 ## Looping Data
 The Block class implements the Iterator interface.
 While looping an array via Block, by default, if the current element should be an array, a Block is returned so that you can access the Block method for handling the current array item in the loop.

@@ -111,4 +111,46 @@ trait QueryableBlock
         return $table;
     }
 
+    /**
+     * Groups the elements of the DataBlock by a specified field.
+     *
+     * This method takes a field name as an argument and groups the elements of the
+     * DataBlock collection based on the values of that field. Each element is grouped into
+     * an associative array where the keys are the values of the specified field
+     * and the values are arrays of elements that share that key.
+     *
+     * @param string|int $field The field name to group by.
+     * @return self A new DataBlock instance with the grouped elements.
+     *
+     */
+    public function groupBy(string|int $field): self
+    {
+        $result = [];
+
+        foreach ($this as $value) {
+            $property = $value->get($field);
+            $property = self::castVariableForStrval($property);
+            if (!$property) {
+                continue;
+            }
+            if (! array_key_exists(strval($property), $result)) {
+                $result[$property] = [];
+            }
+            $result[$property][] = $value->toArray();
+        }
+
+        return self::make($result);
+    }
+
+    private static function castVariableForStrval(mixed $property): bool|float|int|string|null
+    {
+        return match(gettype($property)) {
+            'boolean' => $property,
+            'double' => $property,
+            'integer' => $property,
+            'string' => $property,
+            default => null,
+        };
+    }
+
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.6 - 2024-07-11
+- Implementing the `groupBy()` method
+
 ## 0.3.5 - 2024-07-07
 - Fix returning nested array type after `where()`
 

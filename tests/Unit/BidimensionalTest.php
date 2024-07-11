@@ -139,6 +139,19 @@ test(
 );
 
 test(
+    'group by',
+    function () use ($dataTable): void {
+        $table = Block::make($dataTable);
+        $grouped = $table->groupBy("product");
+        expect($grouped->getBlock("Door"))->tohaveCount(2);
+        expect($grouped->getBlock("Desk"))->tohaveCount(1);
+        expect($grouped->getBlock("NotExists"))->tohaveCount(0);
+
+    },
+);
+
+
+test(
     'extract json by attribute',
     function (): void {
         $file = "./tests/data/stories.json";

@@ -49,3 +49,31 @@ test(
 
     },
 );
+
+test(
+    'group by',
+    function () use ($fruitsArray): void {
+        $table = Block::make($fruitsArray);
+        $grouped = $table->groupBy("color");
+        expect($grouped->getBlock("red"))->tohaveCount(2);
+        expect($grouped->getBlock("yellow"))->tohaveCount(1);
+        expect($grouped->getBlock("NotExists"))->tohaveCount(0);
+
+    },
+);
+
+test(
+    'group by 2',
+    function (): void {
+        $data = Block::make([
+            ['type' => 'fruit', 'name' => 'apple'],
+            ['type' => 'fruit', 'name' => 'banana'],
+            ['type' => 'vegetable', 'name' => 'carrot'],
+        ]);
+        $grouped = $data->groupBy('type');
+        expect($grouped->getBlock("fruit"))->tohaveCount(2);
+        expect($grouped->getBlock("vegetable"))->tohaveCount(1);
+        expect($grouped->getBlock("NotExists"))->tohaveCount(0);
+
+    },
+);
