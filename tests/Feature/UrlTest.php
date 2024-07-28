@@ -28,3 +28,25 @@ it('remote dummyjson post', function (): void {
 
 
 })->group("url");
+
+it('remote foreach', function (): void {
+
+    $url = "https://dummyjson.com/posts";
+    $posts = Block::fromJsonUrl($url)
+    ->getBlock("posts")
+        ->where(
+            field:"tags",
+            operator: "in",
+            value: "love",
+            preseveKeys: false,
+        )
+        ->forEach(fn($element): array => [
+            "title" => strtoupper((string) $element->get("title")),
+            "tags" => count($element->get("tags")),
+        ]);
+    expect($posts)->toBeInstanceOf(Block::class);
+    expect($posts)->toHaveCount(9);
+    expect($posts->get("0.title"))->toBe("HOPES AND DREAMS WERE DASHED THAT DAY.");
+    expect($posts->get("0.tags"))->toBe(3);
+
+})->group("url");

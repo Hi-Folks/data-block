@@ -68,4 +68,17 @@ trait IteratableBlock
     {
         unset($this->data[$offset]);
     }
+
+    /**
+     * It executes a provided function ($callback) once for each element.
+     * @param callable $callback the function to call for each element
+     */
+    public function forEach(callable $callback): self
+    {
+        $result = [];
+        foreach ($this as $key => $item) {
+            $result[$key] = $callback($item);
+        }
+        return self::make($result);
+    }
 }

@@ -14,12 +14,10 @@ return RectorConfig::configure()
         php81: true,
     )
     ->withPreparedSets(
-        //deadCode: true,
-        //codeQuality: true,
+        deadCode: true,
+        codeQuality: true,
         earlyReturn: true,
-        // typeDeclarations: true,
+        typeDeclarations: true,
         privatization: true,
-    )
-    ->withTypeCoverageLevel(10)
-    ->withCodeQualityLevel(10)
-    ->withDeadCodeLevel(10);
+        // naming: true
+    );

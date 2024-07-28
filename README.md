@@ -588,6 +588,32 @@ foreach ($table->iterateBlock(false) as $key => $item) {
 }
 ```
 
+### Using forEach() method
+The `Block` class implements the `forEach()`method.
+> If you need to walk through the `Block` object, you can use the `forEach()` method.
+You can specify the function as an argument of the `forEach()` method to manage each single element.
+
+```php
+$url = "https://dummyjson.com/posts";
+$posts = Block::fromJsonUrl($url) // Load the Block from the remote URL
+    ->getBlock("posts") // get the `posts` as Block object
+    ->where(
+        field:"tags",
+        operator: "in",
+        value: "love",
+        preseveKeys: false,
+    ) // filter the posts, selecting only the posts with tags "love"
+    ->forEach(fn($element): array => [
+        "title" => strtoupper((string) $element->get("title")),
+        "tags" => count($element->get("tags")),
+    ]);
+// The `$posts` object is an instance of the `Block` class.
+// The `$posts` object contains the items that matches the `where` method.
+// You can access to the elements via the nested keys
+// $posts->get("0.title"); // "HOPES AND DREAMS WERE DASHED THAT DAY."
+// $posts->get("0.tags"); // 3
+```
+
 ## Validating Data 🆕
 
 You can validate the data in the Block object with JSON schema.

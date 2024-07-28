@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.7 - 2024-07-28
+- Implementing the `forEach()` method
+
 ## 0.3.6 - 2024-07-11
 - Implementing the `groupBy()` method
 
