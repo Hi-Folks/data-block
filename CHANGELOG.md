@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.8 - 2024-08-03
+- Implementing the `applyField()` method
+
 ## 0.3.7 - 2024-07-28
 - Implementing the `forEach()` method
 
