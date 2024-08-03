@@ -193,7 +193,17 @@ The `set()` method supports keys with the dot (or custom) notation for setting v
 If a key doesn't exist, the `set()` method creates one and sets the value.
 If a key already exists, the `set()` method will replace the value related to the key.
 
-For example:
+#### Parameters
+
+- `key` (int|string): The key to which the value should be assigned. If a string is provided, you can use dot notation to set nested values.
+- `value` (mixed): The value to be assigned to the specified key.
+- `charNestedKey` (string, optional): The character used for dot notation in nested keys. Defaults to `.`.
+
+#### Returns
+
+- `self`: Returns the instance of the class for method chaining.
+
+#### Example Usage
 
 ```php
 $articleText = "Some words as a sample sentence";
@@ -614,7 +624,7 @@ $posts = Block::fromJsonUrl($url) // Load the Block from the remote URL
 // $posts->get("0.tags"); // 3
 ```
 
-## Validating Data 🆕
+## Validating Data
 
 You can validate the data in the Block object with JSON schema.
 JSON Schema is a vocabulary used to annotate and validate JSON documents.
@@ -722,6 +732,34 @@ $data->validateJsonWithSchema(
     $schemaBlock->toJson()
 );
 ```
+
+## Applying functions
+
+The `applyField()` method applies a callable function to the value of a specified field and sets the result to another field. This method supports method chaining.
+
+### Parameters
+
+- `key` (string|int): The key of the field whose value will be processed.
+- `targetKey` (string|int): The key where the result of the callable function should be stored.
+- `callable` (callable): The function to apply to the field value. This function should accept a single argument (the value of the field) and return the processed value.
+
+### Returns
+
+- `self`: Returns the instance of the class for method chaining.
+
+### Example Usage
+
+```php
+<?php
+
+// Assuming $object is an instance of the class that contains the applyField method
+$object
+    ->set('name', 'John Doe')
+    ->applyField('name', 'uppercase_name', function($value) {
+        return strtoupper($value);
+    });
+
+echo $object->get('uppercase_name'); // Outputs: JOHN DOE
 
 ## Testing
 

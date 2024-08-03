@@ -146,7 +146,7 @@ final class Block implements Iterator, ArrayAccess, Countable
      * You can use the dot notation for setting a nested value.
      * @param non-empty-string $charNestedKey
      */
-    public function set(int|string $key, mixed $value, string $charNestedKey = "."): void
+    public function set(int|string $key, mixed $value, string $charNestedKey = "."): self
     {
         if (is_string($key)) {
             $array = &$this->data;
@@ -165,9 +165,10 @@ final class Block implements Iterator, ArrayAccess, Countable
             }
 
             $array[array_shift($keys)] = $value;
-            return;
+            return $this;
         }
         $this->data[$key] = $value;
+        return $this;
     }
 
 
@@ -221,6 +222,24 @@ final class Block implements Iterator, ArrayAccess, Countable
         /** @var array<int, int|string> $keys */
         $keys = $this->keys();
         return in_array($key, $keys);
+    }
+
+    /**
+     * Applies a callable function to a field and sets the result to a target field.
+     *
+     * @param string|int $key The key of the field to be processed.
+     * @param string|int $targetKey The key where the result should be stored.
+     * @param callable $callable The function to apply to the field value.
+     *
+     * @return self Returns the instance of the class for method chaining.
+     */
+    public function applyField(
+        string|int $key,
+        string|int $targetKey,
+        callable $callable,
+    ): self {
+        $this->set($targetKey, $callable($this->get($key)));
+        return $this;
     }
 
 

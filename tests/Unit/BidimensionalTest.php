@@ -185,3 +185,35 @@ test(
         expect($rel->get("0"))->toHaveCount(2);
     },
 );
+
+test(
+    'Apply field',
+    function (): void {
+        $table = Block::make(
+            [
+                "title" => "Title",
+                "number" => 11,
+            ],
+        );
+        $table->applyField(
+            "number",
+            "newfield",
+            fn($value): int|float => $value * 2,
+        );
+        expect($table)->toHaveCount(3);
+        expect($table->get("newfield"))->toBe(22);
+        expect($table->get("number"))->toBe(11);
+    },
+);
+
+test(
+    'Apply field2',
+    function (): void {
+        $object = Block::make();
+        $object->set('name', 'John Doe')
+            ->applyField('name', 'uppercase_name', fn($value): string => strtoupper((string) $value));
+        expect($object)->toHaveCount(2);
+        expect($object->get("uppercase_name"))->toBe("JOHN DOE");
+        expect($object->get("name"))->toBe('John Doe');
+    },
+);
