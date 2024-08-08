@@ -16,20 +16,27 @@ trait QueryableBlock
         return str_contains($strValue1, $strValue2);
     }
 
+    public function exists(): bool
+    {
+        return $this->count() > 0;
+    }
+
     public function where(
         string|int $field,
         mixed $operator = null,
         mixed $value = null,
         bool $preseveKeys = true,
     ): self {
+
         if (func_num_args() === 1) {
             $value = true;
             $operator = '==';
         }
         if (func_num_args() === 2) {
             $value = $operator;
-            $operator = '===';
+            $operator = '==';
         }
+
         $returnData = [];
 
         foreach ($this as $key => $element) {

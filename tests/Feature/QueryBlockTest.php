@@ -113,3 +113,31 @@ it('local dummyjson post', function (): void {
     expect($posts->get("0.id"))->toBe(1);
     expect($posts->get("0.reactions.likes"))->toBe(192);
 });
+
+test('Query Block with has', function (): void {
+    $jsonString = file_get_contents("./tests/data/story.json");
+    $composerContent = Block::fromJsonString($jsonString);
+    $has = $composerContent->getBlock("story.content.body")->where(
+        "component",
+        "==",
+        "banner",
+    )->exists();
+    expect($has)->toBeTrue();
+    $has = $composerContent->getBlock("story.content.body")->where(
+        "component",
+        "!=",
+        "banner",
+    )->exists();
+    expect($has)->toBeTrue();
+    $has = $composerContent->getBlock("story.content.body")->where(
+        "component",
+        "==",
+        "bannerXXX",
+    )->exists();
+    expect($has)->toBeFalse();
+    $has = $composerContent->getBlock("story.content.body")->where(
+        "component",
+        "banner",
+    )->exists();
+    expect($has)->toBeTrue();
+});

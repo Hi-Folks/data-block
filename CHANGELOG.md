@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.9 - 2024-08-08
+- Implementing the `exists()` method
+
 ## 0.3.8 - 2024-08-03
 - Implementing the `applyField()` method
 

@@ -538,6 +538,21 @@ $grouped->dumpJson();
 */
 ```
 
+### The `exists()` method
+
+You can use the `exists()` method to check if an element that meets a certain condition exists. This method is a convenient way to determine if any records match your query without needing to count them explicitly.
+
+Here’s how you can use it:
+
+```php
+$has = $composerContent
+    ->getBlock("story.content.body")->where(
+        "component",
+        "banner",
+    )->exists();
+```
+
+This will return true if a banner component exists, and false if it does not.
 
 ## Looping Data
 The Block class implements the Iterator interface.
