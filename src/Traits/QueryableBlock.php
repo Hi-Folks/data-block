@@ -151,7 +151,7 @@ trait QueryableBlock
 
     private static function castVariableForStrval(mixed $property): bool|float|int|string|null
     {
-        return match(gettype($property)) {
+        return match (gettype($property)) {
             'boolean' => $property,
             'double' => $property,
             'integer' => $property,
