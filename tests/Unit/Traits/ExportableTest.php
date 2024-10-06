@@ -62,3 +62,12 @@ test(
         expect($string1)->toBe($string2);
     },
 );
+
+test(
+    'Test saveToJson',
+    function () use ($fruitsArray): void {
+        $data = Block::make($fruitsArray);
+        $data->saveToJson('fruits.json');
+        expect(file_exists('fruits.json'))->toBeTrue();
+    },
+);
