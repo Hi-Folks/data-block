@@ -293,6 +293,21 @@ $data = Block::make($fruitsArray);
 $yamlString = $data->toYaml(); // YAML string
 ```
 
+### Saving JSON to a file with `saveToJson()`
+If you need to save the JSON string in a file using the content of the Block object, you can use the `saveToJson()` method.
+
+This is helpful when you are manipulating data with the Block class and at a certain point need to save the data in JSON string format to a file.
+The `saveToJson()` method has two parameters:
+
+- `filename`: the first parameter (mandatory) with the filename;
+- `overwrite`: the second parameter (optional), If the file exists, the file is not saved by default, unless you set the overwrite parameter as true.
+
+```php
+$data = Block::make($fruitsArray);
+$jsonString = $data->saveToJson('./fruits.json', true);
+```
+
+
 ## Loading Data
 
 ### Loading Data from JSON file
