@@ -56,9 +56,10 @@ trait ExportableBlock
 
     /**
      * Saves the JSON String to a file
-     * @param string $filename
-     * @param bool $overwrite
-     * @return bool
+     * @param string $filename file name for example "./file.json"
+     * @param bool $overwrite if the file already exists you can force overwriting
+     * @return bool true if the file is saved, if already exists and you don't want to
+     * force overwiting the file it returns false
      */
     public function saveToJson(string $filename, bool $overwrite = false): bool
     {
@@ -66,7 +67,7 @@ trait ExportableBlock
             return false;
         }
 
-        $result = file_put_contents($filename, $this->toJson());
+        file_put_contents($filename, $this->toJson());
         return true;
     }
 }
