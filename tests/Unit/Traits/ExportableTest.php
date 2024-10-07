@@ -62,3 +62,41 @@ test(
         expect($string1)->toBe($string2);
     },
 );
+
+test(
+    'Test saveToJson',
+    function () use ($fruitsArray): void {
+        $data = Block::make($fruitsArray);
+        $data->saveToJson('fruits.json');
+        expect(file_exists('fruits.json'))->toBeTrue();
+        unlink('fruits.json');
+    },
+);
+
+test(
+    'Test saveToJson with overwrite',
+    function () use ($fruitsArray): void {
+        $data = Block::make($fruitsArray);
+        $data->saveToJson('fruits.json');
+        expect(file_exists('fruits.json'))->toBeTrue();
+
+        $result = $data->saveToJson('fruits.json', true);
+        expect($result)->toBeTrue();
+
+        unlink('fruits.json');
+    },
+);
+
+test(
+    'Test saveToJson with existing file',
+    function () use ($fruitsArray): void {
+        $data = Block::make($fruitsArray);
+        $data->saveToJson('fruits.json');
+        expect(file_exists('fruits.json'))->toBeTrue();
+
+        $result = $data->saveToJson('fruits.json');
+        expect($result)->toBeFalse();
+
+        unlink('fruits.json');
+    },
+);

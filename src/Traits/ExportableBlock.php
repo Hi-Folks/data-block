@@ -9,9 +9,9 @@ use Symfony\Component\Yaml\Yaml;
 trait ExportableBlock
 {
     /**
-    * Returns the native array
-    * @return array<int|string, mixed>
-        */
+     * Returns the native array
+     * @return array<int|string, mixed>
+     */
     public function toArray(): array
     {
         return $this->data;
@@ -52,5 +52,21 @@ trait ExportableBlock
     public function toYaml(): string
     {
         return Yaml::dump($this->data, 3, 2);
+    }
+
+    /**
+     * Saves the JSON String to a file
+     * @param string $filename
+     * @param bool $overwrite
+     * @return bool
+     */
+    public function saveToJson(string $filename, bool $overwrite = false): bool
+    {
+        if (file_exists($filename) && !$overwrite) {
+            return false;
+        }
+
+        $result = file_put_contents($filename, $this->toJson());
+        return true;
     }
 }
