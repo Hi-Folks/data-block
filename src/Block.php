@@ -9,6 +9,7 @@ use Countable;
 use HiFolks\DataType\Traits\EditableBlock;
 use HiFolks\DataType\Traits\QueryableBlock;
 use HiFolks\DataType\Traits\ExportableBlock;
+use HiFolks\DataType\Traits\FormattableBlock;
 use HiFolks\DataType\Traits\IteratableBlock;
 use HiFolks\DataType\Traits\LoadableBlock;
 use HiFolks\DataType\Traits\ValidableBlock;
@@ -29,6 +30,8 @@ final class Block implements Iterator, ArrayAccess, Countable
     use LoadableBlock;
     use IteratableBlock;
     use ValidableBlock;
+    use FormattableBlock;
+
 
     /** @var array<int|string, mixed> */
     private array $data;
