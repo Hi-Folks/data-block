@@ -168,6 +168,19 @@ $value = $data->get(
 ); // 🫠
 ```
 
+### The `getFormattedDateTime()` for getting and formatting a date-time field value
+
+When working with date-time fields, consider utilizing the `getFormattedDateTime()` method instead of relying solely on `get()`. This approach not only retrieves the value but also formats it according to the specified date-time format, as defined by the second optional parameter `$format`.
+
+By default, this formatting is set to "Y-m-d H:i:s", providing a convenient and standardized output. However, customizing the format allows for more flexibility in presenting your data.
+
+Here are some key points:
+
+*   `getFormattedDateTime()` combines the functionality of `get()` with date-time formatting.
+*   The second parameter `$format` controls the date-time format used for formatting.
+*   Custom formats can be applied to provide tailored outputs for different use cases.
+
+
 ### The `getBlock()` method
 If you need to manage a complex array (nested array) or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object via the `getBlock()` method.
 
