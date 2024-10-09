@@ -8,10 +8,12 @@ trait FormattableBlock
 {
     /**
      * Get and format as date the element with $key
-     *
-     * @param non-empty-string $charNestedKey
+     * @param mixed $key the key, can be nested for example "some.datetime"
+     * @param string $format the format default is "Y-m-d H:i:s"
+     * @param mixed $defaultValue, the value returned in the case the key not exists
+     * @param non-empty-string $charNestedKey the separator for nested keys, default is "."
      */
-    public function getFormattedData(
+    public function getFormattedDateTime(
         mixed $key,
         string $format = "Y-m-d H:i:s",
         mixed $defaultValue = null,

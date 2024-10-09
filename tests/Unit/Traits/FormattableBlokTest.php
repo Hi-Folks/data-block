@@ -11,9 +11,9 @@ test(
 
         expect($data1)->toHaveCount(10);
         expect($data2)->toHaveCount(10);
-        expect($data1->getFormattedData("0.commit.author.date", "Y"))->toBe("2024");
-        expect($data1->getFormattedData("0.commit.author.date", "Y-m-d"))->toBe("2024-06-28");
-        expect($data1->getFormattedData("0.commit.author.dateNOTEXISTS", "Y-m-d"))->toBeNull();
+        expect($data1->getFormattedDateTime("0.commit.author.date", "Y"))->toBe("2024");
+        expect($data1->getFormattedDateTime("0.commit.author.date", "Y-m-d"))->toBe("2024-06-28");
+        expect($data1->getFormattedDateTime("0.commit.author.dateNOTEXISTS", "Y-m-d"))->toBeNull();
 
     },
 );
