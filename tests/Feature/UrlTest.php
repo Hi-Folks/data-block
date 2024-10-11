@@ -23,7 +23,7 @@ it('remote dummyjson post', function (): void {
 
     expect($posts)->toBeInstanceOf(Block::class);
     expect($posts)->toHaveCount(30);
-    $lovePosts = $posts->where("tags", "in", "love");
+    $lovePosts = $posts->where("tags", "has", "love");
     expect($lovePosts)->toHaveCount(9);
 
 
@@ -36,7 +36,7 @@ it('remote foreach', function (): void {
     ->getBlock("posts")
         ->where(
             field: "tags",
-            operator: "in",
+            operator: "has",
             value: "love",
             preseveKeys: false,
         )
