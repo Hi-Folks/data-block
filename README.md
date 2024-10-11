@@ -180,6 +180,26 @@ Here are some key points:
 *   The second parameter `$format` controls the date-time format used for formatting.
 *   Custom formats can be applied to provide tailored outputs for different use cases.
 
+### The `getFormattedByte()` for getting and formatting a 'byte' field value
+
+The `getFormattedByte()` method retrieves and formats a byte value from a specified field in a data block. It converts the raw byte count into a more human-readable format (e.g., GB, MB, etc.), with an optional precision parameter to control the number of decimal places displayed.
+
+Parameters:
+- `$path` (string): The path to the field containing the byte value (e.g., "assets.0.total_bytes").
+- `$precision` (int): (Optional) Number of decimal places to include in the formatted result. Default is 2.
+
+Example usage:
+
+```php
+$data1->getFormattedByte("assets.0.total_bytes");  // Returns "5.98 GB"
+$data1->getFormattedByte("assets.1.total_bytes");  // Returns "2.18 GB"
+$data1->getFormattedByte("assets.1.total_bytes", 5);  // Returns "2.18288 GB"
+$data1->getFormattedByte("assets.1.total_bytes", 0);  // Returns "2 GB"
+```
+
+Key Features:
+- Automatic unit conversion: converts bytes into appropriate units (e.g., KB, MB, GB) based on the size.
+- customizable precision: you can specify the number of decimal places for the output, making it flexible for various use cases.
 
 ### The `getBlock()` method
 If you need to manage a complex array (nested array) or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object via the `getBlock()` method.
