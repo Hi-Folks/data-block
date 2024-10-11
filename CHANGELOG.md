@@ -1,6 +1,7 @@
 # Changelog
 
 ## WIP
+- `in` and `has` operator
 - Implementing a Trait for formatting data
 - Implementing getFormattedDateTime for getting value as formatted data
 
