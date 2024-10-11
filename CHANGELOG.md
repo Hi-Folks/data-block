@@ -1,5 +1,12 @@
 # Changelog
 
+## WIP
+- Implementing a Trait for formatting data
+- Implementing getFormattedDateTime for getting value as formatted data
+
+## 0.3.10 - 2024-10-07
+- Implementing the `saveToJson()` method
+
 ## 0.3.9 - 2024-08-08
 - Implementing the `exists()` method
 

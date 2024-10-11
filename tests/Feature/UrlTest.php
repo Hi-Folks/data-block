@@ -35,7 +35,7 @@ it('remote foreach', function (): void {
     $posts = Block::fromJsonUrl($url)
     ->getBlock("posts")
         ->where(
-            field:"tags",
+            field: "tags",
             operator: "in",
             value: "love",
             preseveKeys: false,

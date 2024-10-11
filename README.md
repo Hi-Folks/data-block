@@ -168,6 +168,19 @@ $value = $data->get(
 ); // 🫠
 ```
 
+### The `getFormattedDateTime()` for getting and formatting a date-time field value
+
+When working with date-time fields, consider utilizing the `getFormattedDateTime()` method instead of relying solely on `get()`. This approach not only retrieves the value but also formats it according to the specified date-time format, as defined by the second optional parameter `$format`.
+
+By default, this formatting is set to "Y-m-d H:i:s", providing a convenient and standardized output. However, customizing the format allows for more flexibility in presenting your data.
+
+Here are some key points:
+
+*   `getFormattedDateTime()` combines the functionality of `get()` with date-time formatting.
+*   The second parameter `$format` controls the date-time format used for formatting.
+*   Custom formats can be applied to provide tailored outputs for different use cases.
+
+
 ### The `getBlock()` method
 If you need to manage a complex array (nested array) or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object via the `getBlock()` method.
 
@@ -292,6 +305,21 @@ This is helpful when manipulating data with the Block class and, at a certain po
 $data = Block::make($fruitsArray);
 $yamlString = $data->toYaml(); // YAML string
 ```
+
+### Saving JSON to a file with `saveToJson()`
+If you need to save the JSON string in a file using the content of the Block object, you can use the `saveToJson()` method.
+
+This is helpful when you are manipulating data with the Block class and at a certain point need to save the data in JSON string format to a file.
+The `saveToJson()` method has two parameters:
+
+- `filename`: the first parameter (mandatory) with the filename;
+- `overwrite`: the second parameter (optional), If the file exists, the file is not saved by default, unless you set the overwrite parameter as true.
+
+```php
+$data = Block::make($fruitsArray);
+$jsonString = $data->saveToJson('./fruits.json', true);
+```
+
 
 ## Loading Data
 
