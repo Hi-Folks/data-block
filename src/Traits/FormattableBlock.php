@@ -42,18 +42,8 @@ trait FormattableBlock
         int $precision = 2,
     ): string {
         $bytes = $this->get($key, $defaultValue, $charNestedKey);
-        return self::formatBytes($bytes, $precision);
-    }
-
-    /**
-     * Static function to format bytes to human-readable units (KB, MB, GB, etc.)
-     * @param string|null $bytes the byte value to format
-     * @param int $precision the number of decimal points for the formatted output
-     */
-    public static function formatBytes(string|null $bytes, int $precision = 2): string
-    {
         if (is_null($bytes)) {
-            $bytes = 0;
+            return '0 B';
         }
 
         $kilobyte = 1024;
