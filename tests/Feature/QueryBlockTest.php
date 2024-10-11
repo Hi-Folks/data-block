@@ -88,7 +88,7 @@ it('local dummyjson post', function (): void {
 
     expect($posts)->toBeInstanceOf(Block::class);
     expect($posts)->toHaveCount(30);
-    $lovePosts = $posts->where("tags", "in", "love");
+    $lovePosts = $posts->where("tags", "has", "love");
     expect($lovePosts)->toHaveCount(9);
 
     $mostViewedPosts = $posts->orderBy("views", "desc");

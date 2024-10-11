@@ -55,8 +55,8 @@ trait QueryableBlock
                 '<=' => $elementToCheck->get($field) <= $value,
                 '!=' => $elementToCheck->get($field) != $value,
                 '!==' => $elementToCheck->get($field) !== $value,
-                'in' => in_array($value, $elementToCheck->get($field)),
-                'has' => in_array($elementToCheck->get($field), $value),
+                'in' => in_array($elementToCheck->get($field), $value),
+                'has' => in_array($value, $elementToCheck->get($field)),
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {

@@ -437,7 +437,36 @@ If you want to avoid preserving the keys and set new integer keys starting from 
 ```
 
 With `where()` method you can use different operators, like "==", ">", "<" etc.
-You can use also the `in` operator in the case your nested data contains arrays.
+
+
+
+You can use also the `has` operator in the case your nested data contains arrays or `in` operator in the case you want to check if your data field value is included in an array of elements.
+
+#### The `in` operator
+
+The `in` operator is used within the where method to filter elements from a data collection based on whether a specific field's value exists within a given array of values.
+The behavior is as follows:
+
+```php
+$data->where("field", "in", ["value1", "value2", ...])
+```
+
+If the field's value exists in the provided array, the element is included in the result.
+Example: Filtering fruits by color that match either "green" or "black"
+```php
+$greenOrBlack = $data->where("color", "in", ["green", "black"]);
+```
+
+You should use the `in` operator if your field is a scalar type (for example string or number) and you need to check if it is included in a list of values (array).
+
+#### The `has` operator
+
+The `has` operator is used within the where method to filter elements from a data collection based on whether a specific field contains a given value, typically in cases where the field holds an array or a collection of tags or attributes. The behavior is as follows:
+
+```php
+$data->where("field", "has", "value")
+```
+
 For example if you have posts and each post can have multiple tags, you can filter posts with a specific tag:
 
 ```php
@@ -446,8 +475,13 @@ $posts = Block
     ::fromJsonUrl($url)
     ->getBlock("posts");
 
-$lovePosts = $posts->where("tags", "in", "love");
+$lovePosts = $posts->where("tags", "has", "love");
 ```
+#### Summary `in` VS `has`
+
+The `in` operator filters elements by matching a field's value against an array of possible values. If the value exists in the array, the element is included in the result. An empty array returns no results.
+
+The `has` operator filters elements by checking if a specific value exists within a field (usually an array or a collection). If the value exists, the element is included in the result. Non-existent values return no matches.
 
 ### The `orderBy()` method
 You can order or sort data for a specific key.
