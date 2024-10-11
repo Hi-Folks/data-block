@@ -55,11 +55,8 @@ trait QueryableBlock
                 '<=' => $elementToCheck->get($field) <= $value,
                 '!=' => $elementToCheck->get($field) != $value,
                 '!==' => $elementToCheck->get($field) !== $value,
-                'like' => self::like($elementToCheck->get($field), $value),
-                'in' => (is_array($elementToCheck->get($field)) && is_string($value) 
-                            ? in_array($value, $elementToCheck->get($field))
-                            : in_array($elementToCheck->get($field), $value)
-                            ),
+                'in' => in_array($value, $elementToCheck->get($field)),
+                'has' => in_array($elementToCheck->get($field), $value),
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {
