@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.1 - 2024-10-11
+- Implementing `getFormattedByte()` for getting value as formatted byte
+
 ## 0.4.0 - 2024-10-11
 - `in` and `has` operator
 - Implementing a Trait for formatting data
