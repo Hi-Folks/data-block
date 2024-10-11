@@ -39,7 +39,7 @@ trait FormattableBlock
         mixed $key,
         int $precision = 2,
         mixed $defaultValue = null,
-        string $charNestedKey = "."
+        string $charNestedKey = ".",
     ): string {
         $bytes = $this->get($key, $defaultValue, $charNestedKey);
         if (is_null($bytes)) {
