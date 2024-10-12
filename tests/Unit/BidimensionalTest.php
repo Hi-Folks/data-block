@@ -1,6 +1,7 @@
 <?php
 
 use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\Operator;
 
 $dataTable = [
     ['product' => 'Desk', 'price' => 200, 'active' => true],
@@ -14,7 +15,7 @@ test(
     'Block as table',
     function () use ($dataTable): void {
         $table = Block::make($dataTable);
-
+        var_dump(Operator::GREATER_THAN);
         $data = $table
             //->select('product', 'price')
             ->where('price', ">", 100);

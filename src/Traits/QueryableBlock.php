@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiFolks\DataType\Traits;
 
 use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\Operator;
 
 trait QueryableBlock
 {
@@ -23,18 +24,18 @@ trait QueryableBlock
 
     public function where(
         string|int $field,
-        mixed $operator = null,
+        mixed $operator = Operator::EQUAL,
         mixed $value = null,
         bool $preseveKeys = true,
     ): self {
 
         if (func_num_args() === 1) {
             $value = true;
-            $operator = '==';
+            $operator = Operator::EQUAL;
         }
         if (func_num_args() === 2) {
             $value = $operator;
-            $operator = '==';
+            $operator = Operator::EQUAL;
         }
 
         $returnData = [];
@@ -47,16 +48,17 @@ trait QueryableBlock
             if (! $elementToCheck instanceof Block) {
                 return Block::make([], $this->iteratorReturnsBlock);
             }
+
             $found = match ($operator) {
-                '==' => ($elementToCheck->get($field) == $value),
-                '>' => $elementToCheck->get($field) > $value,
-                '<' => $elementToCheck->get($field) < $value,
-                '>=' => $elementToCheck->get($field) >= $value,
-                '<=' => $elementToCheck->get($field) <= $value,
-                '!=' => $elementToCheck->get($field) != $value,
-                '!==' => $elementToCheck->get($field) !== $value,
-                'in' => in_array($elementToCheck->get($field), $value),
-                'has' => in_array($value, $elementToCheck->get($field)),
+                Operator::EQUAL => ($elementToCheck->get($field) == $value),
+                Operator::GREATER_THAN => $elementToCheck->get($field) > $value,
+                Operator::LESS_THAN => $elementToCheck->get($field) < $value,
+                Operator::GREATER_THAN_OR_EQUAL => $elementToCheck->get($field) >= $value,
+                Operator::LESS_THAN_OR_EQUAL => $elementToCheck->get($field) <= $value,
+                Operator::NOT_EQUAL => $elementToCheck->get($field) != $value,
+                Operator::STRICT_NOT_EQUAL => $elementToCheck->get($field) !== $value,
+                Operator::IN => in_array($elementToCheck->get($field), $value),
+                Operator::HAS => in_array($value, $elementToCheck->get($field)),
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {

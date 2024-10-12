@@ -1,6 +1,7 @@
 <?php
 
 use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\Operator;
 
 $fruitsArray = [
     "avocado" =>
@@ -45,9 +46,9 @@ test(
     'Test query greater than x',
     function () use ($fruitsArray): void {
         $data = Block::make($fruitsArray);
-        $highRated = $data->where("rating", ">", 8);
+        $highRated = $data->where("rating", Operator::GREATER_THAN, 8);
         expect($highRated)->tohaveCount(2);
-        $sorted = $data->where("rating", ">", 8)->orderBy("rating", "desc");
+        $sorted = $data->where("rating", Operator::GREATER_THAN, 8)->orderBy("rating", "desc");
         expect($sorted)->tohaveCount(2);
 
 
@@ -87,11 +88,11 @@ test(
     'where method, in operator',
     function () use ($fruitsArray): void {
         $data = Block::make($fruitsArray);
-        $greenOrBlack = $data->where("color", "in", ["green", "black"]);
+        $greenOrBlack = $data->where("color", Operator::IN, ["green", "black"]);
         expect($greenOrBlack)->tohaveCount(1);
-        $noResult = $data->where("color", "in", []);
+        $noResult = $data->where("color", Operator::IN, []);
         expect($noResult)->tohaveCount(0);
-        $greenOrRed = $data->where("color", "in", ["green", "red"]);
+        $greenOrRed = $data->where("color", Operator::IN, ["green", "red"]);
         expect($greenOrRed)->tohaveCount(3);
     },
 );
@@ -100,11 +101,11 @@ test(
     'where method, has operator',
     function () use ($fruitsArray): void {
         $data = Block::make($fruitsArray);
-        $sweet = $data->where("tags", "has", "sweet");
+        $sweet = $data->where("tags", Operator::HAS, "sweet");
         expect($sweet)->tohaveCount(2);
-        $noResult = $data->where("tags", "has", "not-existent");
+        $noResult = $data->where("tags", Operator::HAS, "not-existent");
         expect($noResult)->tohaveCount(0);
-        $softFruit = $data->where("tags", "has", "soft");
+        $softFruit = $data->where("tags", Operator::HAS, "soft");
         expect($softFruit)->tohaveCount(1);
     },
 );

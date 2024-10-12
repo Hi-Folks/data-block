@@ -1,6 +1,7 @@
 <?php
 
 use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\Operator;
 
 test('Query Block', function (): void {
     $jsonString = file_get_contents("./tests/data/story.json");
@@ -18,7 +19,7 @@ test('Query Block', function (): void {
     $composerContent = Block::fromJsonString($jsonString);
     $banners = $composerContent->getBlock("story.content.body")->where(
         "component",
-        "!=",
+        Operator::NOT_EQUAL,
         "banner",
         false,
     );
@@ -34,7 +35,7 @@ test('Query and select Block', function (): void {
     $composerContent = Block::fromJsonString($jsonString);
     $banners = $composerContent->getBlock("story.content.body")->where(
         "component",
-        "==",
+        Operator::EQUAL,
         "banner",
     )->select("headline");
     expect($banners)->toHaveCount(2);
@@ -46,7 +47,7 @@ test('Query and select Block', function (): void {
     $composerContent = Block::fromJsonString($jsonString);
     $banners = $composerContent->getBlock("story.content.body")->where(
         "component",
-        "!=",
+        Operator::NOT_EQUAL,
         "banner",
         false,
     );
@@ -88,7 +89,7 @@ it('local dummyjson post', function (): void {
 
     expect($posts)->toBeInstanceOf(Block::class);
     expect($posts)->toHaveCount(30);
-    $lovePosts = $posts->where("tags", "has", "love");
+    $lovePosts = $posts->where("tags", Operator::HAS, "love");
     expect($lovePosts)->toHaveCount(9);
 
     $mostViewedPosts = $posts->orderBy("views", "desc");
@@ -119,19 +120,19 @@ test('Query Block with has', function (): void {
     $composerContent = Block::fromJsonString($jsonString);
     $has = $composerContent->getBlock("story.content.body")->where(
         "component",
-        "==",
+        Operator::EQUAL,
         "banner",
     )->exists();
     expect($has)->toBeTrue();
     $has = $composerContent->getBlock("story.content.body")->where(
         "component",
-        "!=",
+        Operator::NOT_EQUAL,
         "banner",
     )->exists();
     expect($has)->toBeTrue();
     $has = $composerContent->getBlock("story.content.body")->where(
         "component",
-        "==",
+        Operator::EQUAL,
         "bannerXXX",
     )->exists();
     expect($has)->toBeFalse();
