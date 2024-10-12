@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.2 - WIP
+- Implementing `getString()` for returning a string
+
 ## 0.4.1 - 2024-10-11
 - Implementing `getFormattedByte()` for getting value as formatted byte
 
