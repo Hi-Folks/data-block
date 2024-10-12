@@ -201,6 +201,21 @@ Key Features:
 - Automatic unit conversion: converts bytes into appropriate units (e.g., KB, MB, GB) based on the size.
 - customizable precision: you can specify the number of decimal places for the output, making it flexible for various use cases.
 
+### The `getString()` method
+
+The `getString()` method retrieves the value of a specified field as a string from a data block. If the field does not exist or is null, it returns a default value, which can be customized.
+Parameters:
+- `$path` (string): The path to the field (e.g., "0.commit.author.date").
+- `$default` (string): (Optional) The default value to return if the field doesn't exist. Defaults to an empty string ("").
+
+Example Usage:
+```php
+$data1->getString("0.commit.author.date");  // Returns the field value as a string
+$data1->getString("0.commit.author.notexists");  // Returns ""
+$data1->getString("0.commit.author.notexists", "AA");  // Returns "AA"
+$data1->getString("0.commit.comment_count");  // Returns "0" as a string even if the field value is an integer
+```
+
 ### The `getBlock()` method
 If you need to manage a complex array (nested array) or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object via the `getBlock()` method.
 
