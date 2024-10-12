@@ -15,4 +15,6 @@ class Operator
     public const STRICT_NOT_EQUAL = '!==';
     public const IN = 'in';
     public const HAS = 'has';
+    public const LIKE = 'like';
+
 }

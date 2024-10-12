@@ -109,3 +109,19 @@ test(
         expect($softFruit)->tohaveCount(1);
     },
 );
+
+
+test(
+    'query with operators',
+    function (): void {
+        $data1 = Block::fromJsonFile(__DIR__ . "/../../data/commits-json/commits-10-p1.json");
+        $data2 = Block::fromJsonFile(__DIR__ . "/../../data/commits-json/commits-10-p2.json");
+        $data3 = Block::fromJsonFile(__DIR__ . "/../../data/commits-json/commits-10-p3.json");
+        $data1->append($data2)->append($data3);
+        expect($data1)->toHaveCount(30);
+        expect($data2)->toHaveCount(10);
+        $block = $data1->where("commit.author.name", Operator::LIKE, "Roberto");
+        expect($block->count())->toEqual(29);
+
+    },
+);
