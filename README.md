@@ -376,7 +376,7 @@ Retrieving JSON API into a Block object is useful for applying the methods provi
 ```php
 $url = "https://api.github.com/repos/hi-folks/data-block/commits";
 $commits = Block::fromJsonUrl($url);
-$myCommits = $commits->where("commit.author.name", "like", "Roberto");
+$myCommits = $commits->where("commit.author.name", Operator::LIKE, "Roberto");
 foreach ($myCommits as $value) {
     echo $value->get("commit.message") . PHP_EOL;
 }
@@ -453,7 +453,7 @@ You can also set the operator
 $composerContent = Block::fromJsonString($jsonString);
 $banners = $composerContent->getBlock("story.content.body")->where(
     "component",
-    "==",
+    Operator::EQUAL,
     "banner",
 );
 ```
@@ -465,7 +465,7 @@ If you want to avoid preserving the keys and set new integer keys starting from 
     $composerContent = Block::fromJsonString($jsonString);
     $banners = $composerContent->getBlock("story.content.body")->where(
         "component",
-        "!=",
+        Operator::NOT_EQUAL,
         "banner",
 +        false
     );
@@ -477,19 +477,37 @@ With `where()` method you can use different operators, like "==", ">", "<" etc.
 
 You can use also the `has` operator in the case your nested data contains arrays or `in` operator in the case you want to check if your data field value is included in an array of elements.
 
+#### The operators
+
+The `Operator` class provides a set of predefined constants that represent comparison and logical operators. This ensures type safety and prevents errors from using invalid or misspelled operators in your data comparisons.
+
+Supported Operators:
+- `Operator::EQUAL` (==)
+- `Operator::GREATER_THAN` (>)
+- `Operator::LESS_THAN` (<)
+- `Operator::GREATER_THAN_OR_EQUAL` (>=)
+- `Operator::LESS_THAN_OR_EQUAL` (<=)
+- `Operator::NOT_EQUAL` (!=)
+- `Operator::STRICT_NOT_EQUAL` (!==)
+- `Operator::IN` (array inclusion)
+- `Operator::HAS` (array containment)
+- `Operator::LIKE` (string contains)
+
+> The `Operator` class is defined in the `use HiFolks\DataType\Enums\Operator` namespace.
+
 #### The `in` operator
 
 The `in` operator is used within the where method to filter elements from a data collection based on whether a specific field's value exists within a given array of values.
 The behavior is as follows:
 
 ```php
-$data->where("field", "in", ["value1", "value2", ...])
+$data->where("field", Operator::IN, ["value1", "value2", ...])
 ```
 
 If the field's value exists in the provided array, the element is included in the result.
 Example: Filtering fruits by color that match either "green" or "black"
 ```php
-$greenOrBlack = $data->where("color", "in", ["green", "black"]);
+$greenOrBlack = $data->where("color", Operator::IN, ["green", "black"]);
 ```
 
 You should use the `in` operator if your field is a scalar type (for example string or number) and you need to check if it is included in a list of values (array).
@@ -499,7 +517,7 @@ You should use the `in` operator if your field is a scalar type (for example str
 The `has` operator is used within the where method to filter elements from a data collection based on whether a specific field contains a given value, typically in cases where the field holds an array or a collection of tags or attributes. The behavior is as follows:
 
 ```php
-$data->where("field", "has", "value")
+$data->where("field", Operator::HAS, "value")
 ```
 
 For example if you have posts and each post can have multiple tags, you can filter posts with a specific tag:
@@ -510,7 +528,7 @@ $posts = Block
     ::fromJsonUrl($url)
     ->getBlock("posts");
 
-$lovePosts = $posts->where("tags", "has", "love");
+$lovePosts = $posts->where("tags", Operator::HAS, "love");
 ```
 #### Summary `in` VS `has`
 
@@ -570,7 +588,7 @@ If you want to retrieve elements with `product` and `price` keys, with a price g
 $table = Block::make($dataTable);
 $data = $table
     ->select('product' , 'price')
-    ->where('price', ">", 100)
+    ->where('price', Operator::GREATER_THAN, 100)
     ->orderBy("price");
 print_r($data->toArray());
 /*
@@ -670,7 +688,7 @@ You can apply filters and then loop into the result:
 $table = Block::make($dataTable);
 $data = $table
     ->select('product', 'price')
-    ->where('price', ">", 100, false);
+    ->where('price', Operator::GREATER_THAN, 100, false);
 foreach ($data as $key => $item) {
     echo $item->get("price"); // returns an integer
 }
@@ -682,7 +700,7 @@ If you want to loop through `$data` and obtain the current `$item` variable as a
 
 ```php
 $table = Block::make($dataTable, false);
-$data = $table->select('product', 'price')->where('price', ">", 100, false);
+$data = $table->select('product', 'price')->where('price', Operator::GREATER_THAN, 100, false);
 foreach ($data as $key => $item) {
     print_r($item); // $item is an array
 }
@@ -721,7 +739,7 @@ $posts = Block::fromJsonUrl($url) // Load the Block from the remote URL
     ->getBlock("posts") // get the `posts` as Block object
     ->where(
         field:"tags",
-        operator: "in",
+        operator: Operator::HAS,
         value: "love",
         preseveKeys: false,
     ) // filter the posts, selecting only the posts with tags "love"

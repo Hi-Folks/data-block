@@ -59,6 +59,7 @@ trait QueryableBlock
                 Operator::STRICT_NOT_EQUAL => $elementToCheck->get($field) !== $value,
                 Operator::IN => in_array($elementToCheck->get($field), $value),
                 Operator::HAS => in_array($value, $elementToCheck->get($field)),
+                Operator::LIKE => str_contains($elementToCheck->get($field), $value),
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {
