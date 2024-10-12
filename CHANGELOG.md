@@ -3,6 +3,7 @@
 ## 0.4.2 - WIP
 - Implementing `getString()` for returning a string
 - Implementing Operator Class with constans like Operator::EQUAL, Operator::GREATER_THAN ...
+- Implementing LIKE Operator
 
 ## 0.4.1 - 2024-10-11
 - Implementing `getFormattedByte()` for getting value as formatted byte
