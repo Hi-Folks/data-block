@@ -915,16 +915,16 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 ## Thanks to
 
-Thanks to all the people for providing feedback, opening issues, creating Pull Requests.
-Thank you to all the contributors! You can see the list of contributors [at this section](https://github.com/Hi-Folks/data-block/graphs/contributors).
+Thank you to everyone who has provided feedback, opened issues, or created pull requests. A special thanks to all the contributors! You can view the full list of contributors [in this section](https://github.com/Hi-Folks/data-block/graphs/contributors).
 
-In the PHP ecosystem, we have many tools that help developers work with great productivity, reliability, and efficiency. One of these tools is JetBrains PHP Storm.
-JetBrains supports the open-source community by providing licenses for open-source projects.
-You can find more information in the [Open Source section of the JetBrains website](https://jb.gg/OpenSourceSupport).
+The PHP ecosystem offers many tools that help developers enhance productivity, reliability, and efficiency. One such tool is JetBrains PhpStorm. JetBrains supports the open-source community by offering licenses for various open-source projects. More information can be found in the [Open Source section of the JetBrains website](https://jb.gg/OpenSourceSupport).
 
 <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/PhpStorm_icon.png" alt= "PhpStorm logo" width="128" height="128">
 
 
-JetBrains is providing me the license for the PHP Data Block project.
-This fills me with joy, because PHP Data Block has been recognized as a deserving open-source software.
-Thank you.
+I’m thrilled to share that JetBrains has provided a license for the PHP Data Block project.
+This recognition of PHP Data Block as a valuable open-source software fills me with joy.
+
+Thank you!
+
+[Roberto](https://github.com/roberto-butti)
