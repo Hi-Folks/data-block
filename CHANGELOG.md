@@ -2,7 +2,7 @@
 
 ## 0.4.2 - WIP
 - Implementing `getString()` for returning a string
-- Implementing Operator Class with constans like Operator::EQUAL, Operator::GREATER_THAN ...
+- Implementing Operator Class with constants like Operator::EQUAL, Operator::GREATER_THAN ...
 - Implementing LIKE Operator
 
 ## 0.4.1 - 2024-10-11
