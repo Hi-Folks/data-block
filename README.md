@@ -922,7 +922,7 @@ The PHP ecosystem offers many tools that help developers enhance productivity, r
 <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/PhpStorm_icon.png" alt= "PhpStorm logo" width="128" height="128">
 
 
-I’m thrilled to share that JetBrains has provided a license for the PHP Data Block project.
+I’m thrilled to share that JetBrains has provided an Open Source license for the PHP Data Block project.
 This recognition of PHP Data Block as a valuable open-source software fills me with joy.
 
 Thank you!
