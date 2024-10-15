@@ -1,6 +1,7 @@
 # Changelog
 
-## 0.4.2 - WIP
+## 0.4.2 - 2024-10-15
+- Implementing the `groupByFunction()` to group elements based on a specific function.
 - Implementing `getString()` for returning a string
 - Implementing Operator Class with constants like Operator::EQUAL, Operator::GREATER_THAN ...
 - Implementing LIKE Operator
