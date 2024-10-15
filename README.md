@@ -28,13 +28,14 @@
         PHP Package for Managing Nested Data
     </i>
 </p>
+This PHP package provides classes and methods for easily managing, querying, filtering, and setting nested data structures.
+The PHP Data Block package offers a streamlined approach to handling nested data, whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays.
 
-This PHP package provides classes and methods for managing, querying, filtering, and setting nested data structures with ease.
-Whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays, this package offers a streamlined approach to handling nested data easly.
+One "core" element of the PHP Data Block package is the Block PHP class.
 
 ## The Block class
 
-The **Block** class offers a comprehensive set of methods to create, manage, and access nested data structures.
+The **Block** class offers comprehensive methods to create, manage, and access nested data structures.
 
 The **Block** class provides various methods, including:
 
@@ -45,15 +46,15 @@ The **Block** class provides various methods, including:
 
 ## Installing and using the Block class
 
-For adding to your projects, the Block class with its method and helper you can run the `composer require` command:
+For adding to your projects, the Block class with its methods and helpers, you can run the `composer require` command:
 
 ```php
 composer require hi-folks/data-block
 ```
 
-> For supporting the development you can star the repository: https://github.com/Hi-Folks/data-block
+> To support the development, you can "star" ⭐ the repository: https://github.com/Hi-Folks/data-block
 
-Then in your PHP files, you can import the `HiFolks\DataType\Block` Namespace:
+Then, in your PHP files, you can import the `HiFolks\DataType\Block` Namespace:
 
 ```php
 use HiFolks\DataType\Block;
@@ -124,7 +125,7 @@ $data->get('avocado.color'); // returns the string "green"
 
 For example, with the `$fruitsArray` sample data, the `$data->get("avocado")` is:
 - an array;
-- has 5 elements;
+- has five elements;
 
 For example, the `$data->get("avocado.color")` is:
 - a string;
@@ -186,7 +187,7 @@ The `getFormattedByte()` method retrieves and formats a byte value from a specif
 
 Parameters:
 - `$path` (string): The path to the field containing the byte value (e.g., "assets.0.total_bytes").
-- `$precision` (int): (Optional) Number of decimal places to include in the formatted result. Default is 2.
+- `$precision` (int): (Optional) Number of decimal places to include in the formatted result. The default is 2.
 
 Example usage:
 
@@ -199,12 +200,13 @@ $data1->getFormattedByte("assets.1.total_bytes", 0);  // Returns "2 GB"
 
 Key Features:
 - Automatic unit conversion: converts bytes into appropriate units (e.g., KB, MB, GB) based on the size.
-- customizable precision: you can specify the number of decimal places for the output, making it flexible for various use cases.
+- Customizable precision: you can specify the number of decimal places for the output, making it flexible for various use cases.
 
 ### The `getString()` method
 
 The `getString()` method retrieves the value of a specified field as a string from a data block. If the field does not exist or is null, it returns a default value, which can be customized.
 Parameters:
+
 - `$path` (string): The path to the field (e.g., "0.commit.author.date").
 - `$default` (string): (Optional) The default value to return if the field doesn't exist. Defaults to an empty string ("").
 
@@ -647,6 +649,65 @@ $grouped->dumpJson();
         {
             "type": "vegetable",
             "name": "carrot"
+        }
+    ]
+}
+*/
+```
+
+### The `groupByFunction()` method
+
+The `groupByFunction()` method allows you to group items from an Block based on a grouping logic provided by a callback function (closure). The function returns an associative array where the keys represent groupings defined by the callback, and the values are arrays of elements that belong to each group.
+
+```php
+$fruits = [
+    ['name' => 'Apple', 'type' => 'Citrus', 'quantity' => 15],
+    ['name' => 'Banana', 'type' => 'Tropical', 'quantity' => 10],
+    ['name' => 'Orange', 'type' => 'Citrus', 'quantity' => 8],
+    ['name' => 'Mango', 'type' => 'Tropical', 'quantity' => 5],
+    ['name' => 'Lemon', 'type' => 'Citrus', 'quantity' => 12]
+];
+$fruitsBlock = Block::make($fruits);
+$groupedByQuantityRange = $fruitsBlock->groupByFunction(
+    fn($fruit): string =>
+        match (true) {
+            $fruit['quantity'] < 10 => 'Low',
+            $fruit['quantity'] < 15 => 'Medium',
+            default => 'High',
+        },
+);
+// It returns:
+/*
+{
+    "High": [
+        {
+            "name": "Apple",
+            "type": "Citrus",
+            "quantity": 15
+        }
+    ],
+    "Medium": [
+        {
+            "name": "Banana",
+            "type": "Tropical",
+            "quantity": 10
+        },
+        {
+            "name": "Lemon",
+            "type": "Citrus",
+            "quantity": 12
+        }
+    ],
+    "Low": [
+        {
+            "name": "Orange",
+            "type": "Citrus",
+            "quantity": 8
+        },
+        {
+            "name": "Mango",
+            "type": "Tropical",
+            "quantity": 5
         }
     ]
 }
