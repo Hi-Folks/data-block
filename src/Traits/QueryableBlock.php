@@ -59,7 +59,7 @@ trait QueryableBlock
                 Operator::STRICT_NOT_EQUAL => $elementToCheck->get($field) !== $value,
                 Operator::IN => in_array($elementToCheck->get($field), $value),
                 Operator::HAS => in_array($value, $elementToCheck->get($field)),
-                Operator::LIKE => str_contains($elementToCheck->get($field), $value),
+                Operator::LIKE => str_contains($elementToCheck->get($field), (string) $value),
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {
@@ -151,6 +151,25 @@ trait QueryableBlock
 
         return self::make($result);
     }
+
+    public function groupByFunction(callable $groupFunction): self
+    {
+        $result = [];
+
+        foreach ($this->data as $item) {
+            // Call the closure to determine the group key
+            $groupKey = $groupFunction($item);
+
+            // Group items under the same key
+            if (!array_key_exists($groupKey, $result)) {
+                $result[$groupKey] = [];
+            }
+
+            $result[$groupKey][] = $item;
+        }
+        return self::make($result);
+    }
+
 
     private static function castVariableForStrval(mixed $property): bool|float|int|string|null
     {
