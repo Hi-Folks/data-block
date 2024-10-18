@@ -31,6 +31,64 @@
 This PHP package provides classes and methods for easily managing, querying, filtering, and setting nested data structures.
 The PHP Data Block package offers a streamlined approach to handling nested data, whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays.
 
+## What you can do with PHP Data Block
+
+For example, with PHP Data Block, you can retrieve complex JSON from an API and then filter, sort, and handle the data.
+For example, here you can:
+
+- Retrieve the list of the repository from GitHub
+- Order the repository by the number of stars received (ascending, starting from the repos with more stars)
+- Loop the results
+- Get values from elements
+
+```php
+<?php
+
+use HiFolks\DataType\Block;
+
+require './vendor/autoload.php';
+$url = 'https://api.github.com/orgs/hi-folks/repos';
+
+Block::fromJsonUrl($url)
+    ->orderBy('stargazers_count', 'desc')
+    ->forEach(
+        function ($item) {
+            echo $item->get('full_name').' : ';
+            echo $item->get('stargazers_count').PHP_EOL;
+        }
+    );
+```
+
+Then, you can do more, you can:
+- Extract only the fields you need using the `select()` method
+- Filter the elements with the `where()` method and using the `Operator` class
+
+Here is an example:
+
+```php
+<?php
+
+use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\Operator;
+
+require './vendor/autoload.php';
+$url = 'https://api.github.com/orgs/hi-folks/repos';
+
+Block::fromJsonUrl($url)
+    ->select('full_name', 'stargazers_count')
+    ->where('stargazers_count', Operator::GREATER_THAN, 0)
+    ->orderBy('stargazers_count', 'desc')
+    ->forEach(
+        function ($item) {
+            echo $item->get('full_name').' : ';
+            echo $item->get('stargazers_count').PHP_EOL;
+        }
+    );
+```
+This is just an overview as an appetizer :)
+
+Now, let's explore the classes and methods PHP Data Block provides.
+
 One "core" element of the PHP Data Block package is the Block PHP class.
 
 ## The Block class
