@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.3 - WIP
+- Using Operator class in the tests
+- Updating readme with 2 use cases
+- Adding rector to composer scripts
+
 ## 0.4.2 - 2024-10-15
 - Implementing the `groupByFunction()` to group elements based on a specific function.
 - Implementing `getString()` for returning a string
