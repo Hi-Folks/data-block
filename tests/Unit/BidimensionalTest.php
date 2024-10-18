@@ -15,11 +15,8 @@ test(
     'Block as table',
     function () use ($dataTable): void {
         $table = Block::make($dataTable);
-        var_dump(Operator::GREATER_THAN);
         $data = $table
-            //->select('product', 'price')
-            ->where('price', ">", 100);
-        //->calc('new_field', fn ($item) => $item['price'] * 2)
+            ->where('price', Operator::GREATER_THAN, 100);
 
         expect($data)->toHaveCount(3);
     },
@@ -32,8 +29,7 @@ test(
 
         $data = $table
             ->select('product', 'price')
-            ->where('price', ">", 100, false);
-        //->calc('new_field', fn ($item) => $item['price'] * 2)
+            ->where('price', Operator::GREATER_THAN, 100, false);
 
         expect($data)->toHaveCount(3);
         expect($data->get("0"))->toHaveCount(2);
@@ -67,7 +63,7 @@ test(
 
         $data = $table
             ->select('product', 'price')
-            ->where('price', ">", 100, false);
+            ->where('price', Operator::GREATER_THAN, 100, false);
 
         //->calc('new_field', fn ($item) => $item['price'] * 2)
         foreach ($data as $key => $item) {
@@ -75,7 +71,6 @@ test(
             expect($key)->toBeInt();
             expect($item->get("price"))->toBeGreaterThan(100);
         }
-
         expect($data->get("0.price"))->toBe(200);
         expect($data->get("1.price"))->toBe(300);
 
@@ -86,9 +81,8 @@ test(
         $table = Block::make($dataTable, false);
         $data = $table
             ->select('product', 'price')
-            ->where('price', ">", 100, false);
+            ->where('price', Operator::GREATER_THAN, 100, false);
 
-        //->calc('new_field', fn ($item) => $item['price'] * 2)
         foreach ($data as $key => $item) {
             expect($item)->toBeArray();
             expect($key)->toBeInt();
@@ -158,14 +152,16 @@ test(
         $file = "./tests/data/stories.json";
         $block = Block::fromJsonFile($file);
         //$block->getBlock("rels")->dumpJson();
-        $rel = $block->getBlock("rels")->where("uuid", "==", "a6af7728-eadf-4428-8cf5-343304857374");
+        $rel = $block
+            ->getBlock("rels")
+            ->where("uuid", Operator::EQUAL, "a6af7728-eadf-4428-8cf5-343304857374");
         expect($rel)->toHaveCount(1);
         expect($rel->get("4.name"))->toBe("Category C");
         expect($rel->get("4"))->toHaveCount(22);
 
         $rel = $block->getBlock("rels")->where(
             field: "uuid",
-            operator: "==",
+            operator: Operator::EQUAL,
             value: "a6af7728-eadf-4428-8cf5-343304857374",
             preseveKeys: false,
         );
@@ -177,7 +173,7 @@ test(
             ->select("uuid", "name")
             ->where(
                 field: "uuid",
-                operator: "==",
+                operator: Operator::EQUAL,
                 value: "a6af7728-eadf-4428-8cf5-343304857374",
                 preseveKeys: false,
             );

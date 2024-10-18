@@ -98,7 +98,7 @@ test(
                     default => 'High',
                 },
         );
-        $groupedByQuantityRange->dumpJson();
+        //$groupedByQuantityRange->dumpJson();
         expect($groupedByQuantityRange)
             ->tohaveCount(3)
             ->and($groupedByQuantityRange->getBlock('Low'))
