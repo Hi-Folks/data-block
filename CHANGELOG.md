@@ -1,9 +1,10 @@
 # Changelog
 
-## 0.4.3 - WIP
+## 0.4.3 - 2024-11-20
 - Using Operator class in the tests
 - Updating readme with 2 use cases
 - Adding rector to composer scripts
+- Welcome PHP 8.4 (adding GitHub actions configuration for PHP 8.4)
 
 ## 0.4.2 - 2024-10-15
 - Implementing the `groupByFunction()` to group elements based on a specific function.
