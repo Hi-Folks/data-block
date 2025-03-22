@@ -76,3 +76,22 @@ test(
         expect($data1->getString("0.commit.comment_countnotexists", 1))->toBeString()->toEqual("1");
     },
 );
+
+test(
+    'Force field to boolean',
+    function (): void {
+        $data1 = Block::fromJsonFile(__DIR__ . "/../../data/commits-json/commits-10-p1.json");
+        $data2 = Block::fromJsonFile(__DIR__ . "/../../data/commits-json/commits-10-p2.json");
+        $data3 = Block::fromJsonFile(__DIR__ . "/../../data/commits-json/commits-10-p3.json");
+        $data1->append($data2)->append($data3);
+        expect($data1)->toHaveCount(30);
+        expect($data2)->toHaveCount(10);
+        expect($data1->getBoolean("0.author.site_admin"))->toBeBool();
+        expect($data1->getBoolean("0.author.notexist"))->toBeBool();
+        expect($data1->getBoolean("0.author.notexist"))->toBeBool()->toEqual(false);
+        expect($data1->getBoolean("0.author.notexist", "true"))->toEqual(true);
+        expect($data1->getBoolean("0.author.site_admin"))->toBeBool()->toEqual(false);
+        expect($data1->getBoolean("0.author.site_admin", true))->toBeBool()->toEqual(false);
+        expect($data1->getBoolean("0.commit.comment_countnotexists", true))->toBeBool()->toEqual(true);
+    },
+);

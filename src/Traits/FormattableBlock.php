@@ -78,9 +78,23 @@ trait FormattableBlock
      */
     public function getString(
         mixed $key,
-        string $defaultValue = null,
+        string|null $defaultValue = null,
         string $charNestedKey = ".",
     ): string {
         return (string) $this->get($key, $defaultValue, $charNestedKey);
+    }
+
+    /**
+     * Return a forced boolean value from the get() method
+     * @param mixed $key the filed key , can be nested for example "commits.0.editable"
+     * @param bool|null $defaultValue the default value returned if no value is found
+     * @param non-empty-string $charNestedKey for nested field the . character is the default
+     */
+    public function getBoolean(
+        mixed $key,
+        bool|null $defaultValue = null,
+        string $charNestedKey = ".",
+    ): bool {
+        return (bool) $this->get($key, $defaultValue, $charNestedKey);
     }
 }

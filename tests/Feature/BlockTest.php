@@ -76,11 +76,11 @@ it('has some value', function (): void {
 });
 
 it('tests some value for composer.lock', function (): void {
-    $file = "./composer.lock";
+    $file = "./tests/data/dummy-composer.lock";
     $composer = Block::fromJsonFile($file);
     expect($composer->getBlock("packages"))->toBeInstanceOf(Block::class);
-    expect($composer->getBlock("packages"))->toHaveCount(6);
-    expect($composer->getBlock("packages")->where("dist.type", "zip"))->toHaveCount(6);
-    expect($composer->getBlock("packages")->where("dist.type", "zip"))->toHaveCount(6);
-    expect($composer->getBlock("packages")->where("source.type", "git"))->toHaveCount(6);
+    expect($composer->getBlock("packages"))->toHaveCount(7);
+    expect($composer->getBlock("packages")->where("dist.type", "zip"))->toHaveCount(7);
+    expect($composer->getBlock("packages")->where("dist.type", "zip"))->toHaveCount(7);
+    expect($composer->getBlock("packages")->where("source.type", "git"))->toHaveCount(7);
 });

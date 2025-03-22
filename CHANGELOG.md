@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.4 - 2025-03-22
+- Adding `getBoolean()` method for returning boolean value
+
 ## 0.4.3 - 2024-11-20
 - Using Operator class in the tests
 - Updating readme with 2 use cases
