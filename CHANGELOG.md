@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0 - WIP
+- Upgrade dev package PestPHP 3
+- Upgrade dev package PHPstan 2
+- Upgrade dev package Rector 2
+
 ## 0.4.4 - 2025-03-22
 - Adding `getBoolean()` method for returning boolean value
 
