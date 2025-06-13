@@ -70,7 +70,7 @@ it('has some value', function (): void {
     expect($composer->getBlock("require.php"))->toBeInstanceOf(Block::class);
     expect($composer->get("require.php"))->toBeString();
 
-    expect($composer->getBlock("require")->has("^8.1|^8.2|^8.3|^8.4"))->toBeTrue();
+    expect($composer->getBlock("require")->has("^8.2|^8.3|^8.4"))->toBeTrue();
     expect($composer->getBlock("require")->hasKey("php"))->toBeTrue();
     expect($composer->getBlock("require-dev")->hasKey("pestphp/pest"))->toBeTrue();
 });

@@ -36,13 +36,10 @@ final class Block implements Iterator, ArrayAccess, Countable
     /** @var array<int|string, mixed> */
     private array $data;
 
-    private bool $iteratorReturnsBlock = true;
-
     /** @param array<int|string, mixed> $data */
-    public function __construct(array $data = [], bool $iteratorReturnsBlock = true)
+    public function __construct(array $data = [], private bool $iteratorReturnsBlock = true)
     {
         $this->data = $data;
-        $this->iteratorReturnsBlock = $iteratorReturnsBlock;
     }
 
     public function iterateBlock(bool $returnsBlock = true): self
@@ -204,9 +201,9 @@ final class Block implements Iterator, ArrayAccess, Countable
      * It returns Block or [] depending on $returnArrClass value
      *
      * @param bool $returnBlockClass true if you need Block object
-     * @return int|string|array<int|string, mixed>|Block
+     * @return array<int|string, mixed>|Block
      */
-    public function keys(bool $returnBlockClass = false): int|string|array|Block
+    public function keys(bool $returnBlockClass = false): array|Block
     {
         if ($returnBlockClass) {
             return self::make(array_keys($this->data));

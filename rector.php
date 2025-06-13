@@ -11,7 +11,7 @@ return RectorConfig::configure()
     ])
     // uncomment to reach your current PHP version
     ->withPhpSets(
-        php81: true,
+        php82: true,
     )
     ->withPreparedSets(
         deadCode: true,
