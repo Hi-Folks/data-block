@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 - WIP
+## 1.0.0 - 2025-06-13
 - Upgrade dev package PestPHP 3
 - Upgrade dev package PHPstan 2
 - Upgrade dev package Rector 2
