@@ -56,4 +56,24 @@ trait TypeableBlock
 
         return $defaultValue;
     }
+
+    /**
+     * Return a forced boolean value from the get() method
+     * @param int|string $key the filed key , can be nested for example "commits.0.editable"
+     * @param bool $defaultValue the default value returned if no value is found
+     * @param non-empty-string $charNestedKey for nested field the . character is the default
+     */
+    public function getBooleanStrict(
+        int|string $key,
+        bool $defaultValue = false,
+        string $charNestedKey = ".",
+    ): ?bool {
+        $returnValue = $this->get($key, $defaultValue, $charNestedKey);
+
+        if (is_scalar($returnValue)) {
+            return boolval($returnValue);
+        }
+
+        return $defaultValue;
+    }
 }
