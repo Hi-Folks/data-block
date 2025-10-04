@@ -292,6 +292,22 @@ $data1->getInt("0.author.idx"); // Returns null because the field doesn't exists
 $data1->getInt("0.author.idx", 44); // Returns 44 because the field doesn't exists, and you set a default, in this case 44
 ```
 
+### The `getBoolean()` method
+
+The `getBoolean()` method retrieves the value of a specified field as a boolean from a data block. If the field does not exist or is null, it returns a default value, which can be customized (null by default).
+Parameters:
+
+- `$path` (string): The path to the field (e.g., "0.author.id").
+- `$default` (null|bool): (Optional) The default value to return if the field doesn't exist. Defaults to null.
+- `$charNestedKey` (string): the character separator for nested field names.  The default is ".".
+
+Example usage:
+```php
+$data1->getBoolean("0.author.site_admin"); // Returns the field value as an boolean, for example true
+$data1->getBoolean("0.author.site_admin_notexists"); // Returns null because the field doesn't exists
+$data1->getBoolean("0.author.site_admin_notexists", true); // Returns true because the field doesn't exists, and you set a default, in this case true
+```
+
 
 ### The `getBlock()` method
 If you need to manage a complex array (nested array) or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object via the `getBlock()` method.
