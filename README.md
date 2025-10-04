@@ -276,6 +276,23 @@ $data1->getString("0.commit.author.notexists", "AA");  // Returns "AA"
 $data1->getString("0.commit.comment_count");  // Returns "0" as a string even if the field value is an integer
 ```
 
+### The `getInt()` method
+
+The `getInt()` method retrieves the value of a specified field as a integer from a data block. If the field does not exist or is null, it returns a default value, which can be customized (null by default).
+Parameters:
+
+- `$path` (string): The path to the field (e.g., "0.author.id").
+- `$default` (null|int): (Optional) The default value to return if the field doesn't exist. Defaults to null.
+- `$charNestedKey` (string): the character separator for nested field names.  The default is ".".
+
+Example usage:
+```php
+$data1->getInt("0.author.id"); // Returns the field value as an integer, for example 678434
+$data1->getInt("0.author.idx"); // Returns null because the field doesn't exists
+$data1->getInt("0.author.idx", 44); // Returns 44 because the field doesn't exists, and you set a default, in this case 44
+```
+
+
 ### The `getBlock()` method
 If you need to manage a complex array (nested array) or an array obtained from a complex JSON structure, you can access a portion of the array and obtain the `Block` object via the `getBlock()` method.
 
