@@ -3,32 +3,32 @@
 use HiFolks\DataType\Block;
 
 $fruitsArray = [
-    "avocado" =>
-    [
+    "avocado"
+    => [
         'name' => 'Avocado',
         'fruit' => '🥑',
         'wikipedia' => 'https://en.wikipedia.org/wiki/Avocado',
         'color' => 'green',
         'rating' => 8,
     ],
-    "apple" =>
-    [
+    "apple"
+    => [
         'name' => 'Apple',
         'fruit' => '🍎',
         'wikipedia' => 'https://en.wikipedia.org/wiki/Apple',
         'color' => 'red',
         'rating' => 7,
     ],
-    "banana" =>
-    [
+    "banana"
+    => [
         'name' => 'Banana',
         'fruit' => '🍌',
         'wikipedia' => 'https://en.wikipedia.org/wiki/Banana',
         'color' => 'yellow',
         'rating' => 8.5,
     ],
-    "cherry" =>
-    [
+    "cherry"
+    => [
         'name' => 'Cherry',
         'fruit' => '🍒',
         'wikipedia' => 'https://en.wikipedia.org/wiki/Cherry',
@@ -169,26 +169,26 @@ it('Basic getBlock', function (): void {
 
     $block = Block::make(
         [
-            "avocado" =>
-                [
+            "avocado"
+                => [
                     'name' => 'Avocado',
                     'fruit' => '🥑',
                     'wikipedia' => 'https://en.wikipedia.org/wiki/Avocado',
                 ],
-            "apple" =>
-                [
+            "apple"
+                => [
                     'name' => 'Apple',
                     'fruit' => '🍎',
                     'wikipedia' => 'https://en.wikipedia.org/wiki/Apple',
                 ],
-            "banana" =>
-                [
+            "banana"
+                => [
                     'name' => 'Banana',
                     'fruit' => '🍌',
                     'wikipedia' => 'https://en.wikipedia.org/wiki/Banana',
                 ],
-            "cherry" =>
-                [
+            "cherry"
+                => [
                     'name' => 'Cherry',
                     'fruit' => '🍒',
                     'wikipedia' => 'https://en.wikipedia.org/wiki/Cherry',

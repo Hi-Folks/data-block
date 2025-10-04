@@ -122,7 +122,7 @@ final class Block implements Iterator, ArrayAccess, Countable
      * In the case the $key doesn't exist, null can be returned
      * @param non-empty-string $charNestedKey
      */
-    public function getBlockNullable(mixed $key, mixed $defaultValue = null, string $charNestedKey = "."): self|null
+    public function getBlockNullable(mixed $key, mixed $defaultValue = null, string $charNestedKey = "."): ?self
     {
         $value = $this->get($key, $defaultValue, $charNestedKey);
         if (is_null($value)) {

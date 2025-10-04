@@ -18,7 +18,7 @@ trait FormattableBlock
         string $format = "Y-m-d H:i:s",
         mixed $defaultValue = null,
         string $charNestedKey = ".",
-    ): string|null {
+    ): ?string {
         $value =  $this->get($key, $defaultValue, $charNestedKey);
         if (is_null($value)) {
             return null;
@@ -78,7 +78,7 @@ trait FormattableBlock
      */
     public function getString(
         mixed $key,
-        string|null $defaultValue = null,
+        ?string $defaultValue = null,
         string $charNestedKey = ".",
     ): string {
         return (string) $this->get($key, $defaultValue, $charNestedKey);
@@ -92,7 +92,7 @@ trait FormattableBlock
      */
     public function getBoolean(
         mixed $key,
-        bool|null $defaultValue = null,
+        ?bool $defaultValue = null,
         string $charNestedKey = ".",
     ): bool {
         return (bool) $this->get($key, $defaultValue, $charNestedKey);

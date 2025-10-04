@@ -11,8 +11,8 @@ trait ValidableBlock
     public function validateJsonViaUrl(string $url): bool
     {
         try {
-            $schema =
-                Schema::import($url);
+            $schema
+                = Schema::import($url);
             $schema->in($this->toJsonObject());
         } catch (\Exception) {
             return false;
@@ -29,8 +29,8 @@ trait ValidableBlock
     public function validateJsonWithSchema(string $schemaJson): bool
     {
         try {
-            $schema =
-                Schema::import(json_decode($schemaJson));
+            $schema
+                = Schema::import(json_decode($schemaJson));
             $schema->in($this->toJsonObject());
         } catch (\Exception) {
             //echo $e->getMessage();
