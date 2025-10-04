@@ -7,8 +7,24 @@ namespace HiFolks\DataType\Traits;
 trait TypeableBlock
 {
     /**
-     *
-     * @param non-empty-string $charNestedKey
+     * Return a forced string value from the get() method
+     * @param int|string $key the field key , can be nested for example "commits.0.name"
+     * @param string|null $defaultValue the default value returned if no value is found
+     * @param non-empty-string $charNestedKey for nested field the . character is the default
+     */
+    public function getString(
+        int|string $key,
+        ?string $defaultValue = null,
+        string $charNestedKey = ".",
+    ): string {
+        return (string) $this->get($key, $defaultValue, $charNestedKey);
+    }
+
+    /**
+     * Return a forced integer value from the get() method
+     * @param int|string $key the field key, can be nested for example "0.author.id"
+     * @param int|null $defaultValue the default integer value returned if no value is found
+     * @param non-empty-string $charNestedKey for nested field the . character is the default
      */
     public function getInt(int|string $key, ?int $defaultValue = null, string $charNestedKey = "."): ?int
     {
