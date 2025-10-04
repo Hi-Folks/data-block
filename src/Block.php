@@ -77,7 +77,7 @@ final class Block implements Iterator, ArrayAccess, Countable
      *
      * @param non-empty-string $charNestedKey
      */
-    public function get(mixed $key, mixed $defaultValue = null, string $charNestedKey = "."): mixed
+    public function get(int|string $key, mixed $defaultValue = null, string $charNestedKey = "."): mixed
     {
         if (is_string($key)) {
             $keyString = strval($key);

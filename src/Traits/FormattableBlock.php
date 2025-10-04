@@ -70,19 +70,7 @@ trait FormattableBlock
         return number_format($bytes / $terabyte, $precision) . ' TB';
     }
 
-    /**
-     * Return a forced string value from the get() method
-     * @param mixed $key the filed key , can be nested for example "commits.0.name"
-     * @param string|null $defaultValue the default value returned if no value is found
-     * @param non-empty-string $charNestedKey for nested field the . character is the default
-     */
-    public function getString(
-        mixed $key,
-        ?string $defaultValue = null,
-        string $charNestedKey = ".",
-    ): string {
-        return (string) $this->get($key, $defaultValue, $charNestedKey);
-    }
+
 
     /**
      * Return a forced boolean value from the get() method
