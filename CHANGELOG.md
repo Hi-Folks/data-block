@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1 - WIP
+- Adding getInt() method for returing casted integer value
+
 ## 1.0.0 - 2025-06-13
 - Upgrade dev package PestPHP 3
 - Upgrade dev package PHPstan 2
