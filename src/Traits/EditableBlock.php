@@ -12,7 +12,7 @@ trait EditableBlock
      * @param array<int|string, mixed>|Block $data
      * @return $this
      */
-    public function append(array|Block $data, string|null $key = null): self
+    public function append(array|Block $data, ?string $key = null): self
     {
         if ($data instanceof Block) {
             $this->data = array_merge($this->data, $data->toArray());
@@ -23,7 +23,7 @@ trait EditableBlock
         return $this;
     }
 
-    public function appendItem(mixed $data, string|null $key = null): self
+    public function appendItem(mixed $data, ?string $key = null): self
     {
         if (is_null($key)) {
             $this->data[] =  $data;

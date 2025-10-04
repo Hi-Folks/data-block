@@ -91,8 +91,8 @@ test(
         ];
         $fruitsBlock = Block::make($fruits);
         $groupedByQuantityRange = $fruitsBlock->groupByFunction(
-            fn($fruit): string =>
-                match (true) {
+            fn($fruit): string
+                => match (true) {
                     $fruit['quantity'] < 10 => 'Low',
                     $fruit['quantity'] < 15 => 'Medium',
                     default => 'High',
