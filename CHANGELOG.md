@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.0.1 - WIP
-- Adding getInt() method for returing casted integer value.
-- Adding getBooleanStrict() method for returning strict boolean.
+## 1.0.1 - 2025-10-04
+- Adding `getInt()` method for returing casted integer value.
+- Adding `getBooleanStrict()` method for returning strict boolean.
 
 ## 1.0.0 - 2025-06-13
 - Upgrade dev package PestPHP 3
