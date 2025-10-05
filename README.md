@@ -263,17 +263,35 @@ Key Features:
 ### The `getString()` method
 
 The `getString()` method retrieves the value of a specified field as a string from a data block. If the field does not exist or is null, it returns a default value, which can be customized.
+
 Parameters:
 
 - `$path` (string): The path to the field (e.g., "0.commit.author.date").
-- `$default` (string): (Optional) The default value to return if the field doesn't exist. Defaults to an empty string ("").
+- `$default` (string|null): (Optional) The default value to return if the field doesn't exist. Defaults to null.
 
 Example Usage:
 ```php
 $data1->getString("0.commit.author.date");  // Returns the field value as a string
-$data1->getString("0.commit.author.notexists");  // Returns ""
+$data1->getString("0.commit.author.notexists");  // Returns null
 $data1->getString("0.commit.author.notexists", "AA");  // Returns "AA"
 $data1->getString("0.commit.comment_count");  // Returns "0" as a string even if the field value is an integer
+```
+
+### The `getStringStrict()` method
+
+The `getStringStrict()` method retrieves the value of a specified field as a string from a data block. If the field does not exist or is null, it returns a default string value, which can be customized ("" by default).
+
+Parameters:
+
+- `$path` (string): The path to the field (e.g., "0.commit.author.date").
+- `$default` (string): (Optional) The default value to return if the field doesn't exist. Defaults to "".
+
+Example Usage:
+```php
+$data1->getStringStrict("0.commit.author.date");  // Returns the field value as a string
+$data1->getStringStrict("0.commit.author.notexists");  // Returns an empty string ""
+$data1->getStringStrict("0.commit.author.notexists", "AA");  // Returns "AA"
+$data1->getStringStrict("0.commit.comment_count");  // Returns "0" as a string even if the field value is an integer
 ```
 
 ### The `getInt()` method
