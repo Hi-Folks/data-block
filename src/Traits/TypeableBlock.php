@@ -7,7 +7,7 @@ namespace HiFolks\DataType\Traits;
 trait TypeableBlock
 {
     /**
-     * Return a forced string value from the get() method
+     * Return a string value from the get() method
      * @param int|string $key the field key , can be nested for example "commits.0.name"
      * @param string|null $defaultValue the default value returned if no value is found
      * @param non-empty-string $charNestedKey for nested field the . character is the default
@@ -16,8 +16,42 @@ trait TypeableBlock
         int|string $key,
         ?string $defaultValue = null,
         string $charNestedKey = ".",
+    ): ?string {
+        $returnValue = $this->get($key, $defaultValue, $charNestedKey);
+        if ($returnValue === null) {
+            return $defaultValue;
+        }
+
+        if (is_scalar($returnValue)) {
+            return strval($returnValue);
+        }
+
+        return $defaultValue;
+
+    }
+
+    /**
+     * Return a forced string value from the get() method
+     * @param int|string $key the field key , can be nested for example "commits.0.name"
+     * @param string $defaultValue the default value returned if no value is found, by default is ""
+     * @param non-empty-string $charNestedKey for nested field the . character is the default
+     */
+    public function getStringStrict(
+        int|string $key,
+        string $defaultValue = "",
+        string $charNestedKey = ".",
     ): string {
-        return (string) $this->get($key, $defaultValue, $charNestedKey);
+        $returnValue = $this->get($key, $defaultValue, $charNestedKey);
+        if ($returnValue === null) {
+            return $defaultValue;
+        }
+
+        if (is_scalar($returnValue)) {
+            return strval($returnValue);
+        }
+
+        return $defaultValue;
+
     }
 
     /**
