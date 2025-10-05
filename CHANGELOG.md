@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.2 - WIP
+- - Adding `getIntStrict()` method for returning strict int.
+
 ## 1.0.1 - 2025-10-04
 - Adding `getInt()` method for returing casted integer value.
 - Adding `getBooleanStrict()` method for returning strict boolean.
