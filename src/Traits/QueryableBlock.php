@@ -11,7 +11,6 @@ trait QueryableBlock
 {
     public static function like(mixed $value1, mixed $value2): bool
     {
-
         $strValue1 = strval($value1);
         $strValue2 = strval($value2);
         return str_contains($strValue1, $strValue2);
@@ -28,7 +27,6 @@ trait QueryableBlock
         mixed $value = null,
         bool $preseveKeys = true,
     ): self {
-
         if (func_num_args() === 1) {
             $value = true;
             $operator = Operator::EQUAL;
@@ -43,41 +41,53 @@ trait QueryableBlock
         foreach ($this as $key => $element) {
             $elementToCheck = $element;
             if (is_array($element)) {
-                $elementToCheck = Block::make($element, $this->iteratorReturnsBlock);
+                $elementToCheck = Block::make(
+                    $element,
+                    $this->iteratorReturnsBlock,
+                );
             }
-            if (! $elementToCheck instanceof Block) {
+            if (!$elementToCheck instanceof Block) {
                 return Block::make([], $this->iteratorReturnsBlock);
             }
 
             $found = match ($operator) {
-                Operator::EQUAL => ($elementToCheck->get($field) == $value),
+                Operator::EQUAL => $elementToCheck->get($field) == $value,
                 Operator::GREATER_THAN => $elementToCheck->get($field) > $value,
                 Operator::LESS_THAN => $elementToCheck->get($field) < $value,
-                Operator::GREATER_THAN_OR_EQUAL => $elementToCheck->get($field) >= $value,
-                Operator::LESS_THAN_OR_EQUAL => $elementToCheck->get($field) <= $value,
+                Operator::GREATER_THAN_OR_EQUAL => $elementToCheck->get(
+                    $field,
+                ) >= $value,
+                Operator::LESS_THAN_OR_EQUAL => $elementToCheck->get($field)
+                    <= $value,
                 Operator::NOT_EQUAL => $elementToCheck->get($field) != $value,
-                Operator::STRICT_NOT_EQUAL => $elementToCheck->get($field) !== $value,
+                Operator::STRICT_NOT_EQUAL => $elementToCheck->get($field)
+                    !== $value,
                 Operator::IN => in_array($elementToCheck->get($field), $value),
                 Operator::HAS => in_array($value, $elementToCheck->get($field)),
-                Operator::LIKE => str_contains($elementToCheck->get($field), (string) $value),
+                Operator::LIKE => str_contains(
+                    $elementToCheck->get($field),
+                    (string) $value,
+                ),
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {
-
                 if ($preseveKeys) {
-                    $returnData[$key] = $element instanceof Block ? $element->toArray() : $element;
+                    $returnData[$key]
+                        = $element instanceof Block
+                            ? $element->toArray()
+                            : $element;
                 } else {
-                    $returnData[] = $element instanceof Block ? $element->toArray() : $element;
-                    ;
+                    $returnData[]
+                        = $element instanceof Block
+                            ? $element->toArray()
+                            : $element;
                 }
-
             }
         }
         return self::make($returnData, $this->iteratorReturnsBlock);
     }
 
-
-    public function orderBy(string|int $field, string $order = 'asc'): self
+    public function orderBy(string|int $field, string $order = "asc"): self
     {
         $map = [];
         $array = $this->data;
@@ -85,15 +95,10 @@ trait QueryableBlock
         foreach ($this as $key => $item) {
             $map[$key] = $item->get($field);
         }
-        if ($order === 'desc') {
-            array_multisort(
-                $map,
-                SORT_DESC,
-                $array,
-            );
-
+        if ($order === "desc") {
+            array_multisort($map, SORT_DESC, $array);
         } else {
-            array_multisort($map, $array) ;
+            array_multisort($map, $array);
         }
 
         return self::make($array, $this->iteratorReturnsBlock);
@@ -139,11 +144,11 @@ trait QueryableBlock
 
         foreach ($this as $value) {
             $property = $value->get($field);
-            $property = self::castVariableForStrval($property);
+            $property = self::castForArrayKey($property);
             if (!$property) {
                 continue;
             }
-            if (! array_key_exists(strval($property), $result)) {
+            if (!array_key_exists(strval($property), $result)) {
                 $result[$property] = [];
             }
             $result[$property][] = $value->toArray();
@@ -170,16 +175,26 @@ trait QueryableBlock
         return self::make($result);
     }
 
-
-    private static function castVariableForStrval(mixed $property): bool|float|int|string|null
-    {
+    private static function castVariableForStrval(
+        mixed $property,
+    ): bool|float|int|string|null {
         return match (gettype($property)) {
-            'boolean' => $property,
-            'double' => $property,
-            'integer' => $property,
-            'string' => $property,
+            "boolean" => $property,
+            "double" => $property,
+            "integer" => $property,
+            "string" => $property,
             default => null,
         };
     }
-
+    private static function castForArrayKey(
+        mixed $property,
+    ): bool|int|string|null {
+        return match (gettype($property)) {
+            "boolean" => $property,
+            "double" => strval($property),
+            "integer" => $property,
+            "string" => $property,
+            default => null,
+        };
+    }
 }
