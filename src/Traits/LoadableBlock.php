@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiFolks\DataType\Traits;
 
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 trait LoadableBlock
 {
@@ -54,6 +55,20 @@ trait LoadableBlock
         }
         return self::fromJsonString($content);
 
+    }
+
+    /**
+     * @param array<string, mixed> $options Symfony client's request options
+     */
+    public static function fromHttpJsonUrl(string $jsonUrl, HttpClientInterface $client, array $options = []): self
+    {
+        $content = $client->request('GET', $jsonUrl, $options)->getContent(false);
+
+        if ('' === $content) {
+            return self::make([]);
+        }
+
+        return self::fromJsonString($content);
     }
 
     public static function fromYamlFile(string $yamlFile): self

@@ -1,6 +1,7 @@
 <?php
 
 use HiFolks\DataType\Block;
+use Symfony\Component\HttpClient\HttpClient;
 
 it('remote json', function (): void {
 
@@ -8,6 +9,20 @@ it('remote json', function (): void {
     $commits = Block::fromJsonUrl($url);
     expect($commits)->toBeInstanceOf(Block::class);
     expect($commits)->toHaveCount(30);
+    $myCommits = $commits->where("commit.author.name", "like", "Roberto");
+    foreach ($myCommits as $value) {
+        expect($value->get("commit.message"))->toBeString();
+    }
+
+})->group("url");
+
+it('remote json (Symfony\Contracts\HttpClient\HttpClientInterface)', function (): void {
+    $url = "https://api.github.com/repos/hi-folks/data-block/commits";
+
+    $commits = Block::fromHttpJsonUrl($url, HttpClient::create());
+    expect($commits)->toBeInstanceOf(Block::class);
+    expect($commits)->toHaveCount(30);
+
     $myCommits = $commits->where("commit.author.name", "like", "Roberto");
     foreach ($myCommits as $value) {
         expect($value->get("commit.message"))->toBeString();
