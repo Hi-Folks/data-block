@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3 - WIP
+- Adding the `extractWhere()` method that allows you to recursively query data elements and extract all elements that match a given property/value pair.
+- Fix `offsetAccess.invalidOffset` phpstan warning
+
 ## 1.0.2 - 2025-10-05
 - Adding `getIntStrict()` method for returning strict int.
 - Adding `getStringStrict()` method for returning strict string.

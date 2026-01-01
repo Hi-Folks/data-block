@@ -679,6 +679,31 @@ The `in` operator filters elements by matching a field's value against an array 
 
 The `has` operator filters elements by checking if a specific value exists within a field (usually an array or a collection). If the value exists, the element is included in the result. Non-existent values return no matches.
 
+### The `extractWhere()` method
+The `extractWhere()` method allows you to recursively query data elements and extract all elements that match a given property/value pair.
+
+It is especially useful when working with deeply nested data structures (for example JSON content trees), where matching items may appear at any depth.
+
+The implementation:
+- Recursively scans the entire Block
+- Finds all elements that:
+    - Contain the given $property
+    - Have a value strictly equal (===) to $value
+- Returns a new Block instance containing only the matched items
+- The original datablock is not modified
+
+```php
+$jsonString = file_get_contents('./tests/data/story.json');
+
+$story = Block::fromJsonString($jsonString);
+
+// Extract all items where "fieldtype" === "asset"
+$assets = $story->extractWhere('fieldtype', 'asset');
+
+// Debug output
+$assets->dump();
+```
+
 ### The `orderBy()` method
 You can order or sort data for a specific key.
 For example, if you want to retrieve the data at `story.content.body` key and sort them by `component` key:
