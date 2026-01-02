@@ -18,17 +18,17 @@
         }
     ],
     "require": {
-        "php": "^8.2|^8.3|^8.4",
+        "php": "^8.3|^8.4|^8.5",
         "swaggest/json-schema": "^0.12.42",
         "symfony/http-client-contracts": "^3.4.4",
-        "symfony/yaml": "^6.4|^7.1"
+        "symfony/yaml": "^6.4|^7.1|^8.0"
     },
     "require-dev": {
         "laravel/pint": "^1.2",
-        "pestphp/pest": "^3.0",
+        "pestphp/pest": "^4.0",
         "phpstan/phpstan": "^2",
         "rector/rector": "^2",
-        "symfony/http-client": "^7.4"
+        "symfony/http-client": "^7.4|^8.0"
     },
     "suggest": {
         "symfony/http-client": "HTTP client implementation"
@@ -45,10 +45,15 @@
     },
     "scripts": {
         "all": [
-            "@test", "@format", "@phpstan", "@rector"
+            "@test",
+            "@format",
+            "@phpstan",
+            "@rector"
         ],
         "complete": [
-            "@test-with-url", "@format", "@phpstan"
+            "@test-with-url",
+            "@format",
+            "@phpstan"
         ],
         "test": "vendor/bin/pest  --exclude-group=url",
         "test-with-url": "vendor/bin/pest",
