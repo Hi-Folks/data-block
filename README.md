@@ -535,6 +535,34 @@ echo $workflow->get("jobs.test.runs-on");
 echo $workflow->get("on.0"); // push , the first event
 ```
 
+### Loading Data from JSON URL via Symfony HttpClient
+
+If you want more control over the HTTP request (headers, authentication, timeouts, retries, etc.) or your environment restricts PHP stream functions (for example `allow_url_fopen=0`), you can use `fromHttpJsonUrl()`.  
+This method relies on your Symfony HttpClient implementation and allows you to pass any request options supported by the client.
+
+```php
+use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\Operator;
+use Symfony\Component\HttpClient\HttpClient;
+
+$url = "https://api.github.com/repos/hi-folks/data-block/commits";
+$client = HttpClient::create();
+
+$commits = Block::fromHttpJsonUrl($url, $client, [
+    'headers' => [
+        'User-Agent' => 'my-app',
+        'Accept' => 'application/json',
+    ],
+]);
+
+$myCommits = $commits->where("commit.author.name", Operator::LIKE, "Roberto");
+foreach ($myCommits as $value) {
+    echo $value->get("commit.message") . PHP_EOL;
+}
+```
+Don't forget to install the client's implementation `composer require symfony/http-client`
+
+
 ## Adding and appending elements
 
 ### Appending the elements of a Block object to another Block object
