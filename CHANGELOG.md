@@ -1,8 +1,11 @@
 # Changelog
 
-## 1.0.3 - WIP
+## 1.1.0 - 2026-01-02
+- Add Symfony HttpClient support for loading JSON from URL. Thanks to @sonnymilton
+- Update to PHP 8.5 support.
 - Adding the `extractWhere()` method that allows you to recursively query data elements and extract all elements that match a given property/value pair.
 - Fix `offsetAccess.invalidOffset` phpstan warning
+- Upgrade to `actions/checkout@v6` for GitHub Actions
 
 ## 1.0.2 - 2025-10-05
 - Adding `getIntStrict()` method for returning strict int.
