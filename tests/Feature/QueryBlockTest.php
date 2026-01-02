@@ -134,7 +134,6 @@ test("Query Block extractWhere", function (): void {
 
     $story = Block::fromJsonString($jsonString);
     $assets = $story->extractWhere("fieldtype", "asset");
-    $assets->dump();
     expect($assets)->toHaveCount(16);
     expect($assets->get("3.filename"))->toStartWith("https://a.story");
 });
