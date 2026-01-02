@@ -165,8 +165,12 @@ final class Block implements Iterator, ArrayAccess, Countable
 
                 $array = &$array[$key];
             }
+            $key = array_shift($keys);
 
-            $array[array_shift($keys)] = $value;
+            if (!is_null($key)) {
+                $array[$key] = $value;
+            }
+
             return $this;
         }
         $this->data[$key] = $value;

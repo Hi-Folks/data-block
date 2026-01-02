@@ -175,6 +175,32 @@ trait QueryableBlock
         return self::make($result);
     }
 
+    public function extractWhere(string $property, mixed $value): self
+    {
+        $results = [];
+
+        $scan = function ($item) use (&$results, &$scan, $property, $value): void {
+            if (is_array($item)) {
+                // Match the property/value pair
+                if (
+                    array_key_exists($property, $item)
+                    && $item[$property] === $value
+                ) {
+                    $results[] = $item;
+                }
+
+                // Scan deeper
+                foreach ($item as $subItem) {
+                    $scan($subItem);
+                }
+            }
+        };
+
+        $scan($this->data);
+
+        return self::make($results);
+    }
+
     private static function castVariableForStrval(
         mixed $property,
     ): bool|float|int|string|null {
