@@ -326,6 +326,42 @@ $data1->getIntStrict("0.author.idx"); // Returns 0 because the field doesn't exi
 $data1->getIntStrict("0.author.idx", 44); // Returns 44 because the field doesn't exists, and you set a default, in this case 44
 ```
 
+### The `getFloat()` method
+
+The `getFloat()` method retrieves the value of a specified field as a float from a data block. If the field does not exist or is null, it returns a default value, which can be customized (`null` by default).
+
+**Parameters:**
+
+- `$path` (string): The path to the field (e.g., `"0.author.score"`).
+- `$default` (null|float): (Optional) The default value to return if the field doesn't exist. Defaults to null.
+- `$charNestedKey` (string): The character separator for nested field names. The default is `"."`.
+
+**Example usage:**
+
+```php
+$data1->getFloat("0.author.score"); // Returns the field value as a float, for example 4.75
+$data1->getFloat("0.author.notexists"); // Returns null because the field doesn't exist
+$data1->getFloat("0.author.notexists", 1.5); // Returns 1.5 because the field doesn't exist, and you set a default
+```
+
+### The `getFloatStrict()` method
+
+The `getFloatStrict()` method retrieves the value of a specified field as a float from a data block. If the field does not exist or is null, it returns a default value, which can be customized (`0.0` by default).
+
+**Parameters:**
+
+- `$path` (string): The path to the field (e.g., `"0.author.score"`).
+- `$default` (float): (Optional) The default value to return if the field doesn't exist. Defaults to `0.0`.
+- `$charNestedKey` (string): The character separator for nested field names. The default is `"."`.
+
+**Example usage:**
+
+```php
+$data1->getFloatStrict("0.author.score"); // Returns the field value as a float, for example 4.75
+$data1->getFloatStrict("0.author.notexists"); // Returns 0.0 because the field doesn't exist, and the method is strict
+$data1->getFloatStrict("0.author.notexists", 1.5); // Returns 1.5 because the field doesn't exist, and you set a default
+```
+
 ### The `getBoolean()` method
 
 The `getBoolean()` method retrieves the value of a specified field as a boolean from a data block. If the field does not exist or is null, it returns a default value, which can be customized (null by default).

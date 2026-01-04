@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 - 2026-01-04
+- Adding `getFloat()` method for returing casted float value (nullable).
+- Adding `getFloatStrict()` method for returning strict float (not nullable).
+
 ## 1.1.0 - 2026-01-02
 - Add Symfony HttpClient support for loading JSON from URL. Thanks to @sonnymilton
 - Update to PHP 8.5 support.

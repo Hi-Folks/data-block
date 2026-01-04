@@ -27,7 +27,6 @@ trait TypeableBlock
         }
 
         return $defaultValue;
-
     }
 
     /**
@@ -51,7 +50,6 @@ trait TypeableBlock
         }
 
         return $defaultValue;
-
     }
 
     /**
@@ -60,8 +58,11 @@ trait TypeableBlock
      * @param int|null $defaultValue the default integer value returned if no value is found
      * @param non-empty-string $charNestedKey for nested field the . character is the default
      */
-    public function getInt(int|string $key, ?int $defaultValue = null, string $charNestedKey = "."): ?int
-    {
+    public function getInt(
+        int|string $key,
+        ?int $defaultValue = null,
+        string $charNestedKey = ".",
+    ): ?int {
         $returnValue = $this->get($key, null, $charNestedKey);
 
         if (is_scalar($returnValue)) {
@@ -77,8 +78,11 @@ trait TypeableBlock
      * @param int $defaultValue the default integer value returned if no value is found
      * @param non-empty-string $charNestedKey for nested field the . character is the default
      */
-    public function getIntStrict(int|string $key, int $defaultValue = 0, string $charNestedKey = "."): int
-    {
+    public function getIntStrict(
+        int|string $key,
+        int $defaultValue = 0,
+        string $charNestedKey = ".",
+    ): int {
         $returnValue = $this->get($key, $defaultValue, $charNestedKey);
 
         if ($returnValue === null) {
@@ -126,6 +130,50 @@ trait TypeableBlock
 
         if (is_scalar($returnValue)) {
             return boolval($returnValue);
+        }
+
+        return $defaultValue;
+    }
+
+    /**
+     * Return a forced float value from the get() method
+     * @param int|string $key the field key, can be nested for example "0.author.score"
+     * @param float|null $defaultValue the default float value returned if no value is found
+     * @param non-empty-string $charNestedKey for nested field the . character is the default
+     */
+    public function getFloat(
+        int|string $key,
+        ?float $defaultValue = null,
+        string $charNestedKey = ".",
+    ): ?float {
+        $returnValue = $this->get($key, null, $charNestedKey);
+
+        if (is_scalar($returnValue)) {
+            return floatval($returnValue);
+        }
+
+        return $defaultValue;
+    }
+
+    /**
+     * Return a forced float value from the get() method
+     * @param int|string $key the field key, can be nested for example "0.author.score"
+     * @param float $defaultValue the default float value returned if no value is found
+     * @param non-empty-string $charNestedKey for nested field the . character is the default
+     */
+    public function getFloatStrict(
+        int|string $key,
+        float $defaultValue = 0.0,
+        string $charNestedKey = ".",
+    ): float {
+        $returnValue = $this->get($key, $defaultValue, $charNestedKey);
+
+        if ($returnValue === null) {
+            return $defaultValue;
+        }
+
+        if (is_scalar($returnValue)) {
+            return floatval($returnValue);
         }
 
         return $defaultValue;
