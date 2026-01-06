@@ -31,6 +31,14 @@
 This PHP package provides classes and methods for easily managing, querying, filtering, and setting nested data structures.
 The PHP Data Block package offers a streamlined approach to handling nested data, whether you're working with complex JSON data, hierarchical configurations, or deeply nested arrays.
 
+## Articles about PHP DataBlock
+
+If you want to learn more about DataBlock through real-world examples and tutorials, here are some articles that mention or use it:
+
+- **Laravel News** — [Handle Nested Data Structures in PHP with the Data Block Package](https://laravel-news.com/data-block)
+- **Roberto Butti** — [Handling Nested PHP Arrays Using DataBlock](https://dev.to/robertobutti/handling-nested-php-arrays-using-datablock-26d7)
+- **Roberto Butti** — [Exploring Real-World APIs with DataBlock](https://dev.to/robertobutti/exploring-real-world-apis-with-datablock-459i)
+
 ## What you can do with PHP Data Block
 
 For example, with PHP Data Block, you can retrieve complex JSON from an API and then filter, sort, and handle the data.
