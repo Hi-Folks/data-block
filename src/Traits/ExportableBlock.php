@@ -17,7 +17,6 @@ trait ExportableBlock
         return $this->data;
     }
 
-
     /**
      * Returns the JSON String (pretty format by default)
      * @return string|false
@@ -44,7 +43,6 @@ trait ExportableBlock
         }
         return json_decode($jsonString, associative: false);
     }
-
 
     /**
      * Returns the YAML String
