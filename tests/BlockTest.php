@@ -121,7 +121,7 @@ final class BlockTest extends TestCase
         $this->assertIsString($composer->get("require.php"));
 
         $this->assertTrue(
-            $composer->getBlock("require")->has("^8.3|^8.4|^8.5"),
+            $composer->getBlock("require")->has("^8.2|^8.3|^8.4|^8.5"),
         );
 
         $this->assertTrue($composer->getBlock("require")->hasKey("php"));
