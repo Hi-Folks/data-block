@@ -57,7 +57,7 @@
         ],
         "test": "vendor/bin/phpunit  --exclude-group url",
         "test-with-url": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage",
+        "test-coverage": "vendor/bin/phpunit    --coverage-html ./output-coverage-html",
         "phpstan": "vendor/bin/phpstan",
         "format": "vendor/bin/pint",
         "rector": "vendor/bin/rector"

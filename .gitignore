@@ -13,3 +13,4 @@ vendor
 .php-cs-fixer.cache
 .zed
 .DS_Store
+output-coverage-html/
