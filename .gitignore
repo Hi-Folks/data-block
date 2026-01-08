@@ -12,3 +12,4 @@ psalm.xml
 vendor
 .php-cs-fixer.cache
 .zed
+.DS_Store

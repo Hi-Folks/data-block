@@ -7,7 +7,7 @@ class LoadJsonObjectHttpTest extends TestCase
 {
     public function testLoadJsonObjectHttp(): void
     {
-        $jsonString = file_get_contents(__DIR__ . "/../data/story.json");
+        $jsonString = file_get_contents(__DIR__ . "/data/story.json");
 
         $composerContent = Block::fromJsonString($jsonString);
 

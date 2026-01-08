@@ -25,8 +25,8 @@
     },
     "require-dev": {
         "laravel/pint": "^1.2",
-        "pestphp/pest": "^4.0",
         "phpstan/phpstan": "^2",
+        "phpunit/phpunit": "^11",
         "rector/rector": "^2",
         "symfony/http-client": "^7.4|^8.0"
     },
@@ -55,18 +55,15 @@
             "@format",
             "@phpstan"
         ],
-        "test": "vendor/bin/pest  --exclude-group=url",
-        "test-with-url": "vendor/bin/pest",
+        "test": "vendor/bin/phpunit  --exclude-group url",
+        "test-with-url": "vendor/bin/phpunit",
         "test-coverage": "vendor/bin/pest --coverage",
         "phpstan": "vendor/bin/phpstan",
         "format": "vendor/bin/pint",
         "rector": "vendor/bin/rector"
     },
     "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true
