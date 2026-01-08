@@ -68,5 +68,14 @@ final class BlockAppendTest extends TestCase
             ["a", "b", ["c", "d"]],
             array_values($data1->toArray()),
         );
+
+        $data1->appendItem($arrayData2, "newkey");
+        $this->assertCount(4, $data1);
+
+        $this->assertSame(
+            ["a", "b", ["c", "d"], "newkey" => ["c", "d"]],
+            $data1->toArray(),
+        );
+
     }
 }
