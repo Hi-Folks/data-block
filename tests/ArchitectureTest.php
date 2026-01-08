@@ -29,7 +29,7 @@ final class ArchitectureTest extends TestCase
     public function testNoForbiddenGlobals(): void
     {
         // Use the newest supported parser API
-        $parser = new ParserFactory()->createForNewestSupportedVersion();
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
 
         $errors = [];
 
