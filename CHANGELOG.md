@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 - 2026-01-08
+- Removing PestPHP, using phpunit 11
+- Support from PHP 8.2 to 8.5
+
 ## 1.1.1 - 2026-01-04
 - Adding `getFloat()` method for returing casted float value (nullable).
 - Adding `getFloatStrict()` method for returning strict float (not nullable).
