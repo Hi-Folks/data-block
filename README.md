@@ -455,9 +455,15 @@ $nothing = $fruits->get("a-missing-key", "DEFAULT VALUE"); // PHP warning
 
 ```php
 $fruits = Block::make($fruitsArray)
-    ->throwOnMissingKey(\OutOfBoundsException::class);
+    ->throwOnMissingKey();
 
 $nothing = $fruits->get("a-missing-key"); // throws exception
+
+
+$fruits->throwOnMissingKey(
+    MyMissingKeyException::class,
+    "The key in the configuration JSON file doens't exist?"
+);
 ```
 
 You can also pass your own exception class (must extend `\Throwable`).
