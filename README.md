@@ -423,6 +423,54 @@ For example, `$data->getBlock("avocado.color")` returns a Block object with just
 
 If you are going to access a non-valid key, an empty Block object is returned, so the `$data->getBlock("avocado.notexists")` returns a Block object with a length equal to 0.
 
+### Missing key behavior
+
+By default, accessing a non-existing key returns the provided default value **silently**.
+
+You can configure three behaviors:
+
+- **Silent** (default)
+- **Warning** (non-fatal)
+- **Exception**
+
+
+#### Silent (default)
+
+```php
+$fruits = Block::make($fruitsArray);
+// OR if you want to be more explicit: $fruits = Block::make($fruitsArray)->silentOnMissingKey();
+
+$nothing = $fruits->get("a-missing-key", "DEFAULT VALUE"); // no warning, no exception
+```
+
+#### Warning
+
+```php
+$fruits = Block::make($fruitsArray)->warnOnMissingKey();
+
+$nothing = $fruits->get("a-missing-key", "DEFAULT VALUE"); // PHP warning
+```
+
+#### Exception
+
+```php
+$fruits = Block::make($fruitsArray)
+    ->throwOnMissingKey(\OutOfBoundsException::class);
+
+$nothing = $fruits->get("a-missing-key"); // throws exception
+```
+
+You can also pass your own exception class (must extend `\Throwable`).
+
+#### Summary for the "missing key behavior"
+
+| Mode      | Result                               |
+| --------- | ------------------------------------ |
+| Silent (default behavior)    | Returns default value                |
+| Warning   | Emits warning, returns default value |
+| Exception | Throws exception                     |
+
+
 ### The `set()` method
 The `set()` method supports keys with the dot (or custom) notation for setting values for nested data.
 If a key doesn't exist, the `set()` method creates one and sets the value.

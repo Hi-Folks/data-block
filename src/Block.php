@@ -38,11 +38,71 @@ final class Block implements Iterator, ArrayAccess, Countable
     /** @var array<int|string, mixed> */
     private array $data;
 
+    private const MISSING_KEY_SILENT   = 0;
+    private const MISSING_KEY_WARNING  = 1;
+    private const MISSING_KEY_EXCEPTION = 2;
+
+    private int $missingKeyMode = self::MISSING_KEY_SILENT;
+
+    /** @var class-string<\Throwable>|null */
+    private ?string $missingKeyExceptionClass = null;
+
     /** @param array<int|string, mixed> $data */
     public function __construct(array $data = [], private bool $iteratorReturnsBlock = true)
     {
         $this->data = $data;
     }
+
+    public function silentOnMissingKey(): self
+    {
+        $this->missingKeyMode = self::MISSING_KEY_SILENT;
+        return $this;
+    }
+
+    public function warnOnMissingKey(bool $enabled = true): self
+    {
+        $this->missingKeyMode = $enabled
+            ? self::MISSING_KEY_WARNING
+            : self::MISSING_KEY_SILENT;
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param class-string<\Throwable> $exceptionClass
+     */
+    public function throwOnMissingKey(string $exceptionClass = \OutOfBoundsException::class): self
+    {
+        /** @phpstan-ignore function.alreadyNarrowedType, booleanAnd.alwaysFalse */
+        if (!is_subclass_of($exceptionClass, \Throwable::class) && $exceptionClass !== \Throwable::class) {
+            throw new \InvalidArgumentException("Exception class must extend Throwable");
+        }
+
+        $this->missingKeyMode = self::MISSING_KEY_EXCEPTION;
+        $this->missingKeyExceptionClass = $exceptionClass;
+
+        return $this;
+    }
+
+    private function handleMissingKey(int|string $key, mixed $defaultValue): mixed
+    {
+        switch ($this->missingKeyMode) {
+            case self::MISSING_KEY_WARNING:
+                trigger_error("Undefined array key: " . $key, E_USER_WARNING);
+                return $defaultValue;
+
+            case self::MISSING_KEY_EXCEPTION:
+                $class = $this->missingKeyExceptionClass ?? \OutOfBoundsException::class;
+                throw new $class("Undefined array key: " . $key);
+
+            case self::MISSING_KEY_SILENT:
+            default:
+                return $defaultValue;
+        }
+    }
+
+
 
     public function iterateBlock(bool $returnsBlock = true): self
     {
@@ -89,13 +149,17 @@ final class Block implements Iterator, ArrayAccess, Countable
                     } elseif ($nestedValue instanceof Block) {
                         $nestedValue = $nestedValue->get($nestedKey);
                     } else {
-                        return $defaultValue;
+                        return $this->handleMissingKey($key, $defaultValue);
                     }
                 }
                 return $nestedValue;
             }
         }
-        return $this->data[$key] ?? $defaultValue;
+        if (!array_key_exists($key, $this->data)) {
+            return $this->handleMissingKey($key, $defaultValue);
+        }
+
+        return $this->data[$key];
     }
 
 
@@ -247,9 +311,4 @@ final class Block implements Iterator, ArrayAccess, Countable
         $this->set($targetKey, $callable($this->get($key)));
         return $this;
     }
-
-
-
-
-
 }
