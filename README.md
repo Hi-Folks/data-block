@@ -458,15 +458,17 @@ $fruits = Block::make($fruitsArray)
     ->throwOnMissingKey();
 
 $nothing = $fruits->get("a-missing-key"); // throws exception
-
-
-$fruits->throwOnMissingKey(
-    MyMissingKeyException::class,
-    "The key in the configuration JSON file doens't exist?"
-);
 ```
 
 You can also pass your own exception class (must extend `\Throwable`).
+
+```php
+$fruits->throwOnMissingKey(
+    MyMissingKeyException::class,
+    "The key in the JSON configuration file does not exist?"
+);
+$nothing = $fruits->get("a-missing-key"); // throws your custom exception
+```
 
 #### Summary for the "missing key behavior"
 
