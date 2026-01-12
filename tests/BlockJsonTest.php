@@ -109,4 +109,10 @@ final class BlockJsonTest extends TestCase
 
         unlink("fruits.json");
     }
+
+    public function testEmptyJson(): void
+    {
+        $data = Block::fromJsonFile("file-not-exists");
+        $this->assertSame(0, $data->count());
+    }
 }

@@ -38,11 +38,118 @@ final class Block implements Iterator, ArrayAccess, Countable
     /** @var array<int|string, mixed> */
     private array $data;
 
+    /**
+     * Missing key handling mode: return default value silently.
+     */
+    private const MISSING_KEY_SILENT = 0;
+
+    /**
+     * Missing key handling mode: emit a warning and continue execution.
+     */
+    private const MISSING_KEY_WARNING = 1;
+
+    /**
+     * Missing key handling mode: throw an exception.
+     */
+    private const MISSING_KEY_EXCEPTION = 2;
+
+    /**
+     * Current missing key handling mode.
+     *
+     * One of:
+     * - self::MISSING_KEY_SILENT
+     * - self::MISSING_KEY_WARNING
+     * - self::MISSING_KEY_EXCEPTION
+     */
+    private int $missingKeyMode = self::MISSING_KEY_SILENT;
+
+
+    /** @var class-string<\Throwable>|null Exception class to throw on missing key */
+    private ?string $missingKeyExceptionClass = null;
+    /** @var string|null Optional hint appended to the exception message */
+    private ?string $missingKeyExceptionHint = null;
+
     /** @param array<int|string, mixed> $data */
     public function __construct(array $data = [], private bool $iteratorReturnsBlock = true)
     {
         $this->data = $data;
     }
+
+    /**
+     * Use silent mode when accessing missing keys (return default value).
+     */
+    public function silentOnMissingKey(): self
+    {
+        $this->missingKeyMode = self::MISSING_KEY_SILENT;
+        $this->missingKeyExceptionClass = null;
+        $this->missingKeyExceptionHint = null;
+        return $this;
+    }
+
+    /**
+     * Emit a warning when accessing a missing key.
+     */
+    public function warnOnMissingKey(): self
+    {
+        $this->missingKeyMode = self::MISSING_KEY_WARNING;
+
+        return $this;
+    }
+
+    /**
+     * Configure the Block object to throw an exception when accessing a missing key.
+     *
+     * When enabled, any access to a non-existing key will throw an exception of the
+     * given class instead of returning the default value.
+     *
+     * An optional hint can be provided to add extra context to the exception message.
+     *
+     * @param class-string<\Throwable> $exceptionClass Exception class to throw (must extend Throwable)
+     * @param string|null $hint Optional additional context appended to the exception message
+     *
+     * @return self Returns the current instance for method chaining.
+     *
+     * @throws \InvalidArgumentException If the given class does not extend Throwable
+     */
+    public function throwOnMissingKey(
+        string $exceptionClass = \OutOfBoundsException::class,
+        ?string $hint = null,
+    ): self {
+        /** @phpstan-ignore function.alreadyNarrowedType, booleanAnd.alwaysFalse */
+        if (!is_subclass_of($exceptionClass, \Throwable::class) && $exceptionClass !== \Throwable::class) {
+            throw new \InvalidArgumentException("Exception class must extend Throwable");
+        }
+
+        $this->missingKeyMode = self::MISSING_KEY_EXCEPTION;
+        $this->missingKeyExceptionClass = $exceptionClass;
+        $this->missingKeyExceptionHint = $hint;
+
+        return $this;
+    }
+
+    private function handleMissingKey(int|string $key, mixed $defaultValue): mixed
+    {
+        switch ($this->missingKeyMode) {
+            case self::MISSING_KEY_WARNING:
+                trigger_error("Undefined array key: " . $key, E_USER_WARNING);
+                return $defaultValue;
+
+            case self::MISSING_KEY_EXCEPTION:
+                $class = $this->missingKeyExceptionClass ?? \OutOfBoundsException::class;
+                $message = "Undefined array key: " . $key;
+                if ($this->missingKeyExceptionHint) {
+                    $message = $message . " (" . $this->missingKeyExceptionHint . ")";
+                }
+
+                throw new $class($message);
+
+            case self::MISSING_KEY_SILENT:
+            default:
+                return $defaultValue;
+        }
+    }
+
+
 
     public function iterateBlock(bool $returnsBlock = true): self
     {
@@ -89,13 +196,17 @@ final class Block implements Iterator, ArrayAccess, Countable
                     } elseif ($nestedValue instanceof Block) {
                         $nestedValue = $nestedValue->get($nestedKey);
                     } else {
-                        return $defaultValue;
+                        return $this->handleMissingKey($key, $defaultValue);
                     }
                 }
                 return $nestedValue;
             }
         }
-        return $this->data[$key] ?? $defaultValue;
+        if (!array_key_exists($key, $this->data)) {
+            return $this->handleMissingKey($key, $defaultValue);
+        }
+
+        return $this->data[$key];
     }
 
 
@@ -247,9 +358,4 @@ final class Block implements Iterator, ArrayAccess, Countable
         $this->set($targetKey, $callable($this->get($key)));
         return $this;
     }
-
-
-
-
-
 }
