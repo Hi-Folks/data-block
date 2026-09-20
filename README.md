@@ -984,14 +984,23 @@ $assets->dump();
 ```
 
 ### The `orderBy()` method
-You can order or sort data for a specific key.
+Use `orderBy()` with a `SortCriterion` to sort data by one field. The named
+`asc()` and `desc()` constructors make the direction explicit, provide good IDE
+autocomplete, and prevent invalid directions.
+
+```php
+use HiFolks\DataType\SortCriterion;
+
+$sorted = $orders->orderBy(SortCriterion::desc('totals.amount'));
+```
+
 For example, if you want to retrieve the data at `story.content.body` key and sort them by `component` key:
 
 ```php
 $composerContent = Block::fromJsonString($jsonString);
-$bodyComponents = $composerContent->getBlock("story.content.body")->orderBy(
-    "component", "asc"
-);
+$bodyComponents = $composerContent
+    ->getBlock('story.content.body')
+    ->orderBy(SortCriterion::asc('component'));
 ```
 
 You can also order data for a nested attribute.
@@ -999,14 +1008,89 @@ Consider retrieving a remote JSON like the dummy JSON posts and then ordering th
 
 ```php
 use HiFolks\DataType\Block;
+use HiFolks\DataType\SortCriterion;
 
 $posts = Block
     ::fromJsonUrl("https://dummyjson.com/posts")
     ->getBlock("posts");
 echo $posts->count(); // 30
-$mostLikedPosts = $posts->orderBy("reactions.likes", "desc");
+$mostLikedPosts = $posts->orderBy(
+    SortCriterion::desc('reactions.likes'),
+);
 $mostLikedPosts->dump();
 ```
+
+Sorting is stable: rows with the same value keep their original relative
+order. Existing keys are also preserved, which is especially useful when keys
+are IDs. Chain `values()` when you need a zero-based list instead:
+
+```php
+$sorted = $orders->orderBy(SortCriterion::desc('totals.amount'));
+$sortedAndReindexed = $sorted->values();
+```
+
+The earlier syntax remains supported for backward compatibility and for
+directions coming from configuration. String directions are case-insensitive
+and invalid values throw an `InvalidArgumentException`:
+
+```php
+use HiFolks\DataType\Enums\SortDirection;
+
+$orders->orderBy('totals.amount', SortDirection::DESC);
+$orders->orderBy('totals.amount', 'DESC');
+```
+
+Missing and `null` field values are placed last for both ascending and
+descending order. Arrays and objects are not directly comparable, so they are
+also placed last. This makes incomplete or unexpectedly structured rows behave
+predictably rather than affecting the useful sorted values.
+
+### The `orderByMany()` method
+
+Use `orderByMany()` when the next field should break ties in the previous one.
+Criteria are applied from left to right and nested fields are supported:
+
+```php
+use HiFolks\DataType\SortCriterion;
+
+$report = $opportunities->orderByMany([
+    SortCriterion::asc('Assigned Solution Engineer'),
+    SortCriterion::desc('_created_date'),
+]);
+```
+
+`orderByMany()` accepts a list of `SortCriterion` objects, giving single-field
+and multi-field sorting the same API. An empty list returns an unchanged copy.
+
+### The `sort()` method
+
+Use `sort()` when ordering depends on a custom business rule rather than field
+directions:
+
+```php
+$sorted = $opportunities->sort(
+    fn (Block $a, Block $b): int =>
+        ($a->get('probability') * $a->get('amount'))
+        <=> ($b->get('probability') * $b->get('amount')),
+);
+```
+
+The comparator must return an integer below, equal to, or above zero. It
+receives `Block` rows by default; when iteration is configured with
+`Block::make($rows, false)` or `iterateBlock(false)`, it receives the raw array
+rows instead. Like `orderBy()`, callback sorting is stable, preserves keys, and
+does not modify the original Block.
+
+| Need | Method |
+|---|---|
+| Sort by one field | `orderBy(SortCriterion::desc('amount'))` |
+| Sort by several fields | `orderByMany([SortCriterion::asc('team'), SortCriterion::desc('amount')])` |
+| Apply a custom comparison rule | `sort(fn (Block $a, Block $b): int => ...)` |
+| Reindex sorted results | `->values()` |
+
+These methods sort an in-memory Block. For very large CSV exports, stream or
+chunk the input first and avoid a global sort unless the selected data fits in
+memory.
 
 ### The `select()` method
 The `select()` method allows you to select only the needed fields.

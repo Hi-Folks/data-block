@@ -6,6 +6,8 @@ namespace HiFolks\DataType\Traits;
 
 use HiFolks\DataType\Block;
 use HiFolks\DataType\Enums\Operator;
+use HiFolks\DataType\Enums\SortDirection;
+use HiFolks\DataType\SortCriterion;
 
 trait QueryableBlock
 {
@@ -111,19 +113,112 @@ trait QueryableBlock
         );
     }
 
-    public function orderBy(string|int $field, string $order = "asc"): self
+    public function orderBy(
+        SortCriterion|string|int $field,
+        SortDirection|string $order = SortDirection::ASC,
+    ): self {
+        if ($field instanceof SortCriterion) {
+            if (func_num_args() > 1) {
+                throw new \InvalidArgumentException(
+                    "A SortCriterion already defines its sort direction",
+                );
+            }
+
+            return $this->orderByMany([$field]);
+        }
+
+        $direction = self::normalizeSortDirection($order);
+
+        return $this->orderByMany([
+            $direction === SortDirection::ASC
+                ? SortCriterion::asc($field)
+                : SortCriterion::desc($field),
+        ]);
+    }
+
+    /**
+     * Sort by multiple fields, applying criteria from left to right.
+     *
+     * @param list<SortCriterion> $criteria
+     */
+    public function orderByMany(array $criteria): self
     {
-        $map = [];
+        self::validateSortCriteria($criteria);
+
+        $array = $this->data;
+        if ($criteria === []) {
+            return self::make($array, $this->iteratorReturnsBlock);
+        }
+
+        uasort(
+            $array,
+            function (mixed $left, mixed $right) use ($criteria): int {
+                foreach ($criteria as $criterion) {
+                    $leftValue = $this->sortFieldValue(
+                        $left,
+                        $criterion->field,
+                    );
+                    $rightValue = $this->sortFieldValue(
+                        $right,
+                        $criterion->field,
+                    );
+                    $leftIsSortable = is_scalar($leftValue);
+                    $rightIsSortable = is_scalar($rightValue);
+
+                    if (!$leftIsSortable && !$rightIsSortable) {
+                        continue;
+                    }
+                    if (!$leftIsSortable) {
+                        return 1;
+                    }
+                    if (!$rightIsSortable) {
+                        return -1;
+                    }
+
+                    $comparison = $leftValue <=> $rightValue;
+                    if ($comparison === 0) {
+                        continue;
+                    }
+                    return $criterion->direction === SortDirection::DESC
+                        ? -$comparison
+                        : $comparison;
+                }
+
+                return 0;
+            },
+        );
+
+        return self::make($array, $this->iteratorReturnsBlock);
+    }
+
+    /**
+     * Sort with a custom comparator.
+     *
+     * The comparator receives items in the Block's configured iteration form.
+     *
+     * @param callable(mixed, mixed): mixed $comparator
+     */
+    public function sort(callable $comparator): self
+    {
         $array = $this->data;
 
-        foreach ($this as $key => $item) {
-            $map[$key] = $item->get($field);
-        }
-        if ($order === "desc") {
-            array_multisort($map, SORT_DESC, $array);
-        } else {
-            array_multisort($map, $array);
-        }
+        uasort(
+            $array,
+            function (mixed $left, mixed $right) use ($comparator): int {
+                $result = $comparator(
+                    $this->sortableItem($left),
+                    $this->sortableItem($right),
+                );
+
+                if (!is_int($result)) {
+                    throw new \UnexpectedValueException(
+                        "Sort comparator must return an integer",
+                    );
+                }
+
+                return $result;
+            },
+        );
 
         return self::make($array, $this->iteratorReturnsBlock);
     }
@@ -324,6 +419,64 @@ trait QueryableBlock
         return is_int($value)
             || is_float($value)
             || (is_string($value) && $value !== "");
+    }
+
+    private function sortFieldValue(mixed $item, int|string $field): mixed
+    {
+        if ($item instanceof Block) {
+            $item = $item->toArray();
+        }
+
+        if (is_array($item)) {
+            $item = Block::make($item, false);
+        }
+
+        if (!$item instanceof Block) {
+            return null;
+        }
+
+        return $item->get($field);
+    }
+
+    private static function normalizeSortDirection(
+        SortDirection|string $direction,
+    ): SortDirection {
+        if ($direction instanceof SortDirection) {
+            return $direction;
+        }
+
+        $direction = SortDirection::tryFrom(strtolower($direction));
+
+        return $direction ?? throw new \InvalidArgumentException(
+            "Sort direction must be 'asc' or 'desc'",
+        );
+    }
+
+    /** @param array<array-key, mixed> $criteria */
+    private static function validateSortCriteria(array $criteria): void
+    {
+        if (!array_is_list($criteria)) {
+            throw new \InvalidArgumentException(
+                "Sort criteria must be provided as a list of SortCriterion objects",
+            );
+        }
+
+        foreach ($criteria as $criterion) {
+            if (!$criterion instanceof SortCriterion) {
+                throw new \InvalidArgumentException(
+                    "Sort criteria must be provided as a list of SortCriterion objects",
+                );
+            }
+        }
+    }
+
+    private function sortableItem(mixed $item): mixed
+    {
+        if ($this->iteratorReturnsBlock && is_array($item)) {
+            return Block::make($item, $this->iteratorReturnsBlock);
+        }
+
+        return $item;
     }
 
     private static function queryValueHas(mixed $actual, mixed $expected): bool

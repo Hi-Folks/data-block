@@ -1,7 +1,10 @@
 # Changelog
 
-## 2.0.1 - WIP
+## 2.1.0 - WIP
 - Added `countBy()` for counting rows grouped by a field.
+- Added stable multi-field and callback sorting with key preservation, typed
+  `SortCriterion` objects, and the `SortDirection` enum.
+- Changed `orderBy()` to preserve keys; use `values()` to explicitly reindex.
 
 ## 2.0.0 - 2026-09-20
 - Added configurable missing-key behavior: silent, warning, or exception.

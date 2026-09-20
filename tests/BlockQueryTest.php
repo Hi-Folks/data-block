@@ -77,7 +77,8 @@ final class BlockQueryTest extends TestCase
 
         $bodyComponents = $composerContent
             ->getBlock("story.content.body")
-            ->orderBy("component", "asc");
+            ->orderBy("component", "asc")
+            ->values();
 
         $this->assertCount(10, $bodyComponents);
         $this->assertSame("banner", $bodyComponents->get("0.component"));
@@ -85,7 +86,8 @@ final class BlockQueryTest extends TestCase
 
         $bodyComponents = $composerContent
             ->getBlock("story.content.body")
-            ->orderBy("component", "desc");
+            ->orderBy("component", "desc")
+            ->values();
 
         $this->assertCount(10, $bodyComponents);
         $this->assertSame("banner", $bodyComponents->get("9.component"));
@@ -107,17 +109,19 @@ final class BlockQueryTest extends TestCase
         $lovePosts = $posts->where("tags", Operator::HAS, "love");
         $this->assertCount(9, $lovePosts);
 
-        $mostViewedPosts = $posts->orderBy("views", "desc");
+        $mostViewedPosts = $posts->orderBy("views", "desc")->values();
         $this->assertCount(30, $mostViewedPosts);
         $this->assertSame(2, $mostViewedPosts->get("0.id"));
         $this->assertSame(4884, $mostViewedPosts->get("0.views"));
 
-        $lessViewedPosts = $posts->orderBy("views"); // asc default
+        $lessViewedPosts = $posts->orderBy("views")->values(); // asc default
         $this->assertCount(30, $lessViewedPosts);
         $this->assertSame(6, $lessViewedPosts->get("0.id"));
         $this->assertSame(38, $lessViewedPosts->get("0.views"));
 
-        $mostLikedPosts = $posts->orderBy("reactions.likes", "desc");
+        $mostLikedPosts = $posts
+            ->orderBy("reactions.likes", "desc")
+            ->values();
         $this->assertCount(30, $mostLikedPosts);
         $this->assertSame(3, $mostLikedPosts->get("0.id"));
         $this->assertSame(1448, $mostLikedPosts->get("0.reactions.likes"));
