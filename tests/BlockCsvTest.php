@@ -22,13 +22,12 @@ final class BlockCsvTest extends TestCase
 
     public function testEagerLoadingUsesHeadersAndHandlesQuotedMultilineFields(): void
     {
-        $file = $this->csvFile(<<<'CSV'
-            Name,Stage,Notes
-            "Acme, Inc.",Proposal,"First line
-            Second line"
-
-            Globex,Negotiation,Simple
-            CSV);
+        $file = $this->csvFile(
+            "Name,Stage,Notes\n"
+            . '"Acme, Inc.",Proposal,"First line' . "\n"
+            . 'Second line"' . "\n\n"
+            . "Globex,Negotiation,Simple\n",
+        );
 
         $rows = Block::fromCsvFile($file);
 
