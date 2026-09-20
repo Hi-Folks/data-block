@@ -57,7 +57,7 @@ trait AggregatableBlock
         int|string $valueField,
         int|string|null $defaultGroup = null,
     ): self {
-        return $this->groupBy($groupField, $defaultGroup)->forEach(
+        return $this->groupBy($groupField, $defaultGroup)->map(
             fn(Block $group): int|float => $group->sum($valueField),
         );
     }
@@ -67,7 +67,7 @@ trait AggregatableBlock
         int|string $valueField,
         int|string|null $defaultGroup = null,
     ): self {
-        return $this->groupBy($groupField, $defaultGroup)->forEach(
+        return $this->groupBy($groupField, $defaultGroup)->map(
             fn(Block $group): ?float => $group->average($valueField),
         );
     }
@@ -77,7 +77,7 @@ trait AggregatableBlock
         int|string $valueField,
         int|string|null $defaultGroup = null,
     ): self {
-        return $this->groupBy($groupField, $defaultGroup)->forEach(
+        return $this->groupBy($groupField, $defaultGroup)->map(
             fn(Block $group): int|float|null => $group->min($valueField),
         );
     }
@@ -87,7 +87,7 @@ trait AggregatableBlock
         int|string $valueField,
         int|string|null $defaultGroup = null,
     ): self {
-        return $this->groupBy($groupField, $defaultGroup)->forEach(
+        return $this->groupBy($groupField, $defaultGroup)->map(
             fn(Block $group): int|float|null => $group->max($valueField),
         );
     }

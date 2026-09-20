@@ -961,7 +961,7 @@ Using an explicit default keeps missing data visible without confusing it with v
 
 ### The `groupByFunction()` method
 
-The `groupByFunction()` method allows you to group items from an Block based on a grouping logic provided by a callback function (closure). The function returns an associative array where the keys represent groupings defined by the callback, and the values are arrays of elements that belong to each group.
+The `groupByFunction()` method groups items using custom callback logic. Like the other callback-based methods, it receives the current item followed by its key. Nested arrays are provided as `Block` objects by default.
 
 ```php
 $fruits = [
@@ -973,10 +973,10 @@ $fruits = [
 ];
 $fruitsBlock = Block::make($fruits);
 $groupedByQuantityRange = $fruitsBlock->groupByFunction(
-    fn($fruit): string =>
+    fn(Block $fruit): string =>
         match (true) {
-            $fruit['quantity'] < 10 => 'Low',
-            $fruit['quantity'] < 15 => 'Medium',
+            $fruit->getIntStrict('quantity') < 10 => 'Low',
+            $fruit->getIntStrict('quantity') < 15 => 'Medium',
             default => 'High',
         },
 );
@@ -1158,10 +1158,59 @@ foreach ($table->iterateBlock(false) as $key => $item) {
 }
 ```
 
-### Using forEach() method
-The `Block` class implements the `forEach()`method.
-> If you need to walk through the `Block` object, you can use the `forEach()` method.
-You can specify the function as an argument of the `forEach()` method to manage each single element.
+### Choosing the right callback helper
+
+Each helper has one clear responsibility. Keeping these operations separate makes a data pipeline easier to read and prevents callback return values from changing data accidentally.
+
+| Goal | Method | Example | Result |
+| --- | --- | --- | --- |
+| Compare one field with a known operator | `where()` | `where('amount', Operator::GREATER_THAN, 0)` | A filtered `Block` |
+| Select items using custom logic | `filter()` | `filter(fn(Block $row): bool => ...)` | A filtered `Block` |
+| Transform every item | `map()` | `map(fn(Block $row): array => ...)` | A transformed `Block` |
+| Perform a side effect | `forEach()` | `forEach(fn(Block $row) => logger($row))` | The original `Block` |
+| Combine all items | `reduce()` | `reduce(fn($total, $row) => ..., 0)` | The accumulated value |
+
+This distinction makes fluent code communicate its intention directly: `filter()` selects, `map()` transforms, `forEach()` observes, and `reduce()` combines.
+
+#### `where()` vs `filter()`
+
+Both methods select items, but they express different kinds of conditions:
+
+> Use `where()` for one field comparison. Use `filter()` when the condition needs custom callback logic.
+
+| Use case | Method |
+| --- | --- |
+| `amount > 0` | `where()` |
+| `amount > 0 AND status !== cancelled` | `filter()` |
+| Custom business rule | `filter()` |
+
+Internally, `where()` can be understood as a convenient specialized filter, while `filter()` is the flexible escape hatch.
+
+For a direct field, operator, and value comparison, `where()` is shorter and communicates the rule clearly:
+
+```php
+$paidOrders = $orders->where(
+    'amount',
+    Operator::GREATER_THAN,
+    0,
+);
+```
+
+Use `filter()` when the decision involves multiple fields, nullable values, calculations, or an application-specific rule:
+
+```php
+$actionableOrders = $orders->filter(
+    fn(Block $order): bool =>
+        $order->getFloatStrict('amount') > 0
+        && $order->getStringStrict('status') !== 'cancelled',
+);
+```
+
+`where()` is the convenient declarative option; `filter()` is the flexible callback-based option.
+
+### Transforming items with `map()`
+
+`map()` transforms every item and returns the callback results in a new `Block`. Use it when the shape or value of each item needs to change. Keys are preserved, and the original block is unchanged, so transformations can be chained without losing the source data.
 
 ```php
 $url = "https://dummyjson.com/posts";
@@ -1171,9 +1220,9 @@ $posts = Block::fromJsonUrl($url) // Load the Block from the remote URL
         field:"tags",
         operator: Operator::HAS,
         value: "love",
-        preseveKeys: false,
+        preserveKeys: false,
     ) // filter the posts, selecting only the posts with tags "love"
-    ->forEach(fn($element): array => [
+    ->map(fn(Block $element): array => [
         "title" => strtoupper((string) $element->get("title")),
         "tags" => count($element->get("tags")),
     ]);
@@ -1183,6 +1232,43 @@ $posts = Block::fromJsonUrl($url) // Load the Block from the remote URL
 // $posts->get("0.title"); // "HOPES AND DREAMS WERE DASHED THAT DAY."
 // $posts->get("0.tags"); // 3
 ```
+
+### Selecting items with `filter()`
+
+Use `filter()` when `where()` is not expressive enough—for example, when a decision depends on multiple fields, nullable data, or application-specific logic. The callback must return a boolean, which prevents ambiguous truthy or falsey results. Keys are preserved so records keep their identity.
+
+```php
+$priorities = $rows->filter(
+    fn(Block $row): bool =>
+        $row->getStringStrict('assigned_se') === ''
+        && $row->getFloatStrict('amount') > 0,
+);
+```
+
+Call `values()` when a zero-based list is needed explicitly:
+
+```php
+$priorities = $priorities->values();
+```
+
+### Performing side effects with `forEach()`
+
+`forEach()` visits every item without replacing the block's values. It returns the original `Block`, so it is intended for logging, output, notifications, or other side effects. Its callback result is intentionally ignored; this prevents a logging callback from accidentally turning the data into `null` values. Use `map()` when callback results should become the new values.
+
+```php
+$rows->forEach(
+    fn(Block $row, int|string $key) => logger()->info(
+        'Processing row',
+        ['key' => $key, 'row' => $row->toArray()],
+    ),
+);
+```
+
+### Callback arguments and item representation
+
+`map()`, `filter()`, `forEach()`, `reduce()`, and `groupByFunction()` consistently pass the item first and its key second. Callbacks may omit the key when it is not needed. This shared contract makes callbacks reusable and removes method-specific argument surprises.
+
+Nested arrays are `Block` objects by default. After calling `iterateBlock(false)`, the same callback methods receive native arrays instead. Scalar items remain scalar in either mode.
 
 ## Validating Data
 
@@ -1326,6 +1412,16 @@ echo $object->get('uppercase_name'); // Outputs: JOHN DOE
 ```bash
 composer test
 ```
+
+## Upgrading from 1.x to 2.0
+
+Version 2.0 makes callback behavior consistent and separates transformation from side effects:
+
+- Replace transformation-style `forEach()` calls with `map()`. In 2.0, `forEach()` ignores callback return values and returns the original block.
+- `map()`, `filter()`, `forEach()`, `reduce()`, and `groupByFunction()` receive the current item and then its key.
+- `groupByFunction()` now follows the configured iteration representation: nested arrays are `Block` objects by default and native arrays after `iterateBlock(false)`.
+- Rename the `where()` named argument `preseveKeys` to `preserveKeys`.
+- `values()` now explicitly returns a zero-indexed block.
 
 ## Changelog
 

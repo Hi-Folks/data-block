@@ -305,12 +305,11 @@ final class Block implements Iterator, ArrayAccess, Countable
     }
 
     /**
-     * @return Block object that contains the key/value pairs for each index in the array
+     * Returns a new Block containing the values reindexed from zero.
      */
     public function values(): self
     {
-        $pairs = $this->data;
-        return self::make($pairs);
+        return self::make(array_values($this->data), $this->iteratorReturnsBlock);
     }
 
     /**

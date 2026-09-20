@@ -70,15 +70,51 @@ trait IteratableBlock
     }
 
     /**
-     * It executes a provided function ($callback) once for each element.
-     * @param callable $callback the function to call for each element
+     * @param callable(mixed, int|string): mixed $callback
      */
     public function forEach(callable $callback): self
     {
-        $result = [];
         foreach ($this as $key => $item) {
-            $result[$key] = $callback($item);
+            $callback($item, $key);
         }
-        return self::make($result);
+
+        return $this;
+    }
+
+    /**
+     * @param callable(mixed, int|string): mixed $callback
+     */
+    public function map(callable $callback): self
+    {
+        $result = [];
+
+        foreach ($this as $key => $item) {
+            $result[$key] = $callback($item, $key);
+        }
+
+        return self::make($result, $this->iteratorReturnsBlock);
+    }
+
+    /**
+     * @param callable(mixed, int|string): mixed $callback
+     */
+    public function filter(callable $callback): self
+    {
+        $result = [];
+
+        foreach ($this as $key => $item) {
+            $keep = $callback($item, $key);
+            if (!is_bool($keep)) {
+                throw new \UnexpectedValueException(
+                    "The filter callback must return a boolean value",
+                );
+            }
+
+            if ($keep) {
+                $result[$key] = $item instanceof self ? $item->toArray() : $item;
+            }
+        }
+
+        return self::make($result, $this->iteratorReturnsBlock);
     }
 }

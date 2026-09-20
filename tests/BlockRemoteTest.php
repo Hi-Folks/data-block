@@ -70,9 +70,9 @@ final class BlockRemoteTest extends TestCase
                 field: "tags",
                 operator: "has",
                 value: "love",
-                preseveKeys: false,
+                preserveKeys: false,
             )
-            ->forEach(
+            ->map(
                 fn($element): array => [
                     "title" => strtoupper((string) $element->get("title")),
                     "tags" => count($element->get("tags")),

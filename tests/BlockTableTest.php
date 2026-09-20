@@ -172,7 +172,7 @@ final class BlockTableTest extends TestCase
                 field: "uuid",
                 operator: Operator::EQUAL,
                 value: "a6af7728-eadf-4428-8cf5-343304857374",
-                preseveKeys: false,
+                preserveKeys: false,
             );
 
         $this->assertCount(1, $rel);
@@ -186,7 +186,7 @@ final class BlockTableTest extends TestCase
                 field: "uuid",
                 operator: Operator::EQUAL,
                 value: "a6af7728-eadf-4428-8cf5-343304857374",
-                preseveKeys: false,
+                preserveKeys: false,
             );
 
         $this->assertCount(1, $rel);

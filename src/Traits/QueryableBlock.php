@@ -25,7 +25,7 @@ trait QueryableBlock
         string|int $field,
         mixed $operator = Operator::EQUAL,
         mixed $value = null,
-        bool $preseveKeys = true,
+        bool $preserveKeys = true,
     ): self {
         if (func_num_args() === 1) {
             $value = true;
@@ -71,7 +71,7 @@ trait QueryableBlock
                 default => $elementToCheck->get($field) === $value,
             };
             if ($found) {
-                if ($preseveKeys) {
+                if ($preserveKeys) {
                     $returnData[$key]
                         = $element instanceof Block
                             ? $element->toArray()
@@ -169,22 +169,29 @@ trait QueryableBlock
         return self::make($result);
     }
 
+    /**
+     * @param callable(mixed, int|string): (int|string) $groupFunction
+     */
     public function groupByFunction(callable $groupFunction): self
     {
         $result = [];
 
-        foreach ($this->data as $item) {
-            // Call the closure to determine the group key
-            $groupKey = $groupFunction($item);
+        foreach ($this as $key => $item) {
+            $groupKey = self::castForArrayKey($groupFunction($item, $key));
+            if ($groupKey === null) {
+                continue;
+            }
 
-            // Group items under the same key
             if (!array_key_exists($groupKey, $result)) {
                 $result[$groupKey] = [];
             }
 
-            $result[$groupKey][] = $item;
+            $result[$groupKey][] = $item instanceof Block
+                ? $item->toArray()
+                : $item;
         }
-        return self::make($result);
+
+        return self::make($result, $this->iteratorReturnsBlock);
     }
 
     public function extractWhere(string $property, mixed $value): self

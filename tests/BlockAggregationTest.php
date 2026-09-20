@@ -79,7 +79,7 @@ final class BlockAggregationTest extends TestCase
     {
         $totals = $this->rows
             ->groupBy("currency")
-            ->forEach(fn(Block $group): int|float => $group->sum("amount"));
+            ->map(fn(Block $group): int|float => $group->sum("amount"));
 
         $this->assertSame([
             "EUR" => 40,
