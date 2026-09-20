@@ -13,6 +13,7 @@ use HiFolks\DataType\Traits\ExportableBlock;
 use HiFolks\DataType\Traits\FormattableBlock;
 use HiFolks\DataType\Traits\IteratableBlock;
 use HiFolks\DataType\Traits\LoadableBlock;
+use HiFolks\DataType\Traits\NavigableBlock;
 use HiFolks\DataType\Traits\TypeableBlock;
 use HiFolks\DataType\Traits\ValidableBlock;
 use Iterator;
@@ -32,6 +33,7 @@ final class Block implements Iterator, ArrayAccess, Countable
     use ExportableBlock;
     use LoadableBlock;
     use IteratableBlock;
+    use NavigableBlock;
     use ValidableBlock;
     use FormattableBlock;
     use TypeableBlock;

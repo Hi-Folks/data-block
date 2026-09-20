@@ -1099,6 +1099,57 @@ $has = $composerContent
 
 This will return true if a banner component exists, and false if it does not.
 
+## Navigating a collection
+
+Navigation helpers keep limiting and endpoint access inside the fluent `Block` API. `take()`, `skip()`, and `slice()` return new blocks without modifying the original data. The `first*()` and `last*()` methods return an individual item.
+
+| Goal | Method | Example |
+| --- | --- | --- |
+| Keep the first items | `take()` | `$rows->take(15)` |
+| Move past earlier items | `skip()` | `$rows->skip(15)` |
+| Select an exact window | `slice()` | `$rows->slice(15, 10)` |
+| Require an endpoint item | `first()` / `last()` | `$rows->first()` |
+| Read an optional endpoint | `firstOrNull()` / `lastOrNull()` | `$rows->lastOrNull()` |
+
+These methods make reporting pipelines concise and readable:
+
+```php
+$priorities = $rows
+    ->orderBy('close_date')
+    ->take(15)
+    ->select('name', 'stage', 'amount');
+```
+
+### Keys and reindexing
+
+`take()`, `skip()`, and `slice()` preserve keys so record identities are not changed unexpectedly. Call `values()` when the result must be a zero-based list:
+
+```php
+$page = $rows->skip(15)->take(15)->values();
+```
+
+### Limits and offsets
+
+- `take(5)` returns the first five items.
+- `take(-5)` returns the last five items.
+- `take(0)` returns an empty `Block`.
+- `skip(5)` returns everything after the first five items.
+- A negative value passed to `skip()` throws `InvalidArgumentException` because its meaning would be ambiguous.
+- `slice()` follows PHP's `array_slice()` offset and length semantics, including negative values.
+
+### First and last items
+
+`first()` and `last()` throw `UnderflowException` when the block is empty. Use `firstOrNull()` and `lastOrNull()` when an empty result is expected:
+
+```php
+$firstRequired = $rows->first();
+$firstOptional = $rows->firstOrNull();
+```
+
+Because `null` is also a valid item value, the nullable methods cannot distinguish an empty block from a first or last item whose value is `null`. Use `first()` or `last()` when that distinction matters.
+
+Endpoint methods use the same representation as iteration: an array item is returned as a `Block` by default and as a native array after `iterateBlock(false)`. Scalar items are returned unchanged.
+
 ## Looping Data
 The Block class implements the Iterator interface.
 While looping an array via Block, by default, if the current element should be an array, a Block is returned so that you can access the Block method for handling the current array item in the loop.
