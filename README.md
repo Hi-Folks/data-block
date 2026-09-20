@@ -235,17 +235,62 @@ $value = $data->get(
 ); // 🫠
 ```
 
-### The `getFormattedDateTime()` for getting and formatting a date-time field value
+### Parsing and formatting dates
 
-When working with date-time fields, consider utilizing the `getFormattedDateTime()` method instead of relying solely on `get()`. This approach not only retrieves the value but also formats it according to the specified date-time format, as defined by the second optional parameter `$format`.
+Use `getDate()` when you need a nullable `DateTimeImmutable`. Supply the known
+input format for tabular exports so parsing is unambiguous:
 
-By default, this formatting is set to "Y-m-d H:i:s", providing a convenient and standardized output. However, customizing the format allows for more flexibility in presenting your data.
+```php
+$closeDate = $row->getDate(
+    'Close Date',
+    inputFormat: '!d/m/Y',
+);
 
-Here are some key points:
+echo $closeDate?->format('Y-m-d');
+```
 
-*   `getFormattedDateTime()` combines the functionality of `get()` with date-time formatting.
-*   The second parameter `$format` controls the date-time format used for formatting.
-*   Custom formats can be applied to provide tailored outputs for different use cases.
+The `!` is part of PHP's date format syntax and resets fields not present in
+the input, such as the time, to a predictable value. When `inputFormat` is
+omitted, PHP's normal date parser is used, which is convenient for ISO values:
+
+```php
+$createdAt = $row->getDate('created_at');
+```
+
+Use `requireDate()` when missing, empty, or invalid input must stop processing:
+
+```php
+$closeDate = $row->requireDate(
+    'Close Date',
+    inputFormat: '!d/m/Y',
+);
+```
+
+For a nullable formatted string in one step, use `getFormattedDate()`:
+
+```php
+$normalized = $row->getFormattedDate(
+    'Close Date',
+    inputFormat: '!d/m/Y',
+    outputFormat: 'Y-m-d',
+);
+// '2026-09-20' or null
+```
+
+| Need | Method | Result |
+|---|---|---|
+| Parse an optional value | `getDate()` | `?DateTimeImmutable` |
+| Require a valid value | `requireDate()` | `DateTimeImmutable` or exception |
+| Parse and format an optional value | `getFormattedDate()` | `?string` |
+
+All three methods support nested paths, custom key separators, and an optional
+`DateTimeZone`. Explicit-format parsing checks both PHP parser errors and
+warnings, so impossible calendar dates such as `31/02/2026` are rejected. It
+never falls back to automatic parsing when the explicit format does not match.
+
+`getFormattedDateTime()` is deprecated as of 2.1.0. Existing calls continue to
+work, but new code should use `getFormattedDate()` for nullable formatting or
+`requireDate()->format()` when invalid input must throw.
 
 ### The `getFormattedByte()` for getting and formatting a 'byte' field value
 

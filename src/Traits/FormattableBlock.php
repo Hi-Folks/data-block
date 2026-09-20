@@ -8,6 +8,10 @@ trait FormattableBlock
 {
     /**
      * Get and format as date the element with $key
+     *
+     * @deprecated 2.1.0 Use getFormattedDate() for nullable parsing and
+     * formatting, or requireDate()->format() when invalid values must throw.
+     *
      * @param mixed $key the key, can be nested for example "some.datetime"
      * @param string $format the format default is "Y-m-d H:i:s"
      * @param mixed $defaultValue, the value returned in the case the key not exists
@@ -26,6 +30,19 @@ trait FormattableBlock
         $date = new \DateTimeImmutable($value);
 
         return $date->format($format);
+    }
+
+    /** @param non-empty-string $charNestedKey */
+    public function getFormattedDate(
+        int|string $key,
+        string $outputFormat = "Y-m-d H:i:s",
+        ?string $inputFormat = null,
+        ?\DateTimeZone $timezone = null,
+        string $charNestedKey = ".",
+    ): ?string {
+        return $this
+            ->getDate($key, $inputFormat, $timezone, $charNestedKey)
+            ?->format($outputFormat);
     }
 
     /**

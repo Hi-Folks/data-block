@@ -6,6 +6,41 @@ namespace HiFolks\DataType\Traits;
 
 trait TypeableBlock
 {
+    /** @param non-empty-string $charNestedKey */
+    public function getDate(
+        int|string $key,
+        ?string $inputFormat = null,
+        ?\DateTimeZone $timezone = null,
+        string $charNestedKey = ".",
+    ): ?\DateTimeImmutable {
+        $value = $this->get($key, null, $charNestedKey);
+
+        return self::parseDateValue($value, $inputFormat, $timezone);
+    }
+
+    /** @param non-empty-string $charNestedKey */
+    public function requireDate(
+        int|string $key,
+        ?string $inputFormat = null,
+        ?\DateTimeZone $timezone = null,
+        string $charNestedKey = ".",
+    ): \DateTimeImmutable {
+        $date = $this->getDate(
+            $key,
+            $inputFormat,
+            $timezone,
+            $charNestedKey,
+        );
+
+        if ($date === null) {
+            throw new \UnexpectedValueException(
+                "Field '{$key}' does not contain a valid date",
+            );
+        }
+
+        return $date;
+    }
+
     /**
      * Return a string value from the get() method
      * @param int|string $key the field key , can be nested for example "commits.0.name"
@@ -177,5 +212,49 @@ trait TypeableBlock
         }
 
         return $defaultValue;
+    }
+
+    private static function parseDateValue(
+        mixed $value,
+        ?string $inputFormat,
+        ?\DateTimeZone $timezone,
+    ): ?\DateTimeImmutable {
+        if ($value instanceof \DateTimeInterface) {
+            $date = \DateTimeImmutable::createFromInterface($value);
+
+            return $timezone instanceof \DateTimeZone
+                ? $date->setTimezone($timezone)
+                : $date;
+        }
+
+        if (!is_string($value) || trim($value) === "") {
+            return null;
+        }
+
+        try {
+            if ($inputFormat === null) {
+                return new \DateTimeImmutable($value, $timezone);
+            }
+
+            $date = \DateTimeImmutable::createFromFormat(
+                $inputFormat,
+                $value,
+                $timezone,
+            );
+            $errors = \DateTimeImmutable::getLastErrors();
+
+            if (
+                $date === false
+                || ($errors !== false
+                    && ($errors["warning_count"] > 0
+                        || $errors["error_count"] > 0))
+            ) {
+                return null;
+            }
+
+            return $date;
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }
