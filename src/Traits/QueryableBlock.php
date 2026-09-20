@@ -135,23 +135,35 @@ trait QueryableBlock
      * and the values are arrays of elements that share that key.
      *
      * @param string|int $field The field name to group by.
+     * @param string|int|null $defaultGroup The group for missing, null, or unsupported values.
      * @return self A new Block instance with the grouped elements.
      *
      */
-    public function groupBy(string|int $field): self
-    {
+    public function groupBy(
+        string|int $field,
+        string|int|null $defaultGroup = null,
+    ): self {
         $result = [];
 
-        foreach ($this as $value) {
-            $property = $value->get($field);
-            $property = self::castForArrayKey($property);
-            if (!$property) {
+        foreach ($this->data as $value) {
+            if (is_array($value)) {
+                $value = self::make($value, $this->iteratorReturnsBlock);
+            }
+
+            if (!$value instanceof Block) {
                 continue;
             }
-            if (!array_key_exists(strval($property), $result)) {
-                $result[$property] = [];
+
+            $groupKey = self::castForArrayKey($value->get($field));
+            $groupKey ??= $defaultGroup;
+            if ($groupKey === null) {
+                continue;
             }
-            $result[$property][] = $value->toArray();
+
+            if (!array_key_exists($groupKey, $result)) {
+                $result[$groupKey] = [];
+            }
+            $result[$groupKey][] = $value->toArray();
         }
 
         return self::make($result);
@@ -214,9 +226,9 @@ trait QueryableBlock
     }
     private static function castForArrayKey(
         mixed $property,
-    ): bool|int|string|null {
+    ): int|string|null {
         return match (gettype($property)) {
-            "boolean" => $property,
+            "boolean" => (int) $property,
             "double" => strval($property),
             "integer" => $property,
             "string" => $property,

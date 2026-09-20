@@ -65,6 +65,42 @@ final class BlockQueryAdvancedTest extends TestCase
         $this->assertCount(0, $grouped->getBlock("NotExists"));
     }
 
+    public function testGroupByPreservesFalseyKeysAndCanUseADefaultGroup(): void
+    {
+        $rows = [
+            ["category" => 0, "name" => "integer zero"],
+            ["category" => "0", "name" => "string zero"],
+            ["category" => false, "name" => "false"],
+            ["category" => "", "name" => "empty string"],
+            ["category" => null, "name" => "null"],
+            ["name" => "missing"],
+        ];
+
+        $grouped = Block::make($rows)->groupBy("category");
+
+        $this->assertCount(2, $grouped);
+        $this->assertCount(3, $grouped->getBlock(0));
+        $this->assertCount(1, $grouped->getBlock(""));
+
+        $groupedWithDefault = Block::make($rows)->groupBy(
+            "category",
+            defaultGroup: "unknown",
+        );
+
+        $this->assertCount(3, $groupedWithDefault);
+        $this->assertCount(2, $groupedWithDefault->getBlock("unknown"));
+    }
+
+    public function testGroupByDoesNotDependOnTheIterationMode(): void
+    {
+        $rows = Block::make([
+            ["type" => "fruit", "name" => "apple"],
+            ["type" => "fruit", "name" => "banana"],
+        ], false);
+
+        $this->assertCount(2, $rows->groupBy("type")->getBlock("fruit"));
+    }
+
     public function testGroupByArray(): void
     {
         $data = Block::make([

@@ -2,6 +2,8 @@
 
 ## 1.3.0 - WIP
 - Added configurable missing-key behavior: silent, warning, or exception.
+- Added numeric aggregation methods, including grouped helpers such as `sumBy()` and `averageBy()`.
+- Made grouping preserve valid falsey keys and added an optional default group for missing values.
 - Removed obsolete PHPStan suppressions from missing-key exception validation.
 - Made the architecture-test exemption for `ExportableBlock::dump()` independent of source line numbers.
 

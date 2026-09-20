@@ -6,6 +6,7 @@ namespace HiFolks\DataType;
 
 use ArrayAccess;
 use Countable;
+use HiFolks\DataType\Traits\AggregatableBlock;
 use HiFolks\DataType\Traits\EditableBlock;
 use HiFolks\DataType\Traits\QueryableBlock;
 use HiFolks\DataType\Traits\ExportableBlock;
@@ -25,6 +26,7 @@ use Iterator;
  */
 final class Block implements Iterator, ArrayAccess, Countable
 {
+    use AggregatableBlock;
     use QueryableBlock;
     use EditableBlock;
     use ExportableBlock;

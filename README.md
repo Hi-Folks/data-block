@@ -949,6 +949,16 @@ $grouped->dumpJson();
 */
 ```
 
+Grouping preserves valid values, including `0`, `"0"`, `false`, and an empty string. PHP uses the same array key for `0`, `"0"`, and `false`, so those values belong to group `0`. This follows PHP's normal array-key behavior and avoids silently dropping valid data.
+
+Rows whose grouping field is missing, `null`, or cannot be used as an array key are skipped by default. Pass `defaultGroup` when those rows should be collected explicitly instead:
+
+```php
+$grouped = $data->groupBy('type', defaultGroup: 'unknown');
+```
+
+Using an explicit default keeps missing data visible without confusing it with valid falsey values.
+
 ### The `groupByFunction()` method
 
 The `groupByFunction()` method allows you to group items from an Block based on a grouping logic provided by a callback function (closure). The function returns an associative array where the keys represent groupings defined by the callback, and the values are arrays of elements that belong to each group.
@@ -1006,6 +1016,71 @@ $groupedByQuantityRange = $fruitsBlock->groupByFunction(
     ]
 }
 */
+```
+
+### Aggregating numeric values
+
+Use `sum()`, `average()`, `min()`, and `max()` to aggregate a field across all rows. Field names support the same nested paths as `get()`.
+
+```php
+$orders = Block::make([
+    ['currency' => 'EUR', 'totals' => ['amount' => 10]],
+    ['currency' => 'USD', 'totals' => ['amount' => '20.50']],
+    ['currency' => 'EUR', 'totals' => ['amount' => 30]],
+]);
+
+$orders->sum('totals.amount');     // 60.5
+$orders->average('totals.amount'); // 20.166666666666668
+$orders->min('totals.amount');     // 10
+$orders->max('totals.amount');     // 30
+```
+
+When no field is provided, the methods aggregate the values in the `Block` directly:
+
+```php
+Block::make([10, 20, 30])->sum(); // 60
+```
+
+Integer values, floating-point values, and numeric strings are included. Missing fields, `null`, booleans, and non-numeric values are ignored. An empty selection returns `0` from `sum()` and `null` from `average()`, `min()`, and `max()`.
+
+Use the grouped aggregation helpers when you need one result for each value of another field:
+
+```php
+$totalsByCurrency = $orders->sumBy('currency', 'totals.amount');
+
+$totalsByCurrency->toArray();
+// ['EUR' => 40, 'USD' => 20.5]
+```
+
+The available grouped helpers are `sumBy()`, `averageBy()`, `minBy()`, and `maxBy()`. Their first argument is the field used to group the rows, and their second argument is the numeric field to aggregate. Both arguments support nested paths.
+
+They also accept `defaultGroup` for rows with a missing or `null` grouping field:
+
+```php
+$totalsByCurrency = $orders->sumBy(
+    groupField: 'currency',
+    valueField: 'totals.amount',
+    defaultGroup: 'unknown',
+);
+```
+
+### Custom aggregations with `reduce()`
+
+Use `reduce()` when the built-in numeric operations do not cover the required aggregation. The callback receives the accumulated value, the current item, and its key:
+
+```php
+$totalsByCurrency = $orders->reduce(
+    function (array $totals, Block $order): array {
+        $currency = $order->getStringStrict('currency');
+        $totals[$currency] = ($totals[$currency] ?? 0)
+            + $order->getFloatStrict('totals.amount');
+
+        return $totals;
+    },
+    [],
+);
+
+// ['EUR' => 40.0, 'USD' => 20.5]
 ```
 
 ### The `exists()` method
