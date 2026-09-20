@@ -1,6 +1,8 @@
 # Changelog
 
 ## 2.1.0 - WIP
+- Added `partition()` for splitting a Block into matching and non-matching
+  results in one pass.
 - Added explicit-format date parsing with `getDate()`, `requireDate()`, and
   `getFormattedDate()`; deprecated `getFormattedDateTime()`.
 - Added required-header schema validation to eager, streaming, and chunked CSV

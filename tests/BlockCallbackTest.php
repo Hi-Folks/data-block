@@ -62,6 +62,45 @@ final class BlockCallbackTest extends TestCase
         $this->rows->filter(fn(): int => 1);
     }
 
+    public function testPartitionSplitsItemsAndPreservesKeys(): void
+    {
+        [$active, $inactive] = $this->rows->partition(
+            fn(Block $row): bool => $row->getBooleanStrict("active"),
+        );
+
+        $this->assertSame(["first", "third"], $active->keys());
+        $this->assertSame(["second"], $inactive->keys());
+        $this->assertSame("Desk", $active->get("first.name"));
+        $this->assertSame("Chair", $inactive->get("second.name"));
+    }
+
+    public function testPartitionVisitsEachItemOnceAndProvidesItsKey(): void
+    {
+        $visited = [];
+
+        [$matching, $nonMatching] = $this->rows->partition(
+            function (Block $row, string $key) use (&$visited): bool {
+                $visited[] = $key;
+
+                return $row->getStringStrict("name") === "Desk";
+            },
+        );
+
+        $this->assertSame(["first", "second", "third"], $visited);
+        $this->assertSame(["first"], $matching->keys());
+        $this->assertSame(["second", "third"], $nonMatching->keys());
+    }
+
+    public function testPartitionRequiresABooleanResult(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
+            "partition callback must return a boolean",
+        );
+
+        $this->rows->partition(fn(): int => 1);
+    }
+
     public function testValuesExplicitlyReindexesAResult(): void
     {
         $filtered = $this->rows
@@ -104,11 +143,18 @@ final class BlockCallbackTest extends TestCase
         $grouped = $rows->groupByFunction(
             fn(array $row): string => $row["category"],
         );
+        [$furniture, $other] = $rows->partition(
+            fn(array $row): bool => $row["category"] === "furniture",
+        );
 
         $this->assertSame(["Desk", "Lamp"], $mapped->toArray());
         $this->assertSame([["category" => "furniture", "name" => "Desk"]], $filtered->toArray());
         $this->assertCount(1, $grouped->getBlock("furniture"));
         $this->assertCount(1, $grouped->getBlock("lighting"));
+        $this->assertIsArray($furniture->first());
+        $this->assertIsArray($other->first());
+        $this->assertSame("Desk", $furniture->first()["name"]);
+        $this->assertSame("Lamp", $other->first()["name"]);
     }
 
     public function testGroupByFunctionReceivesBlocksAndKeysByDefault(): void
@@ -130,7 +176,23 @@ final class BlockCallbackTest extends TestCase
 
         $this->assertSame([], $empty->map(fn(mixed $item): mixed => $item)->toArray());
         $this->assertSame([], $empty->filter(fn(): bool => true)->toArray());
+        [$matching, $nonMatching] = $empty->partition(fn(): bool => true);
+        $this->assertSame([], $matching->toArray());
+        $this->assertSame([], $nonMatching->toArray());
         $this->assertSame($empty, $empty->forEach(fn(): null => null));
         $this->assertSame([], $empty->values()->toArray());
+    }
+
+    public function testPartitionDoesNotMutateTheOriginalBlock(): void
+    {
+        $original = $this->rows->toArray();
+
+        [$active, $inactive] = $this->rows->partition(
+            fn(Block $row): bool => $row->getBooleanStrict("active"),
+        );
+
+        $this->assertNotSame($this->rows, $active);
+        $this->assertNotSame($this->rows, $inactive);
+        $this->assertSame($original, $this->rows->toArray());
     }
 }

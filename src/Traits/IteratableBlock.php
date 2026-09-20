@@ -117,4 +117,37 @@ trait IteratableBlock
 
         return self::make($result, $this->iteratorReturnsBlock);
     }
+
+    /**
+     * Split the items into matching and non-matching Blocks in one pass.
+     *
+     * @param callable(mixed, int|string): mixed $callback
+     * @return array{0: self, 1: self}
+     */
+    public function partition(callable $callback): array
+    {
+        $matching = [];
+        $nonMatching = [];
+
+        foreach ($this as $key => $item) {
+            $matches = $callback($item, $key);
+            if (!is_bool($matches)) {
+                throw new \UnexpectedValueException(
+                    "The partition callback must return a boolean value",
+                );
+            }
+
+            $value = $item instanceof self ? $item->toArray() : $item;
+            if ($matches) {
+                $matching[$key] = $value;
+            } else {
+                $nonMatching[$key] = $value;
+            }
+        }
+
+        return [
+            self::make($matching, $this->iteratorReturnsBlock),
+            self::make($nonMatching, $this->iteratorReturnsBlock),
+        ];
+    }
 }

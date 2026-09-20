@@ -1566,11 +1566,14 @@ Each helper has one clear responsibility. Keeping these operations separate make
 | --- | --- | --- | --- |
 | Compare one field with a known operator | `where()` | `where('amount', Operator::GREATER_THAN, 0)` | A filtered `Block` |
 | Select items using custom logic | `filter()` | `filter(fn(Block $row): bool => ...)` | A filtered `Block` |
+| Split by custom logic | `partition()` | `partition(fn(Block $row): bool => ...)` | Matching and non-matching Blocks |
 | Transform every item | `map()` | `map(fn(Block $row): array => ...)` | A transformed `Block` |
 | Perform a side effect | `forEach()` | `forEach(fn(Block $row) => logger($row))` | The original `Block` |
 | Combine all items | `reduce()` | `reduce(fn($total, $row) => ..., 0)` | The accumulated value |
 
-This distinction makes fluent code communicate its intention directly: `filter()` selects, `map()` transforms, `forEach()` observes, and `reduce()` combines.
+This distinction makes fluent code communicate its intention directly:
+`filter()` selects, `partition()` separates, `map()` transforms, `forEach()`
+observes, and `reduce()` combines.
 
 #### `where()` vs `filter()`
 
@@ -1583,6 +1586,7 @@ Both methods select items, but they express different kinds of conditions:
 | `amount > 0` | `where()` |
 | `amount > 0 AND status !== cancelled` | `filter()` |
 | Custom business rule | `filter()` |
+| Both sides of a custom business rule | `partition()` |
 
 Internally, `where()` can be understood as a convenient specialized filter, while `filter()` is the flexible escape hatch.
 
@@ -1651,6 +1655,39 @@ Call `values()` when a zero-based list is needed explicitly:
 $priorities = $priorities->values();
 ```
 
+### Splitting items with `partition()`
+
+Use `partition()` when both sides of the same condition are needed. It evaluates
+each item exactly once and returns a two-element array: the first Block contains
+items for which the callback returned `true`, and the second contains those for
+which it returned `false`.
+
+```php
+[$assigned, $unassigned] = $opportunities->partition(
+    fn (Block $row): bool =>
+        $row->getStringStrict('Assigned Solution Engineer') !== '',
+);
+```
+
+Every source item belongs to exactly one result, so no opportunity is lost
+between the two groups. This is particularly useful here because missing and
+`null` values become an empty string through `getStringStrict()` and therefore
+belong to `$unassigned`.
+
+Both returned Blocks preserve the original keys and iteration representation;
+the source Block is unchanged. Use `values()` on either result when a zero-based
+list is required:
+
+```php
+$assigned = $assigned->values();
+$unassigned = $unassigned->values();
+```
+
+Like `filter()`, the callback receives the item followed by its key and must
+return an actual boolean. Returning values such as `1`, `0`, or a non-empty
+string throws an `UnexpectedValueException`, preventing ambiguous truthy and
+falsey classification.
+
 ### Performing side effects with `forEach()`
 
 `forEach()` visits every item without replacing the block's values. It returns the original `Block`, so it is intended for logging, output, notifications, or other side effects. Its callback result is intentionally ignored; this prevents a logging callback from accidentally turning the data into `null` values. Use `map()` when callback results should become the new values.
@@ -1666,7 +1703,10 @@ $rows->forEach(
 
 ### Callback arguments and item representation
 
-`map()`, `filter()`, `forEach()`, `reduce()`, and `groupByFunction()` consistently pass the item first and its key second. Callbacks may omit the key when it is not needed. This shared contract makes callbacks reusable and removes method-specific argument surprises.
+`map()`, `filter()`, `partition()`, `forEach()`, `reduce()`, and
+`groupByFunction()` consistently pass the item first and its key second.
+Callbacks may omit the key when it is not needed. This shared contract makes
+callbacks reusable and removes method-specific argument surprises.
 
 Nested arrays are `Block` objects by default. After calling `iterateBlock(false)`, the same callback methods receive native arrays instead. Scalar items remain scalar in either mode.
 
@@ -1819,7 +1859,8 @@ composer test
 Version 2.0 makes callback behavior consistent and separates transformation from side effects:
 
 - Replace transformation-style `forEach()` calls with `map()`. In 2.0, `forEach()` ignores callback return values and returns the original block.
-- `map()`, `filter()`, `forEach()`, `reduce()`, and `groupByFunction()` receive the current item and then its key.
+- `map()`, `filter()`, `partition()`, `forEach()`, `reduce()`, and
+  `groupByFunction()` receive the current item and then its key.
 - `groupByFunction()` now follows the configured iteration representation: nested arrays are `Block` objects by default and native arrays after `iterateBlock(false)`.
 - Rename the `where()` named argument `preseveKeys` to `preserveKeys`.
 - `values()` now explicitly returns a zero-indexed block.
