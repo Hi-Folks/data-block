@@ -713,8 +713,33 @@ All three methods support the same parsing options:
 | `skipEmptyRows` | `true` | Ignore physically empty CSV records |
 | `rowWidth` | `CsvRowWidth::STRICT` | Handle rows whose field count differs from the header |
 | `normalize` | `null` | Optionally transform each row while it is read |
+| `requiredHeaders` | `[]` | Require specific case-sensitive header names while allowing additional columns |
 
 Header names must be present and unique. UTF-8 BOM bytes are removed from the first header automatically.
+
+Use `requiredHeaders` to detect an unexpected export schema before processing
+data. Every missing header is reported in one exception, additional columns are
+allowed, and header-only files are supported:
+
+```php
+$opportunities = Block::fromCsvFile(
+    '/exports/opportunities.csv',
+    requiredHeaders: [
+        'Opportunity Name',
+        'Stage',
+        'Amount',
+    ],
+);
+```
+
+Required names are matched strictly and case-sensitively after source-encoding
+conversion and UTF-8 BOM removal. `requiredHeaders` cannot be combined with
+`header: false` because positional CSV records have no names to validate.
+
+The same option works with eager, streaming, and chunked loading. Generators
+are lazy, so `streamCsvFile()` and `chunkCsvFile()` open the file and validate
+its headers when iteration begins. Validation always completes before the
+first row or chunk is yielded.
 
 Choose an explicit row-width policy:
 

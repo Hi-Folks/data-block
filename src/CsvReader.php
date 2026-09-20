@@ -11,6 +11,7 @@ final class CsvReader
 {
     /**
      * @param null|callable(Block, int): (array<int|string, mixed>|Block) $normalize
+     * @param list<string> $requiredHeaders
      * @return Generator<int, array<int|string, mixed>>
      */
     public static function rows(
@@ -23,8 +24,10 @@ final class CsvReader
         bool $skipEmptyRows = true,
         CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
         ?callable $normalize = null,
+        array $requiredHeaders = [],
     ): Generator {
         self::validateCharacters($delimiter, $enclosure, $escape);
+        self::validateRequiredHeaderConfiguration($requiredHeaders, $header);
 
         $handle = @fopen($filename, "rb");
         if ($handle === false) {
@@ -47,6 +50,7 @@ final class CsvReader
 
                 if ($header && $headers === null) {
                     $headers = self::validateHeaders($record);
+                    self::validateRequiredHeaders($headers, $requiredHeaders);
                     continue;
                 }
 
@@ -71,6 +75,10 @@ final class CsvReader
                 }
 
                 yield $resultIndex++ => $row;
+            }
+
+            if ($header && $headers === null && $requiredHeaders !== []) {
+                self::throwMissingRequiredHeaders($requiredHeaders);
             }
         } finally {
             fclose($handle);
@@ -168,6 +176,51 @@ final class CsvReader
         }
 
         return array_values($headers);
+    }
+
+    /** @param list<string> $requiredHeaders */
+    private static function validateRequiredHeaderConfiguration(
+        array $requiredHeaders,
+        bool $header,
+    ): void {
+        if ($requiredHeaders !== [] && !$header) {
+            throw new \InvalidArgumentException(
+                "Required CSV headers cannot be used when header is false",
+            );
+        }
+        if (in_array("", $requiredHeaders, true)) {
+            throw new \InvalidArgumentException(
+                "Required CSV headers must not be empty",
+            );
+        }
+        if (count(array_unique($requiredHeaders)) !== count($requiredHeaders)) {
+            throw new \InvalidArgumentException(
+                "Required CSV headers must be unique",
+            );
+        }
+    }
+
+    /**
+     * @param list<string> $headers
+     * @param list<string> $requiredHeaders
+     */
+    private static function validateRequiredHeaders(
+        array $headers,
+        array $requiredHeaders,
+    ): void {
+        $missing = array_values(array_diff($requiredHeaders, $headers));
+
+        if ($missing !== []) {
+            self::throwMissingRequiredHeaders($missing);
+        }
+    }
+
+    /** @param list<string> $headers */
+    private static function throwMissingRequiredHeaders(array $headers): never
+    {
+        throw new \UnexpectedValueException(
+            "CSV is missing required headers: " . implode(", ", $headers),
+        );
     }
 
     /**

@@ -15,6 +15,7 @@ trait LoadableBlock
 {
     /**
      * @param null|callable(Block, int): (array<int|string, mixed>|Block) $normalize
+     * @param list<string> $requiredHeaders
      */
     public static function fromCsvFile(
         string $csvFile,
@@ -26,6 +27,7 @@ trait LoadableBlock
         bool $skipEmptyRows = true,
         CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
         ?callable $normalize = null,
+        array $requiredHeaders = [],
     ): self {
         $rows = iterator_to_array(CsvReader::rows(
             $csvFile,
@@ -37,6 +39,7 @@ trait LoadableBlock
             $skipEmptyRows,
             $rowWidth,
             $normalize,
+            $requiredHeaders,
         ));
 
         return self::make($rows);
@@ -44,6 +47,7 @@ trait LoadableBlock
 
     /**
      * @param null|callable(Block, int): (array<int|string, mixed>|Block) $normalize
+     * @param list<string> $requiredHeaders
      * @return Generator<int, Block>
      */
     public static function streamCsvFile(
@@ -56,6 +60,7 @@ trait LoadableBlock
         bool $skipEmptyRows = true,
         CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
         ?callable $normalize = null,
+        array $requiredHeaders = [],
     ): Generator {
         foreach (CsvReader::rows(
             $csvFile,
@@ -67,6 +72,7 @@ trait LoadableBlock
             $skipEmptyRows,
             $rowWidth,
             $normalize,
+            $requiredHeaders,
         ) as $index => $row) {
             yield $index => self::make($row);
         }
@@ -74,6 +80,7 @@ trait LoadableBlock
 
     /**
      * @param null|callable(Block, int): (array<int|string, mixed>|Block) $normalize
+     * @param list<string> $requiredHeaders
      * @return Generator<int, Block>
      */
     public static function chunkCsvFile(
@@ -87,6 +94,7 @@ trait LoadableBlock
         bool $skipEmptyRows = true,
         CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
         ?callable $normalize = null,
+        array $requiredHeaders = [],
     ): Generator {
         if ($chunkSize < 1) {
             throw new \InvalidArgumentException(
@@ -106,6 +114,7 @@ trait LoadableBlock
             $skipEmptyRows,
             $rowWidth,
             $normalize,
+            $requiredHeaders,
         ) as $row) {
             $chunk[] = $row->toArray();
             if (count($chunk) === $chunkSize) {

@@ -113,6 +113,161 @@ final class BlockCsvTest extends TestCase
         $this->assertSame("Acme", $rows->get("0.Name"));
     }
 
+    public function testEagerLoadingValidatesRequiredHeadersAndAllowsExtras(): void
+    {
+        $file = $this->csvFile(
+            "Opportunity Name,Stage,Amount,Owner\nAcme,Proposal,100,Ada\n",
+        );
+
+        $rows = Block::fromCsvFile(
+            $file,
+            requiredHeaders: ["Opportunity Name", "Stage", "Amount"],
+        );
+
+        $this->assertCount(1, $rows);
+        $this->assertSame("Ada", $rows->get("0.Owner"));
+    }
+
+    public function testEveryMissingRequiredHeaderIsReported(): void
+    {
+        $file = $this->csvFile("Opportunity Name,Owner\nAcme,Ada\n");
+
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
+            "CSV is missing required headers: Stage, Amount",
+        );
+
+        Block::fromCsvFile(
+            $file,
+            requiredHeaders: ["Opportunity Name", "Stage", "Amount"],
+        );
+    }
+
+    public function testRequiredHeadersAreCaseSensitive(): void
+    {
+        $file = $this->csvFile("Name\nAcme\n");
+
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage("CSV is missing required headers: name");
+
+        Block::fromCsvFile($file, requiredHeaders: ["name"]);
+    }
+
+    public function testHeaderOnlyCsvCanValidateRequiredHeaders(): void
+    {
+        $file = $this->csvFile("Name,Stage,Amount\n");
+
+        $rows = Block::fromCsvFile(
+            $file,
+            requiredHeaders: ["Name", "Stage", "Amount"],
+        );
+
+        $this->assertSame([], $rows->toArray());
+    }
+
+    public function testEmptyCsvReportsAllRequiredHeaders(): void
+    {
+        $file = $this->csvFile("");
+
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
+            "CSV is missing required headers: Name, Stage",
+        );
+
+        Block::fromCsvFile($file, requiredHeaders: ["Name", "Stage"]);
+    }
+
+    public function testStreamingValidatesHeadersBeforeYieldingRows(): void
+    {
+        $file = $this->csvFile("Name\nAcme\n");
+        $rows = Block::streamCsvFile(
+            $file,
+            requiredHeaders: ["Name", "Amount"],
+        );
+
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage("missing required headers: Amount");
+
+        $rows->current();
+    }
+
+    public function testChunkingValidatesHeadersBeforeYieldingChunks(): void
+    {
+        $file = $this->csvFile("Name\nAcme\n");
+        $chunks = Block::chunkCsvFile(
+            $file,
+            requiredHeaders: ["Name", "Amount"],
+        );
+
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage("missing required headers: Amount");
+
+        $chunks->current();
+    }
+
+    public function testRequiredHeadersUseConvertedEncoding(): void
+    {
+        $encoded = iconv("UTF-8", "Windows-1252", "Café,Amount\nAcme,10\n");
+        $this->assertNotFalse($encoded);
+
+        $file = $this->csvFile($encoded);
+        $rows = Block::fromCsvFile(
+            $file,
+            encoding: "Windows-1252",
+            requiredHeaders: ["Café", "Amount"],
+        );
+
+        $this->assertSame("Acme", $rows->get("0.Café"));
+    }
+
+    public function testRequiredHeadersUseTheHeaderAfterBomRemoval(): void
+    {
+        $file = $this->csvFile("\xEF\xBB\xBFName,Amount\nAcme,10\n");
+
+        $rows = Block::fromCsvFile(
+            $file,
+            requiredHeaders: ["Name", "Amount"],
+        );
+
+        $this->assertSame("Acme", $rows->get("0.Name"));
+    }
+
+    public function testRequiredHeadersCannotBeUsedWithoutAHeaderRow(): void
+    {
+        $file = $this->csvFile("Acme,10\n");
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            "Required CSV headers cannot be used when header is false",
+        );
+
+        Block::fromCsvFile(
+            $file,
+            header: false,
+            requiredHeaders: ["Name"],
+        );
+    }
+
+    public function testRequiredHeaderConfigurationMustBeNonEmptyAndUnique(): void
+    {
+        $file = $this->csvFile("Name\nAcme\n");
+
+        try {
+            Block::fromCsvFile($file, requiredHeaders: [""]);
+            $this->fail("An empty required header should be rejected");
+        } catch (InvalidArgumentException $exception) {
+            $this->assertStringContainsString(
+                "must not be empty",
+                $exception->getMessage(),
+            );
+        }
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("must be unique");
+
+        Block::fromCsvFile($file, requiredHeaders: ["Name", "Name"]);
+    }
+
     public function testStrictRowWidthRejectsMalformedRowsWithTheRecordNumber(): void
     {
         $file = $this->csvFile("Name,Amount\nAcme\n");
