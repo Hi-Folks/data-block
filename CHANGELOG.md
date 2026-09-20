@@ -5,6 +5,8 @@
 - Added stable multi-field and callback sorting with key preservation, typed
   `SortCriterion` objects, and the `SortDirection` enum.
 - Changed `orderBy()` to preserve keys; use `values()` to explicitly reindex.
+- Added non-mutating `withoutKeys()` and typed `sortKeys()` helpers for
+  associative Blocks.
 
 ## 2.0.0 - 2026-09-20
 - Added configurable missing-key behavior: silent, warning, or exception.

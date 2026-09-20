@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace HiFolks\DataType\Traits;
 
+use HiFolks\DataType\Enums\SortDirection;
+
 trait NavigableBlock
 {
     public function take(int $limit): self
@@ -31,6 +33,42 @@ trait NavigableBlock
             array_slice($this->data, $offset, $length, true),
             $this->iteratorReturnsBlock,
         );
+    }
+
+    public function withoutKeys(int|string ...$keys): self
+    {
+        $result = $this->data;
+
+        foreach ($keys as $key) {
+            unset($result[$key]);
+        }
+
+        return self::make($result, $this->iteratorReturnsBlock);
+    }
+
+    public function sortKeys(
+        SortDirection $direction = SortDirection::ASC,
+    ): self {
+        $result = $this->data;
+
+        uksort(
+            $result,
+            static function (int|string $left, int|string $right) use (
+                $direction,
+            ): int {
+                if (is_int($left)) {
+                    $comparison = is_int($right) ? $left <=> $right : -1;
+                } else {
+                    $comparison = is_int($right) ? 1 : strcmp($left, $right);
+                }
+
+                return $direction === SortDirection::DESC
+                    ? -$comparison
+                    : $comparison;
+            },
+        );
+
+        return self::make($result, $this->iteratorReturnsBlock);
     }
 
     public function first(): mixed

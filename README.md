@@ -1303,6 +1303,31 @@ $opportunitiesByStage = $opportunities
 
 The same pattern works with `where()`, `whereNull()`, `whereBetween()`, `whereIn()`, or callback-based `filter()`.
 
+### Filtering and sorting associative keys
+
+Grouped aggregations return associative Blocks whose keys are the group names.
+Use `withoutKeys()` to exclude unwanted groups and `sortKeys()` to produce a
+predictable report order without leaving the fluent API:
+
+```php
+use HiFolks\DataType\Enums\SortDirection;
+
+$totals = $opportunities
+    ->sumBy('Amount Currency', '_amount')
+    ->withoutKeys('')
+    ->sortKeys(SortDirection::ASC);
+```
+
+Both methods return a new Block, preserve key/value associations and iteration
+mode, and leave the original unchanged. `withoutKeys()` accepts multiple keys
+and silently ignores missing ones. `sortKeys()` defaults to ascending order.
+
+Integer keys are compared numerically and string keys lexicographically with
+case sensitivity. For mixed keys, integers come before strings in ascending
+order; descending order reverses that complete ordering. PHP automatically
+converts numeric-string array keys such as `'10'` to integers, so they cannot be
+distinguished from integer keys after the array is created.
+
 They also accept `defaultGroup` for rows with a missing or `null` grouping field:
 
 ```php
