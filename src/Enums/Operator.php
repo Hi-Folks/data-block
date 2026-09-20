@@ -7,6 +7,7 @@ namespace HiFolks\DataType\Enums;
 class Operator
 {
     public const EQUAL = '==';
+    public const STRICT_EQUAL = '===';
     public const GREATER_THAN = '>';
     public const LESS_THAN = '<';
     public const GREATER_THAN_OR_EQUAL = '>=';
@@ -16,5 +17,4 @@ class Operator
     public const IN = 'in';
     public const HAS = 'has';
     public const LIKE = 'like';
-
 }

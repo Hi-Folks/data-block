@@ -36,55 +36,79 @@ trait QueryableBlock
             $operator = Operator::EQUAL;
         }
 
-        $returnData = [];
-
-        foreach ($this as $key => $element) {
-            $elementToCheck = $element;
-            if (is_array($element)) {
-                $elementToCheck = Block::make(
-                    $element,
-                    $this->iteratorReturnsBlock,
-                );
-            }
-            if (!$elementToCheck instanceof Block) {
-                return Block::make([], $this->iteratorReturnsBlock);
-            }
-
-            $found = match ($operator) {
-                Operator::EQUAL => $elementToCheck->get($field) == $value,
-                Operator::GREATER_THAN => $elementToCheck->get($field) > $value,
-                Operator::LESS_THAN => $elementToCheck->get($field) < $value,
-                Operator::GREATER_THAN_OR_EQUAL => $elementToCheck->get(
-                    $field,
-                ) >= $value,
-                Operator::LESS_THAN_OR_EQUAL => $elementToCheck->get($field)
-                    <= $value,
-                Operator::NOT_EQUAL => $elementToCheck->get($field) != $value,
-                Operator::STRICT_NOT_EQUAL => $elementToCheck->get($field)
-                    !== $value,
-                Operator::IN => in_array($elementToCheck->get($field), $value),
-                Operator::HAS => in_array($value, $elementToCheck->get($field)),
-                Operator::LIKE => str_contains(
-                    $elementToCheck->get($field),
-                    (string) $value,
-                ),
-                default => $elementToCheck->get($field) === $value,
-            };
-            if ($found) {
-                if ($preserveKeys) {
-                    $returnData[$key]
-                        = $element instanceof Block
-                            ? $element->toArray()
-                            : $element;
-                } else {
-                    $returnData[]
-                        = $element instanceof Block
-                            ? $element->toArray()
-                            : $element;
-                }
-            }
+        if (!is_string($operator) || !in_array($operator, self::queryOperators(), true)) {
+            throw new \InvalidArgumentException("Unsupported query operator");
         }
-        return self::make($returnData, $this->iteratorReturnsBlock);
+
+        if ($operator === Operator::IN && !is_array($value)) {
+            throw new \InvalidArgumentException(
+                "The IN operator expects an array of values",
+            );
+        }
+
+        return $this->wherePredicate(
+            $field,
+            fn(bool $exists, mixed $actual): bool => $exists
+                && $this->matchesQuery($actual, $operator, $value),
+            $preserveKeys,
+        );
+    }
+
+    public function whereNull(
+        int|string $field,
+        bool $preserveKeys = true,
+    ): self {
+        return $this->wherePredicate(
+            $field,
+            fn(bool $exists, mixed $value): bool => !$exists || $value === null,
+            $preserveKeys,
+        );
+    }
+
+    public function whereNotNull(
+        int|string $field,
+        bool $preserveKeys = true,
+    ): self {
+        return $this->wherePredicate(
+            $field,
+            fn(bool $exists, mixed $value): bool => $exists && $value !== null,
+            $preserveKeys,
+        );
+    }
+
+    public function whereBetween(
+        int|string $field,
+        mixed $start,
+        mixed $end,
+        bool $preserveKeys = true,
+    ): self {
+        return $this->wherePredicate(
+            $field,
+            fn(bool $exists, mixed $value): bool => $exists
+                && self::isRelationalValue($value)
+                && self::isRelationalValue($start)
+                && self::isRelationalValue($end)
+                && $value >= $start
+                && $value <= $end,
+            $preserveKeys,
+        );
+    }
+
+    /**
+     * @param array<mixed> $values
+     */
+    public function whereIn(
+        int|string $field,
+        array $values,
+        bool $strict = true,
+        bool $preserveKeys = true,
+    ): self {
+        return $this->wherePredicate(
+            $field,
+            fn(bool $exists, mixed $value): bool => $exists
+                && in_array($value, $values, $strict),
+            $preserveKeys,
+        );
     }
 
     public function orderBy(string|int $field, string $order = "asc"): self
@@ -241,5 +265,118 @@ trait QueryableBlock
             "string" => $property,
             default => null,
         };
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function queryOperators(): array
+    {
+        return [
+            Operator::EQUAL,
+            Operator::STRICT_EQUAL,
+            Operator::GREATER_THAN,
+            Operator::LESS_THAN,
+            Operator::GREATER_THAN_OR_EQUAL,
+            Operator::LESS_THAN_OR_EQUAL,
+            Operator::NOT_EQUAL,
+            Operator::STRICT_NOT_EQUAL,
+            Operator::IN,
+            Operator::HAS,
+            Operator::LIKE,
+        ];
+    }
+
+    private function matchesQuery(
+        mixed $actual,
+        string $operator,
+        mixed $expected,
+    ): bool {
+        return match ($operator) {
+            Operator::EQUAL => $actual == $expected,
+            Operator::STRICT_EQUAL => $actual === $expected,
+            Operator::NOT_EQUAL => $actual != $expected,
+            Operator::STRICT_NOT_EQUAL => $actual !== $expected,
+            Operator::GREATER_THAN => self::isRelationalValue($actual)
+                && self::isRelationalValue($expected)
+                && $actual > $expected,
+            Operator::LESS_THAN => self::isRelationalValue($actual)
+                && self::isRelationalValue($expected)
+                && $actual < $expected,
+            Operator::GREATER_THAN_OR_EQUAL => self::isRelationalValue($actual)
+                && self::isRelationalValue($expected)
+                && $actual >= $expected,
+            Operator::LESS_THAN_OR_EQUAL => self::isRelationalValue($actual)
+                && self::isRelationalValue($expected)
+                && $actual <= $expected,
+            Operator::IN => is_array($expected)
+                && in_array($actual, $expected, true),
+            Operator::HAS => self::queryValueHas($actual, $expected),
+            Operator::LIKE => self::queryValueContains($actual, $expected),
+            default => throw new \InvalidArgumentException(
+                "Unsupported query operator",
+            ),
+        };
+    }
+
+    private static function isRelationalValue(mixed $value): bool
+    {
+        return is_int($value)
+            || is_float($value)
+            || (is_string($value) && $value !== "");
+    }
+
+    private static function queryValueHas(mixed $actual, mixed $expected): bool
+    {
+        if ($actual instanceof Block) {
+            $actual = $actual->toArray();
+        }
+
+        return is_array($actual) && in_array($expected, $actual, true);
+    }
+
+    private static function queryValueContains(mixed $actual, mixed $expected): bool
+    {
+        if (!is_scalar($actual) || !is_scalar($expected)) {
+            return false;
+        }
+
+        return str_contains((string) $actual, (string) $expected);
+    }
+
+    /**
+     * @param callable(bool, mixed): bool $predicate
+     */
+    private function wherePredicate(
+        int|string $field,
+        callable $predicate,
+        bool $preserveKeys,
+    ): self {
+        $result = [];
+        $missing = new \stdClass();
+
+        foreach ($this->data as $key => $element) {
+            $row = is_array($element)
+                ? Block::make($element, $this->iteratorReturnsBlock)
+                : $element;
+            if (!$row instanceof Block) {
+                continue;
+            }
+
+            $value = $row->get($field, $missing);
+            $matches = $predicate($value !== $missing, $value);
+            if (!$matches) {
+                continue;
+            }
+
+            $item = $element instanceof Block ? $element->toArray() : $element;
+            if ($preserveKeys) {
+                $result[$key] = $item;
+            } else {
+                $result[] = $item;
+            }
+        }
+
+        return self::make($result, $this->iteratorReturnsBlock);
     }
 }

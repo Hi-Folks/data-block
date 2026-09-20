@@ -754,6 +754,7 @@ The `Operator` class provides a set of predefined constants that represent compa
 
 Supported Operators:
 - `Operator::EQUAL` (==)
+- `Operator::STRICT_EQUAL` (===)
 - `Operator::GREATER_THAN` (>)
 - `Operator::LESS_THAN` (<)
 - `Operator::GREATER_THAN_OR_EQUAL` (>=)
@@ -766,6 +767,52 @@ Supported Operators:
 
 > The `Operator` class is defined in the `use HiFolks\DataType\Enums\Operator` namespace.
 
+Unknown operators throw `InvalidArgumentException`; they never fall back to another comparison. `Operator::EQUAL` and `Operator::NOT_EQUAL` intentionally use PHP's loose comparison rules. Use `Operator::STRICT_EQUAL` and `Operator::STRICT_NOT_EQUAL` when values must also have the same type.
+
+#### Missing, null, and incompatible values
+
+Query behavior is designed to avoid accidental matches from PHP type coercion:
+
+| Condition | Missing field | Explicit `null` | Incompatible value |
+| --- | --- | --- | --- |
+| Equality operators | Never matches | Compared using the selected loose or strict operator | Compared using the selected operator |
+| `<`, `<=`, `>`, `>=` | Never matches | Never matches | Never matches |
+| `IN` | Never matches | Matches only when `null` is in the list | Uses strict membership |
+| `HAS` | Never matches | Never matches | Never matches unless the field is an array or `Block` |
+| `LIKE` | Never matches | Never matches | Never matches unless both values are scalar |
+
+Relational comparisons accept non-empty strings, integers, and floats. This means consistently formatted date strings such as ISO `YYYY-MM-DD` dates can be compared, while missing, `null`, empty-string, boolean, array, and object values are excluded.
+
+#### Null, range, and inclusion helpers
+
+Use `whereNull()` when a field is missing or explicitly `null`. It does not match `0`, `false`, or an empty string:
+
+```php
+$withoutAmount = $rows->whereNull('amount');
+$withAmount = $rows->whereNotNull('amount');
+```
+
+`whereBetween()` performs an inclusive range comparison and supports nested fields. Missing, null, empty, and incompatible values are excluded:
+
+```php
+$closingThisQuarter = $rows->whereBetween(
+    'close_date',
+    '2026-01-01',
+    '2026-03-31',
+);
+```
+
+`whereIn()` provides a readable inclusion query and uses strict comparison by default, preventing values such as `0`, `"0"`, and `false` from matching each other:
+
+```php
+$activeStages = $rows->whereIn(
+    'stage',
+    ['Proposal', 'Negotiation'],
+);
+```
+
+Pass `strict: false` only when PHP's loose membership comparison is explicitly required. All query helpers preserve keys; pass `preserveKeys: false` to return a zero-based result.
+
 #### The `in` operator
 
 The `in` operator is used within the where method to filter elements from a data collection based on whether a specific field's value exists within a given array of values.
@@ -775,7 +822,7 @@ The behavior is as follows:
 $data->where("field", Operator::IN, ["value1", "value2", ...])
 ```
 
-If the field's value exists in the provided array, the element is included in the result.
+If the field's value exists in the provided array with the same value and type, the element is included in the result.
 Example: Filtering fruits by color that match either "green" or "black"
 ```php
 $greenOrBlack = $data->where("color", Operator::IN, ["green", "black"]);
