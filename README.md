@@ -1197,17 +1197,36 @@ Integer values, floating-point values, and numeric strings are included. Missing
 Use the grouped aggregation helpers when you need one result for each value of another field:
 
 ```php
+$ordersByCurrency = $orders->countBy('currency');
 $totalsByCurrency = $orders->sumBy('currency', 'totals.amount');
+
+$ordersByCurrency->toArray();
+// ['EUR' => 2, 'USD' => 1]
 
 $totalsByCurrency->toArray();
 // ['EUR' => 40, 'USD' => 20.5]
 ```
 
-The available grouped helpers are `sumBy()`, `averageBy()`, `minBy()`, and `maxBy()`. Their first argument is the field used to group the rows, and their second argument is the numeric field to aggregate. Both arguments support nested paths.
+The available grouped helpers are `countBy()`, `sumBy()`, `averageBy()`, `minBy()`, and `maxBy()`. `countBy()` counts every row in each group, regardless of missing or null values in other fields. The numeric helpers take a second argument specifying the field to aggregate. All field arguments support nested paths.
+
+To count only rows matching a condition, filter the collection before calling `countBy()`. For example, this counts opportunities with a non-null amount for each stage:
+
+```php
+$opportunitiesByStage = $opportunities
+    ->whereNotNull('Amount')
+    ->countBy('Stage');
+```
+
+The same pattern works with `where()`, `whereNull()`, `whereBetween()`, `whereIn()`, or callback-based `filter()`.
 
 They also accept `defaultGroup` for rows with a missing or `null` grouping field:
 
 ```php
+$ordersByCurrency = $orders->countBy(
+    groupField: 'currency',
+    defaultGroup: 'unknown',
+);
+
 $totalsByCurrency = $orders->sumBy(
     groupField: 'currency',
     valueField: 'totals.amount',

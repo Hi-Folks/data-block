@@ -52,6 +52,15 @@ trait AggregatableBlock
         return $values === [] ? null : max($values);
     }
 
+    public function countBy(
+        int|string $groupField,
+        int|string|null $defaultGroup = null,
+    ): self {
+        return $this->groupBy($groupField, $defaultGroup)->map(
+            fn(Block $group): int => $group->count(),
+        );
+    }
+
     public function sumBy(
         int|string $groupField,
         int|string $valueField,

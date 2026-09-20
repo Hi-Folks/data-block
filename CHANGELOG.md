@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1 - WIP
+- Added `countBy()` for counting rows grouped by a field.
+
 ## 2.0.0 - 2026-09-20
 - Added configurable missing-key behavior: silent, warning, or exception.
 - Added numeric aggregation methods, including grouped helpers such as `sumBy()` and `averageBy()`.

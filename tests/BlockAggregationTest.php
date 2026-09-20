@@ -90,6 +90,11 @@ final class BlockAggregationTest extends TestCase
     public function testGroupedAggregationHelpers(): void
     {
         $this->assertSame([
+            "EUR" => 3,
+            "USD" => 3,
+        ], $this->rows->countBy("currency")->toArray());
+
+        $this->assertSame([
             "EUR" => 40,
             "USD" => 20.5,
         ], $this->rows->sumBy("currency", "amount")->toArray());
@@ -117,6 +122,11 @@ final class BlockAggregationTest extends TestCase
             ["customer" => ["currency" => "USD"], "totals" => ["amount" => "20.5"]],
             ["customer" => ["currency" => "EUR"], "totals" => ["amount" => 30]],
         ]);
+
+        $this->assertSame([
+            "EUR" => 2,
+            "USD" => 1,
+        ], $orders->countBy("customer.currency")->toArray());
 
         $this->assertSame([
             "EUR" => 40,
@@ -155,5 +165,33 @@ final class BlockAggregationTest extends TestCase
             valueField: "amount",
             defaultGroup: "unknown",
         )->toArray());
+    }
+
+    public function testCountBySupportsFalseyKeysAndADefaultGroup(): void
+    {
+        $rows = Block::make([
+            ["group" => 0],
+            ["group" => "0"],
+            ["group" => false],
+            ["group" => ""],
+            ["group" => null],
+            ["name" => "missing"],
+        ]);
+
+        $this->assertSame([
+            0 => 3,
+            "" => 1,
+        ], $rows->countBy("group")->toArray());
+
+        $this->assertSame([
+            0 => 3,
+            "" => 1,
+            "unknown" => 2,
+        ], $rows->countBy("group", defaultGroup: "unknown")->toArray());
+    }
+
+    public function testCountByReturnsAnEmptyBlockForEmptyInput(): void
+    {
+        $this->assertSame([], Block::make([])->countBy("group")->toArray());
     }
 }
