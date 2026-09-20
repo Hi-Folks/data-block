@@ -79,7 +79,10 @@ final class ArchitectureTest extends TestCase
                                             $this->filePath,
                                             "ExportableBlock.php",
                                         )
-                                        && $node->getStartLine() === 35
+                                        && $func === "var_dump"
+                                        && count($node->args) === 1
+                                        && $node->args[0]->value instanceof Node\Expr\Variable
+                                        && $node->args[0]->value->name === "this"
                                     ) {
                                         // skip
                                     } else {

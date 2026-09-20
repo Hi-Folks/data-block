@@ -19,7 +19,6 @@ trait ExportableBlock
 
     /**
      * Returns the JSON String (pretty format by default)
-     * @return string|false
      */
     public function toJson(): string|false
     {

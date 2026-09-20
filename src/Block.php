@@ -115,7 +115,6 @@ final class Block implements Iterator, ArrayAccess, Countable
         string $exceptionClass = \OutOfBoundsException::class,
         ?string $hint = null,
     ): self {
-        /** @phpstan-ignore function.alreadyNarrowedType, booleanAnd.alwaysFalse */
         if (!is_subclass_of($exceptionClass, \Throwable::class) && $exceptionClass !== \Throwable::class) {
             throw new \InvalidArgumentException("Exception class must extend Throwable");
         }

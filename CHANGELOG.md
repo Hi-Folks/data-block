@@ -1,7 +1,9 @@
 # Changelog
 
-## 1.2.1 - WIP
+## 1.3.0 - WIP
 - Added configurable missing-key behavior: silent, warning, or exception.
+- Removed obsolete PHPStan suppressions from missing-key exception validation.
+- Made the architecture-test exemption for `ExportableBlock::dump()` independent of source line numbers.
 
 ## 1.2.0 - 2026-01-08
 - Removing PestPHP, using phpunit 11

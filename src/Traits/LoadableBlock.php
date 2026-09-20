@@ -35,12 +35,10 @@ trait LoadableBlock
      */
     public static function fromJsonUrl(string $jsonUrl, ?array $headers = null): self
     {
-        if (is_null($headers)) {
-            $headers = [
-                'Accept-language: en',
-                'User-Agent: hi-folks/data-block',
-            ];
-        }
+        $headers ??= [
+            'Accept-language: en',
+            'User-Agent: hi-folks/data-block',
+        ];
         $options = [
             'http' => [
                 'method' => "GET",

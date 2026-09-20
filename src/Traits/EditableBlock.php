@@ -10,7 +10,6 @@ trait EditableBlock
 {
     /**
      * @param array<int|string, mixed>|Block $data
-     * @return $this
      */
     public function append(array|Block $data, ?string $key = null): self
     {
