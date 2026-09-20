@@ -635,6 +635,110 @@ echo $workflow->get("jobs.test.runs-on");
 echo $workflow->get("on.0"); // push , the first event
 ```
 
+### Loading CSV files
+
+CSV loading supports three memory strategies. Choose the one that matches the file size and the operation you need to perform.
+
+| Goal | Method | Memory behavior |
+| --- | --- | --- |
+| Use the complete file as one `Block` | `fromCsvFile()` | Loads every row into memory |
+| Process one row at a time | `streamCsvFile()` | Keeps only the current row in memory |
+| Use `Block` operations on bounded batches | `chunkCsvFile()` | Keeps one configurable chunk in memory |
+
+#### Eager loading
+
+Use `fromCsvFile()` for files that comfortably fit in memory:
+
+```php
+$opportunities = Block::fromCsvFile(
+    '/exports/opportunities.csv',
+    encoding: 'Windows-1252',
+);
+
+$total = $opportunities
+    ->whereNotNull('Amount')
+    ->sum('Amount');
+```
+
+The first row is used as field names by default. Quoted delimiters and quoted multiline fields are parsed correctly.
+
+#### Row-by-row streaming
+
+Use `streamCsvFile()` for very large Salesforce or reporting exports. It returns a `Generator` of `Block` rows and does not materialize the complete file:
+
+```php
+foreach (Block::streamCsvFile(
+    '/exports/opportunities.csv',
+    encoding: 'Windows-1252',
+) as $opportunity) {
+    if ($opportunity->getFloatStrict('Amount') > 0) {
+        // Process or persist this row before reading the next one.
+    }
+}
+```
+
+Iteration is lazy: the file is opened and rows are parsed only as they are requested. The file handle is closed when iteration finishes or when the generator is released after stopping early.
+
+#### Processing chunks
+
+Use `chunkCsvFile()` when you need existing collection methods without holding the entire export in memory:
+
+```php
+$total = 0;
+
+foreach (Block::chunkCsvFile(
+    '/exports/opportunities.csv',
+    chunkSize: 1_000,
+    encoding: 'Windows-1252',
+) as $opportunities) {
+    $total += $opportunities
+        ->whereNotNull('Amount')
+        ->sum('Amount');
+}
+```
+
+Filtering, mapping, validation, counting, and summing are safe to perform per chunk. Operations requiring the complete dataset—such as a global `orderBy()`, top-N query, or complete grouping—must not be calculated independently per chunk. For averages, combine the total sum and item count across chunks.
+
+#### CSV options and validation
+
+All three methods support the same parsing options:
+
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `delimiter` | `,` | Field separator |
+| `enclosure` | `"` | Quoted-field character |
+| `escape` | Empty | Explicit RFC 4180-oriented escape behavior |
+| `encoding` | `UTF-8` | Source encoding converted to UTF-8 |
+| `header` | `true` | Use the first non-empty row as field names |
+| `skipEmptyRows` | `true` | Ignore physically empty CSV records |
+| `rowWidth` | `CsvRowWidth::STRICT` | Handle rows whose field count differs from the header |
+| `normalize` | `null` | Optionally transform each row while it is read |
+
+Header names must be present and unique. UTF-8 BOM bytes are removed from the first header automatically.
+
+Choose an explicit row-width policy:
+
+```php
+use HiFolks\DataType\Enums\CsvRowWidth;
+
+CsvRowWidth::STRICT; // Throw with the CSV record number on any mismatch.
+CsvRowWidth::PAD;    // Pad short rows with null; reject rows with extra fields.
+CsvRowWidth::SKIP;   // Skip rows whose width does not match the header.
+```
+
+CSV values remain strings by default. This avoids corrupting identifiers, leading zeros, dates, and large numbers through automatic type guessing. Use `normalize` when explicit conversion is appropriate:
+
+```php
+$opportunities = Block::fromCsvFile(
+    '/exports/opportunities.csv',
+    normalize: fn(Block $row): array => [
+        ...$row->toArray(),
+        'Amount' => $row->getFloatStrict('Amount'),
+        'IsClosed' => $row->getStringStrict('IsClosed') === 'true',
+    ],
+);
+```
+
 ### Loading Data from JSON URL via Symfony HttpClient
 
 If you want more control over the HTTP request (headers, authentication, timeouts, retries, etc.) or your environment restricts PHP stream functions (for example `allow_url_fopen=0`), you can use `fromHttpJsonUrl()`.  

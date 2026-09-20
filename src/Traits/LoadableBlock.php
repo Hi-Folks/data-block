@@ -4,11 +4,121 @@ declare(strict_types=1);
 
 namespace HiFolks\DataType\Traits;
 
+use Generator;
+use HiFolks\DataType\Block;
+use HiFolks\DataType\CsvReader;
+use HiFolks\DataType\Enums\CsvRowWidth;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 trait LoadableBlock
 {
+    /**
+     * @param null|callable(Block, int): (array<int|string, mixed>|Block) $normalize
+     */
+    public static function fromCsvFile(
+        string $csvFile,
+        string $delimiter = ",",
+        string $enclosure = '"',
+        string $escape = "",
+        string $encoding = "UTF-8",
+        bool $header = true,
+        bool $skipEmptyRows = true,
+        CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
+        ?callable $normalize = null,
+    ): self {
+        $rows = iterator_to_array(CsvReader::rows(
+            $csvFile,
+            $delimiter,
+            $enclosure,
+            $escape,
+            $encoding,
+            $header,
+            $skipEmptyRows,
+            $rowWidth,
+            $normalize,
+        ));
+
+        return self::make($rows);
+    }
+
+    /**
+     * @param null|callable(Block, int): (array<int|string, mixed>|Block) $normalize
+     * @return Generator<int, Block>
+     */
+    public static function streamCsvFile(
+        string $csvFile,
+        string $delimiter = ",",
+        string $enclosure = '"',
+        string $escape = "",
+        string $encoding = "UTF-8",
+        bool $header = true,
+        bool $skipEmptyRows = true,
+        CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
+        ?callable $normalize = null,
+    ): Generator {
+        foreach (CsvReader::rows(
+            $csvFile,
+            $delimiter,
+            $enclosure,
+            $escape,
+            $encoding,
+            $header,
+            $skipEmptyRows,
+            $rowWidth,
+            $normalize,
+        ) as $index => $row) {
+            yield $index => self::make($row);
+        }
+    }
+
+    /**
+     * @param null|callable(Block, int): (array<int|string, mixed>|Block) $normalize
+     * @return Generator<int, Block>
+     */
+    public static function chunkCsvFile(
+        string $csvFile,
+        int $chunkSize = 1000,
+        string $delimiter = ",",
+        string $enclosure = '"',
+        string $escape = "",
+        string $encoding = "UTF-8",
+        bool $header = true,
+        bool $skipEmptyRows = true,
+        CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
+        ?callable $normalize = null,
+    ): Generator {
+        if ($chunkSize < 1) {
+            throw new \InvalidArgumentException(
+                "The CSV chunk size must be greater than zero",
+            );
+        }
+
+        $chunk = [];
+        $chunkIndex = 0;
+        foreach (self::streamCsvFile(
+            $csvFile,
+            $delimiter,
+            $enclosure,
+            $escape,
+            $encoding,
+            $header,
+            $skipEmptyRows,
+            $rowWidth,
+            $normalize,
+        ) as $row) {
+            $chunk[] = $row->toArray();
+            if (count($chunk) === $chunkSize) {
+                yield $chunkIndex++ => self::make($chunk);
+                $chunk = [];
+            }
+        }
+
+        if ($chunk !== []) {
+            yield $chunkIndex => self::make($chunk);
+        }
+    }
+
     public static function fromJsonString(string $jsonString = "[]"): self
     {
         /** @var array<int|string, mixed> $json */
