@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 - WIP
+## 2.0.0 - 2026-09-20
 - Added configurable missing-key behavior: silent, warning, or exception.
 - Added numeric aggregation methods, including grouped helpers such as `sumBy()` and `averageBy()`.
 - Made grouping preserve valid falsey keys and added an optional default group for missing values.

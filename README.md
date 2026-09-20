@@ -1608,6 +1608,7 @@ $object
     });
 
 echo $object->get('uppercase_name'); // Outputs: JOHN DOE
+```
 
 ## Testing
 
