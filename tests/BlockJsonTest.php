@@ -7,6 +7,11 @@ use PHPUnit\Framework\TestCase;
 
 final class BlockJsonTest extends TestCase
 {
+    private ?string $temporaryDirectory = null;
+
+    /** @var list<string> */
+    private array $registeredFiles = [];
+
     private array $fruitsArray = [
         "avocado" => [
             "name" => "Avocado",
@@ -37,6 +42,83 @@ final class BlockJsonTest extends TestCase
             "rating" => 9,
         ],
     ];
+
+    protected function tearDown(): void
+    {
+        try {
+            $unexpectedFiles = $this->cleanTemporaryDirectory();
+
+            self::assertSame(
+                [],
+                $unexpectedFiles,
+                "The test created unexpected temporary files",
+            );
+        } finally {
+            parent::tearDown();
+        }
+    }
+
+    private function temporaryPath(string $filename): string
+    {
+        if ($this->temporaryDirectory === null) {
+            $this->temporaryDirectory = sys_get_temp_dir()
+                . DIRECTORY_SEPARATOR
+                . "data-block-json-"
+                . bin2hex(random_bytes(8));
+
+            if (!mkdir($this->temporaryDirectory, 0700)) {
+                throw new RuntimeException("Unable to create the temporary test directory");
+            }
+        }
+
+        $path = $this->temporaryDirectory . DIRECTORY_SEPARATOR . $filename;
+        $this->registeredFiles[] = $path;
+
+        return $path;
+    }
+
+    /** @return list<string> */
+    private function cleanTemporaryDirectory(): array
+    {
+        if (
+            $this->temporaryDirectory === null
+            || !is_dir($this->temporaryDirectory)
+        ) {
+            return [];
+        }
+
+        foreach (array_reverse($this->registeredFiles) as $path) {
+            if (is_file($path) || is_link($path)) {
+                unlink($path);
+            }
+        }
+
+        $unexpectedFiles = [];
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                $this->temporaryDirectory,
+                FilesystemIterator::SKIP_DOTS,
+            ),
+            RecursiveIteratorIterator::CHILD_FIRST,
+        );
+
+        foreach ($iterator as $item) {
+            $unexpectedFiles[] = substr(
+                $item->getPathname(),
+                strlen($this->temporaryDirectory) + 1,
+            );
+
+            if ($item->isDir() && !$item->isLink()) {
+                rmdir($item->getPathname());
+            } else {
+                unlink($item->getPathname());
+            }
+        }
+
+        rmdir($this->temporaryDirectory);
+
+        return $unexpectedFiles;
+    }
 
     public function testToJson(): void
     {
@@ -119,68 +201,57 @@ final class BlockJsonTest extends TestCase
     public function testSaveToJson(): void
     {
         $data = Block::make($this->fruitsArray);
+        $filename = $this->temporaryPath("fruits.json");
 
-        $data->saveToJson("fruits.json");
+        $data->saveToJson($filename);
 
-        $this->assertFileExists("fruits.json");
-
-        unlink("fruits.json");
+        $this->assertFileExists($filename);
     }
 
     public function testSaveToJsonWithOverwrite(): void
     {
         $data = Block::make($this->fruitsArray);
+        $filename = $this->temporaryPath("fruits.json");
 
-        $data->saveToJson("fruits.json");
+        $data->saveToJson($filename);
 
-        $this->assertFileExists("fruits.json");
+        $this->assertFileExists($filename);
 
-        $result = $data->saveToJson("fruits.json", true);
+        $result = $data->saveToJson($filename, true);
 
         $this->assertTrue($result);
-
-        unlink("fruits.json");
     }
 
     public function testSaveToJsonWithExistingFile(): void
     {
         $data = Block::make($this->fruitsArray);
+        $filename = $this->temporaryPath("fruits.json");
 
-        $data->saveToJson("fruits.json");
+        $data->saveToJson($filename);
 
-        $this->assertFileExists("fruits.json");
+        $this->assertFileExists($filename);
 
-        $result = $data->saveToJson("fruits.json");
+        $result = $data->saveToJson($filename);
 
         $this->assertFalse($result);
-
-        unlink("fruits.json");
     }
 
     public function testSaveToJsonUsesTheRequestedEncodingFlags(): void
     {
-        $filename = tempnam(sys_get_temp_dir(), "data-block-json-");
-        $this->assertIsString($filename);
+        $filename = $this->temporaryPath("unicode.json");
 
-        try {
-            $result = Block::make(["emoji" => "🥑"])->saveToJson(
-                $filename,
-                overwrite: true,
-                flags: JSON_UNESCAPED_UNICODE,
-            );
+        $result = Block::make(["emoji" => "🥑"])->saveToJson(
+            $filename,
+            flags: JSON_UNESCAPED_UNICODE,
+        );
 
-            $this->assertTrue($result);
-            $this->assertSame('{"emoji":"🥑"}', file_get_contents($filename));
-        } finally {
-            if (file_exists($filename)) {
-                unlink($filename);
-            }
-        }
+        $this->assertTrue($result);
+        $this->assertSame('{"emoji":"🥑"}', file_get_contents($filename));
     }
 
     public function testSaveToJsonReturnsFalseWhenEncodingFails(): void
     {
-        $filename = sys_get_temp_dir() . "/data-block-invalid-" . uniqid() . ".json";
+        $filename = $this->temporaryPath("invalid.json");
 
         $result = Block::make(["invalid" => "\xB1\x31"])->saveToJson($filename);
 
@@ -190,10 +261,9 @@ final class BlockJsonTest extends TestCase
 
     public function testSaveToJsonReturnsFalseWhenWritingFails(): void
     {
-        $filename = sys_get_temp_dir()
-            . "/data-block-missing-"
-            . uniqid()
-            . "/output.json";
+        $filename = $this->temporaryPath(
+            "missing" . DIRECTORY_SEPARATOR . "output.json",
+        );
 
         $this->assertFalse(Block::make(["valid" => true])->saveToJson($filename));
         $this->assertFileDoesNotExist($filename);
@@ -201,20 +271,14 @@ final class BlockJsonTest extends TestCase
 
     public function testSaveToJsonCanThrowWhenEncodingFails(): void
     {
-        $filename = sys_get_temp_dir() . "/data-block-invalid-" . uniqid() . ".json";
+        $filename = $this->temporaryPath("invalid.json");
 
-        try {
-            $this->expectException(JsonException::class);
+        $this->expectException(JsonException::class);
 
-            Block::make(["invalid" => "\xB1\x31"])->saveToJson(
-                $filename,
-                flags: JSON_THROW_ON_ERROR,
-            );
-        } finally {
-            if (file_exists($filename)) {
-                unlink($filename);
-            }
-        }
+        Block::make(["invalid" => "\xB1\x31"])->saveToJson(
+            $filename,
+            flags: JSON_THROW_ON_ERROR,
+        );
     }
 
     public function testEmptyJson(): void
