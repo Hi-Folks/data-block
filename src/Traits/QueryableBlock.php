@@ -223,6 +223,78 @@ trait QueryableBlock
         return self::make($array, $this->iteratorReturnsBlock);
     }
 
+    /**
+     * Add or replace one computed column on every row.
+     *
+     * @param callable(Block, int|string): mixed $callback
+     */
+    public function withColumn(
+        int|string $column,
+        callable $callback,
+        bool $overwrite = true,
+    ): self {
+        return $this->withColumns([$column => $callback], $overwrite);
+    }
+
+    /**
+     * Add or replace computed columns on every row without changing the source Block.
+     *
+     * Every callback receives an independent snapshot of the original row and
+     * its key. Computed columns therefore do not depend on their array order.
+     *
+     * @param array<int|string, callable(Block, int|string): mixed> $columns
+     */
+    public function withColumns(
+        array $columns,
+        bool $overwrite = true,
+    ): self {
+        self::validateComputedColumns($columns);
+
+        if ($columns === []) {
+            return self::make($this->data, $this->iteratorReturnsBlock);
+        }
+
+        $result = [];
+
+        foreach ($this->data as $key => $item) {
+            if ($item instanceof Block) {
+                $rowData = $item->toArray();
+            } elseif (is_array($item)) {
+                $rowData = $item;
+            } else {
+                throw new \UnexpectedValueException(
+                    "Computed columns require every row to be an array or Block",
+                );
+            }
+
+            $originalRow = self::make($rowData, $this->iteratorReturnsBlock);
+            $computedValues = [];
+
+            foreach ($columns as $column => $callback) {
+                if (!$overwrite && self::rowHasField($originalRow, $column)) {
+                    throw new \UnexpectedValueException(
+                        "Computed column '{$column}' already exists",
+                    );
+                }
+
+                $callbackRow = self::make(
+                    $rowData,
+                    $this->iteratorReturnsBlock,
+                );
+                $computedValues[$column] = $callback($callbackRow, $key);
+            }
+
+            $computedRow = self::make($rowData, $this->iteratorReturnsBlock);
+            foreach ($computedValues as $column => $value) {
+                $computedRow->set($column, $value);
+            }
+
+            $result[$key] = $computedRow->toArray();
+        }
+
+        return self::make($result, $this->iteratorReturnsBlock);
+    }
+
     public function select(int|string ...$columns): self
     {
         $table = self::make([], $this->iteratorReturnsBlock);
@@ -468,6 +540,25 @@ trait QueryableBlock
                 );
             }
         }
+    }
+
+    /** @param array<int|string, mixed> $columns */
+    private static function validateComputedColumns(array $columns): void
+    {
+        foreach ($columns as $column => $callback) {
+            if (!is_callable($callback)) {
+                throw new \InvalidArgumentException(
+                    "Computed column '{$column}' must be defined by a callable",
+                );
+            }
+        }
+    }
+
+    private static function rowHasField(Block $row, int|string $field): bool
+    {
+        $missing = new \stdClass();
+
+        return $row->get($field, $missing) !== $missing;
     }
 
     private function sortableItem(mixed $item): mixed

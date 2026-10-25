@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- Added immutable `withColumn()` and `withColumns()` helpers for adding or
+  replacing computed fields across tabular Blocks.
 - Added validation-oriented `requireString()`, `requireInt()`, `requireFloat()`,
   and `requireBoolean()` accessors for mandatory typed input.
 - Added configurable JSON encoding flags and depth to `toJson()` and

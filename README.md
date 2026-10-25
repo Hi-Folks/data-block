@@ -1317,6 +1317,51 @@ Array
 */
 ```
 
+### Adding computed columns with `withColumn()` and `withColumns()`
+
+Use computed columns when tabular rows need derived values but the complete row
+should otherwise remain unchanged. This avoids reconstructing every row in a
+`map()` callback:
+
+```php
+$ordersWithTotals = $orders->withColumn(
+    'total',
+    fn (Block $row): float => $row->requireInt('quantity')
+        * $row->requireFloat('unit_price'),
+);
+```
+
+Add several derived columns in one operation with `withColumns()`. Callbacks
+receive the original row as a `Block` and its key:
+
+```php
+$report = $orders->withColumns([
+    'total' => fn (Block $row): float => $row->requireInt('quantity')
+        * $row->requireFloat('unit_price'),
+    'source_key' => fn (Block $row, int|string $key): int|string => $key,
+]);
+```
+
+Both methods return a new `Block`, preserve row keys, and leave the source
+unchanged. Array and `Block` rows are supported; scalar rows throw an
+`UnexpectedValueException` because a column cannot be added to them.
+
+Existing fields are replaced by default. Disable replacement when an existing
+field probably indicates a programming or schema error:
+
+```php
+$result = $orders->withColumn(
+    'total',
+    fn (Block $row): float => calculateTotal($row),
+    overwrite: false,
+);
+```
+
+Nested targets such as `totals.amount` use the same dot notation as `set()`.
+Every callback receives an independent snapshot of the original row, so one
+computed column cannot accidentally affect another and results do not depend on
+the order of the callback array.
+
 ### The `groupBy()` method
 
 Groups the elements of the `Block` object by a specified field.
