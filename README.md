@@ -678,6 +678,31 @@ $data = Block::make($fruitsArray);
 $jsonString = $data->toJson(); // JSON string with "pretty print"
 ```
 
+Pretty printing remains the default for backward compatibility. You can pass
+any native `json_encode()` flags and configure the maximum encoding depth:
+
+```php
+$jsonString = $data->toJson(
+    flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE,
+    depth: 512,
+);
+```
+
+By default, an encoding error returns `false`, matching `json_encode()`. At
+validation boundaries, add `JSON_THROW_ON_ERROR` so malformed data cannot be
+mistaken for valid output:
+
+```php
+$jsonString = $data->toJson(
+    flags: JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR,
+);
+```
+
+This throws `JsonException` with the encoding error. Supplying `flags` replaces
+the default, so include `JSON_PRETTY_PRINT` explicitly when formatted output is
+still desired. The depth must be greater than zero; an invalid depth throws
+`ValueError`.
+
 ### Exporting to YAML string with `toYaml()`
 If you need to generate a valid YAML string using the content of the Block object, you can use the `toYaml()` method.
 
@@ -692,7 +717,7 @@ $yamlString = $data->toYaml(); // YAML string
 If you need to save the JSON string in a file using the content of the Block object, you can use the `saveToJson()` method.
 
 This is helpful when you are manipulating data with the Block class and at a certain point need to save the data in JSON string format to a file.
-The `saveToJson()` method has two parameters:
+The first two parameters preserve the original API:
 
 - `filename`: the first parameter (mandatory) with the filename;
 - `overwrite`: the second parameter (optional), If the file exists, the file is not saved by default, unless you set the overwrite parameter as true.
@@ -701,6 +726,22 @@ The `saveToJson()` method has two parameters:
 $data = Block::make($fruitsArray);
 $jsonString = $data->saveToJson('./fruits.json', true);
 ```
+
+Encoding flags and depth can also be supplied:
+
+```php
+$saved = $data->saveToJson(
+    './fruits.json',
+    overwrite: true,
+    flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR,
+    depth: 512,
+);
+```
+
+The method returns `false` when overwrite is disabled for an existing file,
+when JSON encoding returns `false`, or when the file cannot be written. With
+`JSON_THROW_ON_ERROR`, encoding failures throw `JsonException`; filesystem
+failures still return `false`.
 
 
 ## Loading Data

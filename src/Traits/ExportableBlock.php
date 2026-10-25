@@ -18,11 +18,20 @@ trait ExportableBlock
     }
 
     /**
-     * Returns the JSON String (pretty format by default)
+     * Returns the JSON string, pretty-printed by default.
+     *
+     * Pass JSON_THROW_ON_ERROR in $flags when encoding failures should throw a
+     * JsonException instead of returning false.
      */
-    public function toJson(): string|false
-    {
-        return json_encode($this->data, JSON_PRETTY_PRINT);
+    public function toJson(
+        int $flags = JSON_PRETTY_PRINT,
+        int $depth = 512,
+    ): string|false {
+        if ($depth < 1) {
+            throw new \ValueError("JSON depth must be greater than zero");
+        }
+
+        return json_encode($this->data, $flags, $depth);
     }
 
     public function dumpJson(): void
@@ -52,19 +61,30 @@ trait ExportableBlock
     }
 
     /**
-     * Saves the JSON String to a file
+     * Saves the JSON string to a file.
+     *
+     * Returns false when the destination already exists without overwrite
+     * permission, JSON encoding fails, or the encoded data cannot be written.
+     * Pass JSON_THROW_ON_ERROR in $flags to make encoding failures throw.
+     *
      * @param string $filename file name for example "./file.json"
      * @param bool $overwrite if the file already exists you can force overwriting
-     * @return bool true if the file is saved, if already exists and you don't want to
-     * force overwiting the file it returns false
      */
-    public function saveToJson(string $filename, bool $overwrite = false): bool
-    {
+    public function saveToJson(
+        string $filename,
+        bool $overwrite = false,
+        int $flags = JSON_PRETTY_PRINT,
+        int $depth = 512,
+    ): bool {
         if (file_exists($filename) && !$overwrite) {
             return false;
         }
 
-        file_put_contents($filename, $this->toJson());
-        return true;
+        $json = $this->toJson($flags, $depth);
+        if ($json === false) {
+            return false;
+        }
+
+        return @file_put_contents($filename, $json) !== false;
     }
 }

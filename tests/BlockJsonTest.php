@@ -69,6 +69,53 @@ final class BlockJsonTest extends TestCase
         $this->assertSame($string1, $string2);
     }
 
+    public function testToJsonAcceptsEncodingFlags(): void
+    {
+        $data = Block::make(["emoji" => "🥑"]);
+
+        $this->assertSame(
+            '{"emoji":"🥑"}',
+            $data->toJson(flags: JSON_UNESCAPED_UNICODE),
+        );
+        $this->assertStringContainsString(
+            "\n",
+            $data->toJson(
+                flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE,
+            ),
+        );
+    }
+
+    public function testToJsonReturnsFalseWhenEncodingFails(): void
+    {
+        $data = Block::make(["invalid" => "\xB1\x31"]);
+
+        $this->assertFalse($data->toJson());
+    }
+
+    public function testToJsonCanThrowWhenEncodingFails(): void
+    {
+        $data = Block::make(["invalid" => "\xB1\x31"]);
+
+        $this->expectException(JsonException::class);
+
+        $data->toJson(flags: JSON_THROW_ON_ERROR);
+    }
+
+    public function testToJsonHonorsTheMaximumDepth(): void
+    {
+        $data = Block::make(["outer" => ["inner" => "value"]]);
+
+        $this->assertFalse($data->toJson(depth: 1));
+    }
+
+    public function testToJsonRejectsANonPositiveDepth(): void
+    {
+        $this->expectException(ValueError::class);
+        $this->expectExceptionMessage("JSON depth must be greater than zero");
+
+        Block::make([])->toJson(depth: 0);
+    }
+
     public function testSaveToJson(): void
     {
         $data = Block::make($this->fruitsArray);
@@ -108,6 +155,66 @@ final class BlockJsonTest extends TestCase
         $this->assertFalse($result);
 
         unlink("fruits.json");
+    }
+
+    public function testSaveToJsonUsesTheRequestedEncodingFlags(): void
+    {
+        $filename = tempnam(sys_get_temp_dir(), "data-block-json-");
+        $this->assertIsString($filename);
+
+        try {
+            $result = Block::make(["emoji" => "🥑"])->saveToJson(
+                $filename,
+                overwrite: true,
+                flags: JSON_UNESCAPED_UNICODE,
+            );
+
+            $this->assertTrue($result);
+            $this->assertSame('{"emoji":"🥑"}', file_get_contents($filename));
+        } finally {
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+        }
+    }
+
+    public function testSaveToJsonReturnsFalseWhenEncodingFails(): void
+    {
+        $filename = sys_get_temp_dir() . "/data-block-invalid-" . uniqid() . ".json";
+
+        $result = Block::make(["invalid" => "\xB1\x31"])->saveToJson($filename);
+
+        $this->assertFalse($result);
+        $this->assertFileDoesNotExist($filename);
+    }
+
+    public function testSaveToJsonReturnsFalseWhenWritingFails(): void
+    {
+        $filename = sys_get_temp_dir()
+            . "/data-block-missing-"
+            . uniqid()
+            . "/output.json";
+
+        $this->assertFalse(Block::make(["valid" => true])->saveToJson($filename));
+        $this->assertFileDoesNotExist($filename);
+    }
+
+    public function testSaveToJsonCanThrowWhenEncodingFails(): void
+    {
+        $filename = sys_get_temp_dir() . "/data-block-invalid-" . uniqid() . ".json";
+
+        try {
+            $this->expectException(JsonException::class);
+
+            Block::make(["invalid" => "\xB1\x31"])->saveToJson(
+                $filename,
+                flags: JSON_THROW_ON_ERROR,
+            );
+        } finally {
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+        }
     }
 
     public function testEmptyJson(): void

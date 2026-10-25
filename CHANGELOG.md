@@ -3,6 +3,8 @@
 ## Unreleased
 - Added validation-oriented `requireString()`, `requireInt()`, `requireFloat()`,
   and `requireBoolean()` accessors for mandatory typed input.
+- Added configurable JSON encoding flags and depth to `toJson()` and
+  `saveToJson()`, with accurate encoding and write-failure reporting.
 
 ## 2.1.0 - 2026-09-20
 - Added `partition()` for splitting a Block into matching and non-matching
