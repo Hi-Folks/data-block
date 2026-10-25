@@ -1638,6 +1638,31 @@ $groupedByQuantityRange = $fruitsBlock->groupByFunction(
 */
 ```
 
+### Choosing a reporting method
+
+Data Block provides several reporting methods because different output shapes
+need different tools. Choose the narrowest method that directly represents the
+result you need:
+
+| What you need | Use | Result |
+| --- | --- | --- |
+| One numeric calculation | `sum()`, `average()`, `min()`, or `max()` | A number or `null` |
+| One conditional count or sum | `countWhere()` or `sumWhere()` | A number |
+| Several built-in metrics for the complete dataset | `aggregate()` | One summary row |
+| Several built-in metrics for each group | `aggregateBy()` | One flat row per group |
+| Custom callback logic for each group | `summarizeBy()` or `summarizeByMany()` | One flat row per group |
+| A percentage, ratio, or formula based on completed metrics | `withColumn()` or `withColumns()` | The report with derived columns |
+| Counts arranged as rows and dynamic columns | `crossTab()` | A wide count table |
+| Numeric totals arranged as rows and dynamic columns | `pivotSum()` | A wide totals table |
+
+Use `aggregate()` and `aggregateBy()` for common metrics because their typed
+specifications are validated early and accumulated in one source traversal.
+Use the `summarizeBy()` methods when a calculation genuinely needs custom PHP
+logic. Add formulas after either approach with `withColumn()` so aggregation
+and interpretation remain separate and readable. Choose `crossTab()` or
+`pivotSum()` only when consumers specifically need a wide table rather than a
+normal row-oriented report.
+
 ### Aggregating numeric values
 
 Use `sum()`, `average()`, `min()`, and `max()` to aggregate a field across all rows. Field names support the same nested paths as `get()`.
