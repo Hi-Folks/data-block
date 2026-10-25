@@ -1,6 +1,8 @@
 # Changelog
 
 ## WIP
+- Added opt-in CSV normalization error context with the source, logical record
+  number, and original exception preserved.
 - Added opt-in atomic JSON file writing with same-directory replacement and
   temporary-file cleanup.
 - Added `pivotSum()` for wide numeric pivot tables with the same layout,

@@ -6,6 +6,7 @@ namespace HiFolks\DataType;
 
 use Generator;
 use HiFolks\DataType\Enums\CsvRowWidth;
+use HiFolks\DataType\Exceptions\CsvNormalizationException;
 
 final class CsvReader
 {
@@ -25,6 +26,7 @@ final class CsvReader
         CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
         ?callable $normalize = null,
         array $requiredHeaders = [],
+        bool $wrapNormalizationErrors = false,
     ): Generator {
         self::validateCharacters($delimiter, $enclosure, $escape);
         self::validateRequiredHeaderConfiguration($requiredHeaders, $header);
@@ -62,14 +64,26 @@ final class CsvReader
                 }
 
                 if ($normalize !== null) {
-                    $normalized = $normalize(Block::make($row), $recordNumber);
-                    if ($normalized instanceof Block) {
-                        $row = $normalized->toArray();
-                    } elseif (is_array($normalized)) {
-                        $row = $normalized;
-                    } else {
-                        throw new \UnexpectedValueException(
-                            "The CSV normalization callback must return an array or Block",
+                    try {
+                        $normalized = $normalize(Block::make($row), $recordNumber);
+                        if ($normalized instanceof Block) {
+                            $row = $normalized->toArray();
+                        } elseif (is_array($normalized)) {
+                            $row = $normalized;
+                        } else {
+                            throw new \UnexpectedValueException(
+                                "The CSV normalization callback must return an array or Block",
+                            );
+                        }
+                    } catch (\Throwable $exception) {
+                        if (!$wrapNormalizationErrors) {
+                            throw $exception;
+                        }
+
+                        throw new CsvNormalizationException(
+                            $filename,
+                            $recordNumber,
+                            $exception,
                         );
                     }
                 }

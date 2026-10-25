@@ -28,6 +28,7 @@ trait LoadableBlock
         CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
         ?callable $normalize = null,
         array $requiredHeaders = [],
+        bool $wrapNormalizationErrors = false,
     ): self {
         $rows = iterator_to_array(CsvReader::rows(
             $csvFile,
@@ -40,6 +41,7 @@ trait LoadableBlock
             $rowWidth,
             $normalize,
             $requiredHeaders,
+            $wrapNormalizationErrors,
         ));
 
         return self::make($rows);
@@ -61,6 +63,7 @@ trait LoadableBlock
         CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
         ?callable $normalize = null,
         array $requiredHeaders = [],
+        bool $wrapNormalizationErrors = false,
     ): Generator {
         foreach (CsvReader::rows(
             $csvFile,
@@ -73,6 +76,7 @@ trait LoadableBlock
             $rowWidth,
             $normalize,
             $requiredHeaders,
+            $wrapNormalizationErrors,
         ) as $index => $row) {
             yield $index => self::make($row);
         }
@@ -95,6 +99,7 @@ trait LoadableBlock
         CsvRowWidth $rowWidth = CsvRowWidth::STRICT,
         ?callable $normalize = null,
         array $requiredHeaders = [],
+        bool $wrapNormalizationErrors = false,
     ): Generator {
         if ($chunkSize < 1) {
             throw new \InvalidArgumentException(
@@ -115,6 +120,7 @@ trait LoadableBlock
             $rowWidth,
             $normalize,
             $requiredHeaders,
+            $wrapNormalizationErrors,
         ) as $row) {
             $chunk[] = $row->toArray();
             if (count($chunk) === $chunkSize) {

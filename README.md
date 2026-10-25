@@ -881,6 +881,7 @@ All three methods support the same parsing options:
 | `rowWidth` | `CsvRowWidth::STRICT` | Handle rows whose field count differs from the header |
 | `normalize` | `null` | Optionally transform each row while it is read |
 | `requiredHeaders` | `[]` | Require specific case-sensitive header names while allowing additional columns |
+| `wrapNormalizationErrors` | `false` | Add source and record context to normalization failures |
 
 Header names must be present and unique. UTF-8 BOM bytes are removed from the first header automatically.
 
@@ -930,6 +931,54 @@ $opportunities = Block::fromCsvFile(
     ],
 );
 ```
+
+When required accessors or other validation inside `normalize` can fail, enable
+`wrapNormalizationErrors` to identify the exact source record without adding a
+manual `try`/`catch` to every callback. Given this CSV:
+
+```csv
+Name,Quantity
+Ada,not-a-number
+```
+
+Normalize required values at the import boundary:
+
+```php
+use HiFolks\DataType\Exceptions\CsvNormalizationException;
+
+try {
+    $rows = Block::fromCsvFile(
+        'orders.csv',
+        normalize: fn (Block $row): array => [
+            'name' => $row->requireString('Name'),
+            'quantity' => $row->requireInt('Quantity'),
+        ],
+        wrapNormalizationErrors: true,
+    );
+} catch (CsvNormalizationException $exception) {
+    $exception->source;        // orders.csv
+    $exception->recordNumber;  // 2
+    $exception->getPrevious(); // the original UnexpectedValueException
+}
+```
+
+The resulting message contains both the location and the original validation
+reason:
+
+```text
+CSV normalization failed at record 2 in 'orders.csv': Required field 'Quantity' must contain an integer
+```
+
+CSV records are counted from the beginning of the file, so a header is record
+1 and the first data row is normally record 2. A quoted field can span several
+physical lines but still counts as one logical CSV record.
+
+The option behaves identically in `fromCsvFile()`, `streamCsvFile()`, and
+`chunkCsvFile()`. Streaming and chunked errors are raised lazily when iteration
+reaches the invalid record. The original exception remains available through
+`getPrevious()`. With the default `false`, it is thrown unchanged for backward
+compatibility. Parsing, header, encoding, and row-width errors are not wrapped
+because they already provide their own CSV-specific context.
 
 ### Loading Data from JSON URL via Symfony HttpClient
 

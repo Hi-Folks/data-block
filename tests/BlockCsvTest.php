@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use HiFolks\DataType\Block;
 use HiFolks\DataType\Enums\CsvRowWidth;
+use HiFolks\DataType\Exceptions\CsvNormalizationException;
 use PHPUnit\Framework\TestCase;
 
 final class BlockCsvTest extends TestCase
@@ -348,6 +349,174 @@ final class BlockCsvTest extends TestCase
         $this->expectExceptionMessage("must return an array or Block");
 
         Block::fromCsvFile($file, normalize: fn(): string => "invalid");
+    }
+
+    public function testEagerLoadingCanAddSourceAndRecordContextToNormalizationErrors(): void
+    {
+        $file = $this->csvFile("Name,Quantity\nAda,invalid\n");
+
+        try {
+            Block::fromCsvFile(
+                $file,
+                normalize: fn(Block $row): array => [
+                    "Name" => $row->requireString("Name"),
+                    "Quantity" => $row->requireInt("Quantity"),
+                ],
+                wrapNormalizationErrors: true,
+            );
+            $this->fail("Invalid normalized data should throw");
+        } catch (CsvNormalizationException $exception) {
+            $this->assertSame($file, $exception->source);
+            $this->assertSame(2, $exception->recordNumber);
+            $this->assertSame(
+                "CSV normalization failed at record 2 in '{$file}': "
+                . "Required field 'Quantity' must contain an integer",
+                $exception->getMessage(),
+            );
+            $this->assertInstanceOf(
+                UnexpectedValueException::class,
+                $exception->getPrevious(),
+            );
+        }
+    }
+
+    public function testNormalizationErrorsRemainUnwrappedByDefault(): void
+    {
+        $file = $this->csvFile("Name,Quantity\nAda,invalid\n");
+
+        try {
+            Block::fromCsvFile(
+                $file,
+                normalize: fn(Block $row): array => [
+                    "Quantity" => $row->requireInt("Quantity"),
+                ],
+            );
+            $this->fail("Invalid normalized data should throw");
+        } catch (Throwable $exception) {
+            $this->assertSame(UnexpectedValueException::class, $exception::class);
+            $this->assertSame(
+                "Required field 'Quantity' must contain an integer",
+                $exception->getMessage(),
+            );
+        }
+    }
+
+    public function testStreamingContextUsesLogicalCsvRecordNumbers(): void
+    {
+        $file = $this->csvFile(
+            "Name,Quantity,Notes\n"
+            . 'Ada,10,"first line' . "\n"
+            . 'second line"' . "\n"
+            . "Grace,invalid,simple\n",
+        );
+        $rows = Block::streamCsvFile(
+            $file,
+            normalize: fn(Block $row): array => [
+                ...$row->toArray(),
+                "Quantity" => $row->requireInt("Quantity"),
+            ],
+            wrapNormalizationErrors: true,
+        );
+
+        $this->assertSame("Ada", $rows->current()->get("Name"));
+
+        try {
+            $rows->next();
+            $this->fail("The invalid third CSV record should throw");
+        } catch (CsvNormalizationException $exception) {
+            $this->assertSame(3, $exception->recordNumber);
+            $this->assertStringContainsString(
+                "normalization failed at record 3",
+                $exception->getMessage(),
+            );
+        }
+    }
+
+    public function testChunkedLoadingUsesTheSameNormalizationContext(): void
+    {
+        $file = $this->csvFile("Name,Quantity\nAda,10\nGrace,invalid\n");
+        $chunks = Block::chunkCsvFile(
+            $file,
+            chunkSize: 2,
+            normalize: fn(Block $row): array => [
+                ...$row->toArray(),
+                "Quantity" => $row->requireInt("Quantity"),
+            ],
+            wrapNormalizationErrors: true,
+        );
+
+        try {
+            $chunks->current();
+            $this->fail("The invalid third CSV record should throw");
+        } catch (CsvNormalizationException $exception) {
+            $this->assertSame($file, $exception->source);
+            $this->assertSame(3, $exception->recordNumber);
+            $this->assertInstanceOf(
+                UnexpectedValueException::class,
+                $exception->getPrevious(),
+            );
+        }
+    }
+
+    public function testInvalidNormalizationReturnValuesCanReceiveRecordContext(): void
+    {
+        $file = $this->csvFile("Name\nAda\n");
+
+        try {
+            Block::fromCsvFile(
+                $file,
+                normalize: fn(): string => "invalid",
+                wrapNormalizationErrors: true,
+            );
+            $this->fail("An invalid normalization return value should throw");
+        } catch (CsvNormalizationException $exception) {
+            $this->assertSame(2, $exception->recordNumber);
+            $this->assertInstanceOf(
+                UnexpectedValueException::class,
+                $exception->getPrevious(),
+            );
+            $this->assertStringContainsString(
+                "must return an array or Block",
+                $exception->getMessage(),
+            );
+        }
+    }
+
+    public function testNormalizationTypeErrorsCanReceiveRecordContext(): void
+    {
+        $file = $this->csvFile("Name\nAda\n");
+
+        try {
+            Block::fromCsvFile(
+                $file,
+                normalize: fn(int $row): array => [$row],
+                wrapNormalizationErrors: true,
+            );
+            $this->fail("A normalization type error should throw");
+        } catch (CsvNormalizationException $exception) {
+            $this->assertSame(2, $exception->recordNumber);
+            $this->assertInstanceOf(TypeError::class, $exception->getPrevious());
+        }
+    }
+
+    public function testParsingErrorsAreNotWrappedAsNormalizationErrors(): void
+    {
+        $file = $this->csvFile("Name,Quantity\nAda\n");
+
+        try {
+            Block::fromCsvFile(
+                $file,
+                normalize: fn(Block $row): array => $row->toArray(),
+                wrapNormalizationErrors: true,
+            );
+            $this->fail("The malformed CSV record should throw");
+        } catch (Throwable $exception) {
+            $this->assertSame(UnexpectedValueException::class, $exception::class);
+            $this->assertStringContainsString(
+                "CSV record 2 has 1 fields; expected 2",
+                $exception->getMessage(),
+            );
+        }
     }
 
     public function testMissingFilesAndInvalidCsvCharactersAreRejected(): void
