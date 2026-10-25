@@ -276,43 +276,58 @@ trait AggregatableBlock
 
             $identity = serialize($groupValues);
             if (!array_key_exists($identity, $groups)) {
-                $states = [];
-                foreach ($metrics as $name => $aggregation) {
-                    $states[$name] = self::initialAggregationState($aggregation);
-                }
                 $groups[$identity] = [
                     "values" => $groupValues,
-                    "states" => $states,
+                    "states" => self::initializeAggregationStates($metrics),
                 ];
             }
 
-            $fieldCache = [];
-            $missing = new \stdClass();
-            foreach ($metrics as $name => $aggregation) {
-                $this->accumulateAggregation(
-                    $groups[$identity]["states"][$name],
-                    $aggregation,
-                    $row,
-                    $fieldCache,
-                    $missing,
-                );
-            }
+            $this->accumulateAggregationRow(
+                $groups[$identity]["states"],
+                $metrics,
+                $row,
+            );
         }
 
         $report = [];
 
         foreach ($groups as $group) {
-            $reportRow = $group["values"];
-            foreach ($metrics as $name => $aggregation) {
-                $reportRow[$name] = self::finalizeAggregationState(
-                    $group["states"][$name],
-                    $aggregation,
-                );
-            }
-            $report[] = $reportRow;
+            $report[] = $group["values"] + self::finalizeAggregationStates(
+                $group["states"],
+                $metrics,
+            );
         }
 
         return self::make($report, $this->iteratorReturnsBlock);
+    }
+
+    /**
+     * Calculate built-in metrics for the complete dataset in one traversal.
+     *
+     * @param array<int|string, Aggregation> $metrics
+     */
+    public function aggregate(array $metrics): self
+    {
+        self::validateAggregationMetrics($metrics);
+
+        $states = self::initializeAggregationStates($metrics);
+
+        foreach ($this->data as $item) {
+            if ($item instanceof Block) {
+                $row = $item;
+            } elseif (is_array($item)) {
+                $row = Block::make($item, $this->iteratorReturnsBlock);
+            } else {
+                continue;
+            }
+
+            $this->accumulateAggregationRow($states, $metrics, $row);
+        }
+
+        return self::make(
+            [self::finalizeAggregationStates($states, $metrics)],
+            $this->iteratorReturnsBlock,
+        );
     }
 
     /**
@@ -538,6 +553,44 @@ trait AggregatableBlock
     }
 
     /**
+     * @param array<int|string, Aggregation> $metrics
+     * @return array<int|string, mixed>
+     */
+    private static function initializeAggregationStates(array $metrics): array
+    {
+        $states = [];
+
+        foreach ($metrics as $name => $aggregation) {
+            $states[$name] = self::initialAggregationState($aggregation);
+        }
+
+        return $states;
+    }
+
+    /**
+     * @param array<int|string, mixed> $states
+     * @param array<int|string, Aggregation> $metrics
+     */
+    private function accumulateAggregationRow(
+        array &$states,
+        array $metrics,
+        Block $row,
+    ): void {
+        $fieldCache = [];
+        $missing = new \stdClass();
+
+        foreach ($metrics as $name => $aggregation) {
+            $this->accumulateAggregation(
+                $states[$name],
+                $aggregation,
+                $row,
+                $fieldCache,
+                $missing,
+            );
+        }
+    }
+
+    /**
      * @param array<string, mixed> $fieldCache
      */
     private function accumulateAggregation(
@@ -636,6 +689,27 @@ trait AggregatableBlock
         return $state["count"] === 0
             ? null
             : (float) $state["sum"] / $state["count"];
+    }
+
+    /**
+     * @param array<int|string, mixed> $states
+     * @param array<int|string, Aggregation> $metrics
+     * @return array<int|string, mixed>
+     */
+    private static function finalizeAggregationStates(
+        array $states,
+        array $metrics,
+    ): array {
+        $results = [];
+
+        foreach ($metrics as $name => $aggregation) {
+            $results[$name] = self::finalizeAggregationState(
+                $states[$name],
+                $aggregation,
+            );
+        }
+
+        return $results;
     }
 
     /**

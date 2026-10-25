@@ -11,7 +11,7 @@ use HiFolks\DataType\Enums\Operator;
  * Immutable description of one built-in aggregation.
  *
  * Create specifications through the named static constructors and pass them to
- * Block::aggregateBy().
+ * Block::aggregate() or Block::aggregateBy().
  */
 final readonly class Aggregation
 {

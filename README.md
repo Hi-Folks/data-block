@@ -2069,6 +2069,62 @@ rejected before rows are processed. Keep using `summarizeBy()` or
 `summarizeByMany()` when a calculation requires arbitrary callback logic;
 `aggregateBy()` is deliberately limited to typed, built-in calculations.
 
+### Summarizing the complete dataset in one pass
+
+Use `aggregate()` when the same built-in calculations should describe the
+complete dataset rather than separate groups. It uses the same aggregation
+engine and specifications as `aggregateBy()`, so applications do not need
+several independent scans or a custom accumulator loop just to produce one
+summary row.
+
+Given this input:
+
+```php
+$rows = Block::make([
+    ['column1' => 'value1', 'column2' => 10],
+    ['column1' => 'value2', 'column2' => 25],
+    ['column1' => 'value1', 'column2' => '20.5'],
+    ['column1' => 'value2', 'column2' => 30],
+]);
+```
+
+The same typed aggregation specifications can be used without grouping fields:
+
+```php
+$summary = $rows->aggregate([
+    'records' => Aggregation::count(),
+    'matching_records' => Aggregation::countWhere('column1', 'value1'),
+    'total' => Aggregation::sum('column2'),
+    'matching_total' => Aggregation::sumWhere(
+        'column2',
+        'column1',
+        'value1',
+    ),
+    'average' => Aggregation::average('column2'),
+]);
+```
+
+The result is a Block containing exactly one summary row:
+
+```php
+[
+    [
+        'records' => 4,
+        'matching_records' => 2,
+        'total' => 85.5,
+        'matching_total' => 30.5,
+        'average' => 21.375,
+    ],
+]
+```
+
+Returning a row-oriented Block keeps the result compatible with methods such as
+`first()`, `get()`, `withColumn()`, and JSON or CSV export. For an empty source,
+`aggregate()` still returns one row: counts and sums are `0`, while minimum,
+maximum, and average are `null`. This makes the output shape predictable and
+avoids special handling in consumers. As with `aggregateBy()`, scalar source
+items are ignored because aggregation specifications operate on row fields.
+
 ### Building a cross-tabulation
 
 Use `crossTab()` when you want to see how often values from one field occur for

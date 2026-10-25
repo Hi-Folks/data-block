@@ -2,6 +2,8 @@
 
 ## WIP
 - Added typed `Aggregation` specifications and `aggregateBy()` for calculating multiple grouped built-in metrics in one source traversal.
+- Added `aggregate()` for producing a one-row, ungrouped summary with the same
+  typed, single-pass aggregation engine.
 
 ## 2.3.0 - 2026-10-25
 - Added opt-in CSV normalization error context with the source, logical record
