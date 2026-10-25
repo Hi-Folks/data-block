@@ -88,6 +88,53 @@ trait AggregatableBlock
         return $matching->sum($valueField);
     }
 
+    /**
+     * Build a flat report containing named metrics for every group.
+     *
+     * Each metric receives an independent snapshot of the grouped rows followed
+     * by the group value. Groups retain the deterministic order from groupBy().
+     *
+     * @param array<int|string, callable(Block, int|string): mixed> $metrics
+     */
+    public function summarizeBy(
+        int|string $groupField,
+        array $metrics,
+        int|string|null $defaultGroup = null,
+        int|string|null $groupAs = null,
+    ): self {
+        self::validateSummaryMetrics($metrics);
+
+        $groupColumn = $groupAs ?? $groupField;
+        if (array_key_exists($groupColumn, $metrics)) {
+            throw new \InvalidArgumentException(
+                "Summary group column '{$groupColumn}' conflicts with a metric name",
+            );
+        }
+
+        $summary = [];
+
+        foreach ($this->groupBy($groupField, $defaultGroup) as $groupValue => $group) {
+            if (!$group instanceof Block) {
+                continue;
+            }
+
+            $groupData = $group->toArray();
+            $row = [$groupColumn => $groupValue];
+
+            foreach ($metrics as $name => $metric) {
+                $metricGroup = Block::make(
+                    $groupData,
+                    $this->iteratorReturnsBlock,
+                );
+                $row[$name] = $metric($metricGroup, $groupValue);
+            }
+
+            $summary[] = $row;
+        }
+
+        return self::make($summary, $this->iteratorReturnsBlock);
+    }
+
     public function countBy(
         int|string $groupField,
         int|string|null $defaultGroup = null,
@@ -168,5 +215,17 @@ trait AggregatableBlock
         }
 
         return null;
+    }
+
+    /** @param array<int|string, mixed> $metrics */
+    private static function validateSummaryMetrics(array $metrics): void
+    {
+        foreach ($metrics as $name => $metric) {
+            if (!is_callable($metric)) {
+                throw new \InvalidArgumentException(
+                    "Summary metric '{$name}' must be defined by a callable",
+                );
+            }
+        }
     }
 }

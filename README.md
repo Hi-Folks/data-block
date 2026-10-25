@@ -1573,6 +1573,137 @@ numeric strings are included, while missing, null, boolean, and non-numeric
 values are ignored. Both helpers return `0` when no rows match and leave the
 source Block unchanged.
 
+### Building grouped summaries
+
+Use `summarizeBy()` when a report needs several metrics for every value of a
+grouping column. It replaces the repeated `groupBy()->map()->values()` ceremony
+while keeping each calculation as a small, familiar Block operation.
+
+Given this input:
+
+```php
+$orders = Block::make([
+    ['currency' => 'EUR', 'status' => 'paid',    'amount' => 10],
+    ['currency' => 'USD', 'status' => 'pending', 'amount' => 50],
+    ['currency' => 'EUR', 'status' => 'paid',    'amount' => '20.5'],
+    ['currency' => 'EUR', 'status' => 'pending', 'amount' => 30],
+    ['currency' => 'USD', 'status' => 'paid',    'amount' => 25],
+]);
+```
+
+A grouped report can calculate total rows, conditional counts, and conditional
+sums together:
+
+```php
+$summary = $orders->summarizeBy(
+    'currency',
+    [
+        'orders' => fn (Block $group): int =>
+            $group->count(),
+
+        'paid_orders' => fn (Block $group): int =>
+            $group->countWhere('status', 'paid'),
+
+        'paid_amount' => fn (Block $group): int|float =>
+            $group->sumWhere('amount', 'status', 'paid'),
+    ],
+);
+```
+
+The result is a flat, zero-indexed Block suitable for JSON or CSV-style output:
+
+```php
+[
+    [
+        'currency' => 'EUR',
+        'orders' => 3,
+        'paid_orders' => 2,
+        'paid_amount' => 30.5,
+    ],
+    [
+        'currency' => 'USD',
+        'orders' => 2,
+        'paid_orders' => 1,
+        'paid_amount' => 25,
+    ],
+]
+```
+
+The grouping field is included as the first output column. Rename it with
+`groupAs` when the report needs a different heading:
+
+```php
+$summary = $orders->summarizeBy(
+    'customer.region',
+    ['orders' => fn (Block $group): int => $group->count()],
+    groupAs: 'region',
+);
+```
+
+Pass `defaultGroup` to retain rows whose grouping field is missing or null:
+
+```php
+$summary = $orders->summarizeBy(
+    'currency',
+    ['orders' => fn (Block $group): int => $group->count()],
+    defaultGroup: 'unknown',
+);
+```
+
+Metric callbacks receive the grouped `Block` and the group value, making labels
+and other group-aware calculations possible:
+
+```php
+$summary = $orders->summarizeBy(
+    'currency',
+    [
+        'label' => fn (Block $group, string $currency): string =>
+            $currency . ': ' . $group->count() . ' orders',
+    ],
+);
+```
+
+Each metric receives an independent snapshot of the original group. A callback
+cannot change the rows observed by another metric. Groups retain their
+first-seen order, nested grouping fields are supported, missing groups are
+skipped unless `defaultGroup` is provided, and the source Block is unchanged.
+The group output column cannot have the same name as a metric.
+
+Like `groupBy()`, summaries follow PHP array-key semantics for group values.
+The values `0`, `"0"`, and `false` therefore share integer group `0`, while an
+empty string remains a separate group. Null and missing values are skipped or
+placed in `defaultGroup`:
+
+```php
+$rows = Block::make([
+    ['group' => 0,     'amount' => 1],
+    ['group' => '0',   'amount' => 2],
+    ['group' => false, 'amount' => 4],
+    ['group' => '',    'amount' => 8],
+    ['group' => null,  'amount' => 16],
+    [                  'amount' => 32],
+]);
+
+$summary = $rows->summarizeBy(
+    'group',
+    [
+        'count' => fn (Block $group): int => $group->count(),
+        'amount' => fn (Block $group): int|float => $group->sum('amount'),
+    ],
+    defaultGroup: 'unknown',
+);
+```
+
+The result is:
+
+```php
+[
+    ['group' => 0,         'count' => 3, 'amount' => 7],
+    ['group' => '',        'count' => 1, 'amount' => 8],
+    ['group' => 'unknown', 'count' => 2, 'amount' => 48],
+]
+```
+
 Use the grouped aggregation helpers when you need one result for each value of another field:
 
 ```php

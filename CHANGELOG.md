@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- Added `summarizeBy()` for flat grouped reports with named metric callbacks,
+  group aliases, and default groups.
 - Added `countWhere()` and `sumWhere()` conditional aggregation helpers with
   the same field, nested-path, and operator semantics as `where()`.
 - Added immutable `withColumn()` and `withColumns()` helpers for adding or
