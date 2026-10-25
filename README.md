@@ -2125,6 +2125,79 @@ maximum, and average are `null`. This makes the output shape predictable and
 avoids special handling in consumers. As with `aggregateBy()`, scalar source
 items are ignored because aggregation specifications operate on row fields.
 
+### Deriving values from aggregate results
+
+Use `withColumn()` when a value depends on metrics that have already been
+calculated. Aggregations describe how source rows are accumulated; derived
+columns describe how the finished report should be interpreted. Keeping those
+two steps separate makes formulas visible, lets them use typed accessors, and
+avoids adding a special aggregation type for every percentage, ratio, or score.
+
+For example, given these rows:
+
+```php
+$rows = Block::make([
+    ['column1' => 'a', 'column2' => 'value1'],
+    ['column1' => 'a', 'column2' => 'value2'],
+    ['column1' => 'a', 'column2' => 'value1'],
+    ['column1' => 'b', 'column2' => 'value2'],
+    ['column1' => 'b', 'column2' => 'value2'],
+]);
+```
+
+First calculate the counts, then derive the percentage from those completed
+metrics:
+
+```php
+$report = $rows
+    ->aggregateBy('column1', [
+        'records' => Aggregation::count(),
+        'matching_records' => Aggregation::countWhere(
+            'column2',
+            'value1',
+        ),
+    ])
+    ->withColumn(
+        'matching_percentage',
+        function (Block $row): ?float {
+            $records = $row->requireInt('records');
+
+            return $records === 0
+                ? null
+                : round(
+                    100 * $row->requireInt('matching_records') / $records,
+                    1,
+                );
+        },
+    );
+```
+
+The result retains the aggregate metrics and adds the derived value:
+
+```php
+[
+    [
+        'column1' => 'a',
+        'records' => 3,
+        'matching_records' => 2,
+        'matching_percentage' => 66.7,
+    ],
+    [
+        'column1' => 'b',
+        'records' => 2,
+        'matching_records' => 0,
+        'matching_percentage' => 0.0,
+    ],
+]
+```
+
+The zero check also makes the formula safe when it is reused after
+`aggregate()` on an empty dataset. `requireInt()` clearly reports a missing or
+invalid input metric instead of silently producing a misleading result. Use
+`withColumns()` when several independent derived values should be added in one
+operation. No separate derived-metric API is needed because these methods
+already return a new Block and leave the aggregate report unchanged.
+
 ### Building a cross-tabulation
 
 Use `crossTab()` when you want to see how often values from one field occur for
