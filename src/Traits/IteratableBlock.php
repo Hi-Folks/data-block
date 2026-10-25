@@ -82,6 +82,21 @@ trait IteratableBlock
     }
 
     /**
+     * Invoke a callback with this Block without interrupting the pipeline.
+     *
+     * The callback return value is ignored and the same Block instance is
+     * returned.
+     *
+     * @param callable(self): mixed $callback
+     */
+    public function tap(callable $callback): self
+    {
+        $callback($this);
+
+        return $this;
+    }
+
+    /**
      * @param callable(mixed, int|string): mixed $callback
      */
     public function map(callable $callback): self

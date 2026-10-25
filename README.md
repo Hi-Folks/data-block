@@ -2225,6 +2225,47 @@ source Block remains unchanged, and an empty Block returns an empty Block.
 Choose `filter()` when the callback naturally describes the rows to keep;
 choose `reject()` when it naturally describes the rows to discard.
 
+### Observing a pipeline with `tap()`
+
+Use `tap()` when you need to inspect an intermediate result, record a metric,
+or write a log entry without breaking a fluent pipeline. The callback receives
+the whole current Block rather than each individual item.
+
+Given this input:
+
+```php
+$users = Block::make([
+    ['name' => 'Ada', 'active' => true],
+    ['name' => 'Grace', 'active' => false],
+    ['name' => 'Linus', 'active' => true],
+]);
+
+$activeCount = null;
+
+$names = $users
+    ->filter(fn (Block $user): bool => $user->get('active') === true)
+    ->tap(function (Block $activeUsers) use (&$activeCount): void {
+        $activeCount = $activeUsers->count();
+    })
+    ->map(fn (Block $user): string => $user->getStringStrict('name'));
+```
+
+The observed count and final result are:
+
+```php
+$activeCount;      // 2
+$names->toArray(); // [0 => 'Ada', 2 => 'Linus']
+```
+
+`tap()` calls the callback exactly once—even when the Block is empty—and
+returns the exact same Block instance. The callback's return value is ignored.
+This makes `tap()` different from `map()`, which transforms every item, and
+`forEach()`, which invokes a callback once per item. Exceptions raised by the
+callback are not hidden and propagate to the caller.
+
+The callback receives the actual Block, so it can mutate it. For predictable
+pipelines, prefer observation-only callbacks such as logging and metrics.
+
 ### Splitting items with `partition()`
 
 Use `partition()` when both sides of the same condition are needed. It evaluates

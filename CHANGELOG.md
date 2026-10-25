@@ -1,5 +1,8 @@
 # Changelog
 
+## WIP
+- Added `tap()` for observing intermediate pipeline results while returning the same Block instance.
+
 ## 2.2.0 - 2026-10-25
 - Added `keyBy()` with explicit throw, keep-first, and keep-last collision
   policies through the `KeyCollision` enum.
