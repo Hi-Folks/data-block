@@ -1,5 +1,8 @@
 # Changelog
 
+## WIP
+- Added typed `Aggregation` specifications and `aggregateBy()` for calculating multiple grouped built-in metrics in one source traversal.
+
 ## 2.3.0 - 2026-10-25
 - Added opt-in CSV normalization error context with the source, logical record
   number, and original exception preserved.

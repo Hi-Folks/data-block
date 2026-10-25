@@ -1954,6 +1954,121 @@ therefore remain three separate combinations. Grouping fields must be a unique
 list containing at least two non-empty string or integer fields. Group columns
 cannot conflict with metric names, and default values must be scalar or null.
 
+### Calculating several grouped metrics in one pass
+
+Use `aggregateBy()` when a grouped report needs several standard calculations.
+Unlike `summarizeBy()` and `summarizeByMany()`, it does not collect complete
+copies of every group and then scan each group again for every metric. It reads
+the source rows once and updates compact accumulator state for all metrics. This
+is useful for larger datasets and makes common reports declarative without one
+large application-level loop.
+
+Given this input:
+
+```php
+use HiFolks\DataType\Aggregation;
+use HiFolks\DataType\Block;
+
+$rows = Block::make([
+    ['column1' => 'a', 'column2' => 'value1', 'column3' => 10],
+    ['column1' => 'b', 'column2' => 'value2', 'column3' => 25],
+    ['column1' => 'a', 'column2' => 'value1', 'column3' => '20.5'],
+    ['column1' => 'a', 'column2' => 'value2', 'column3' => 30],
+]);
+```
+
+Define the output column names and the calculation for each one:
+
+```php
+$report = $rows->aggregateBy(
+    groupFields: 'column1',
+    metrics: [
+        'records' => Aggregation::count(),
+        'matching_records' => Aggregation::countWhere('column2', 'value1'),
+        'total' => Aggregation::sum('column3'),
+        'matching_total' => Aggregation::sumWhere(
+            'column3',
+            'column2',
+            'value1',
+        ),
+        'minimum' => Aggregation::min('column3'),
+        'maximum' => Aggregation::max('column3'),
+        'average' => Aggregation::average('column3'),
+    ],
+);
+```
+
+The result is a flat, row-oriented Block in first-seen group order:
+
+```php
+[
+    [
+        'column1' => 'a',
+        'records' => 3,
+        'matching_records' => 2,
+        'total' => 60.5,
+        'matching_total' => 30.5,
+        'minimum' => 10,
+        'maximum' => 30,
+        'average' => 20.166666666666668,
+    ],
+    [
+        'column1' => 'b',
+        'records' => 1,
+        'matching_records' => 0,
+        'total' => 25,
+        'matching_total' => 0,
+        'minimum' => 25,
+        'maximum' => 25,
+        'average' => 25.0,
+    ],
+]
+```
+
+The available specifications are `count()`, `countWhere()`, `sum()`,
+`sumWhere()`, `min()`, `max()`, and `average()`. Conditional specifications use
+the same shorthand as `where()`: omitting the expected value means “equals
+`true`”, while passing one value means “equals that value”. Pass an
+`Operator` explicitly when another comparison is needed:
+
+```php
+use HiFolks\DataType\Enums\Operator;
+
+$report = $rows->aggregateBy('column1', [
+    'strict_matches' => Aggregation::countWhere(
+        'column2',
+        Operator::STRICT_EQUAL,
+        'value1',
+    ),
+]);
+```
+
+Pass a list to group by more than one field. Nested paths and defaults behave
+like `summarizeByMany()`:
+
+```php
+$report = $rows->aggregateBy(
+    ['column1.nested', 'column2'],
+    ['records' => Aggregation::count()],
+    defaultGroups: [
+        'column1.nested' => 'unknown',
+        'column2' => 'unknown',
+    ],
+);
+```
+
+Missing or null groups are skipped unless that field has a default. Internal
+group identities preserve types, so `0`, `"0"`, and `false` remain distinct.
+Numeric calculations accept integers, floats, and numeric strings; they ignore
+missing, null, and non-numeric values. A group with no numeric values returns
+`0` for sums and `null` for minimum, maximum, and average.
+
+The source Block is not modified. Group-column and metric names must not
+collide, and invalid fields, operators, defaults, or metric definitions are
+rejected before rows are processed. Keep using `summarizeBy()` or
+`summarizeByMany()` when a calculation requires arbitrary callback logic;
+`aggregateBy()` is deliberately limited to typed, built-in calculations.
+
 ### Building a cross-tabulation
 
 Use `crossTab()` when you want to see how often values from one field occur for

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace HiFolks\DataType\Traits;
 
+use HiFolks\DataType\Aggregation;
 use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\AggregationType;
 use HiFolks\DataType\Enums\Operator;
 
 trait AggregatableBlock
@@ -230,6 +232,90 @@ trait AggregatableBlock
     }
 
     /**
+     * Calculate built-in metrics for one or more grouping fields in one source traversal.
+     *
+     * @param int|string|list<int|string> $groupFields
+     * @param array<int|string, Aggregation> $metrics
+     * @param array<int|string, mixed> $defaultGroups Defaults keyed by grouping field.
+     */
+    public function aggregateBy(
+        int|string|array $groupFields,
+        array $metrics,
+        array $defaultGroups = [],
+    ): self {
+        $groupFields = self::normalizeAggregationGroupFields($groupFields);
+        self::validateAggregationMetrics($metrics);
+        self::validateSummaryDefaults($groupFields, $defaultGroups);
+        self::validateSummaryColumnNames($groupFields, $metrics);
+
+        /**
+         * @var array<string, array{
+         *     values: array<int|string, mixed>,
+         *     states: array<int|string, mixed>
+         * }> $groups
+         */
+        $groups = [];
+
+        foreach ($this->data as $item) {
+            if ($item instanceof Block) {
+                $row = $item;
+            } elseif (is_array($item)) {
+                $row = Block::make($item, $this->iteratorReturnsBlock);
+            } else {
+                continue;
+            }
+
+            $groupValues = self::summaryGroupValues(
+                $row,
+                $groupFields,
+                $defaultGroups,
+            );
+            if ($groupValues === null) {
+                continue;
+            }
+
+            $identity = serialize($groupValues);
+            if (!array_key_exists($identity, $groups)) {
+                $states = [];
+                foreach ($metrics as $name => $aggregation) {
+                    $states[$name] = self::initialAggregationState($aggregation);
+                }
+                $groups[$identity] = [
+                    "values" => $groupValues,
+                    "states" => $states,
+                ];
+            }
+
+            $fieldCache = [];
+            $missing = new \stdClass();
+            foreach ($metrics as $name => $aggregation) {
+                $this->accumulateAggregation(
+                    $groups[$identity]["states"][$name],
+                    $aggregation,
+                    $row,
+                    $fieldCache,
+                    $missing,
+                );
+            }
+        }
+
+        $report = [];
+
+        foreach ($groups as $group) {
+            $reportRow = $group["values"];
+            foreach ($metrics as $name => $aggregation) {
+                $reportRow[$name] = self::finalizeAggregationState(
+                    $group["states"][$name],
+                    $aggregation,
+                );
+            }
+            $report[] = $reportRow;
+        }
+
+        return self::make($report, $this->iteratorReturnsBlock);
+    }
+
+    /**
      * Build a wide count table for the combinations of two fields.
      *
      * Row and generated column values retain their first-seen order. Missing,
@@ -387,6 +473,198 @@ trait AggregatableBlock
                 );
             }
         }
+    }
+
+    /**
+     * @param int|string|array<mixed> $groupFields
+     * @return list<int|string>
+     */
+    private static function normalizeAggregationGroupFields(
+        int|string|array $groupFields,
+    ): array {
+        if (!is_array($groupFields)) {
+            $groupFields = [$groupFields];
+        }
+
+        if ($groupFields === [] || !array_is_list($groupFields)) {
+            throw new \InvalidArgumentException(
+                "Aggregation grouping fields must be a non-empty list",
+            );
+        }
+
+        $seen = [];
+        foreach ($groupFields as $field) {
+            if ((!is_int($field) && !is_string($field)) || $field === "") {
+                throw new \InvalidArgumentException(
+                    "Aggregation grouping fields must be non-empty strings or integers",
+                );
+            }
+            if (array_key_exists($field, $seen)) {
+                throw new \InvalidArgumentException(
+                    "Aggregation grouping fields must be unique",
+                );
+            }
+
+            $seen[$field] = true;
+        }
+
+        return $groupFields;
+    }
+
+    /** @param array<int|string, mixed> $metrics */
+    private static function validateAggregationMetrics(array $metrics): void
+    {
+        foreach ($metrics as $name => $aggregation) {
+            if (!$aggregation instanceof Aggregation) {
+                throw new \InvalidArgumentException(
+                    "Aggregation metric '{$name}' must be an Aggregation specification",
+                );
+            }
+        }
+    }
+
+    private static function initialAggregationState(
+        Aggregation $aggregation,
+    ): mixed {
+        return match ($aggregation->type()) {
+            AggregationType::COUNT,
+            AggregationType::COUNT_WHERE,
+            AggregationType::SUM,
+            AggregationType::SUM_WHERE => 0,
+            AggregationType::MIN,
+            AggregationType::MAX => null,
+            AggregationType::AVERAGE => ["sum" => 0, "count" => 0],
+        };
+    }
+
+    /**
+     * @param array<string, mixed> $fieldCache
+     */
+    private function accumulateAggregation(
+        mixed &$state,
+        Aggregation $aggregation,
+        Block $row,
+        array &$fieldCache,
+        \stdClass $missing,
+    ): void {
+        $conditionField = $aggregation->conditionField();
+        if ($conditionField !== null) {
+            $actual = self::cachedAggregationFieldValue(
+                $row,
+                $conditionField,
+                $fieldCache,
+                $missing,
+            );
+            $operator = $aggregation->operator();
+            if (
+                $actual === $missing
+                || $operator === null
+                || !$this->matchesQuery(
+                    $actual,
+                    $operator,
+                    $aggregation->expectedValue(),
+                )
+            ) {
+                return;
+            }
+        }
+
+        if (
+            $aggregation->type() === AggregationType::COUNT
+            || $aggregation->type() === AggregationType::COUNT_WHERE
+        ) {
+            $state = (int) $state + 1;
+
+            return;
+        }
+
+        $valueField = $aggregation->valueField();
+        if ($valueField === null) {
+            return;
+        }
+        $value = self::cachedAggregationFieldValue(
+            $row,
+            $valueField,
+            $fieldCache,
+            $missing,
+        );
+        $numericValue = self::numericAggregationValue($value);
+        if ($numericValue === null) {
+            return;
+        }
+
+        switch ($aggregation->type()) {
+            case AggregationType::SUM:
+            case AggregationType::SUM_WHERE:
+                $state = (is_int($state) || is_float($state) ? $state : 0)
+                    + $numericValue;
+                break;
+
+            case AggregationType::MIN:
+                $state = $state === null || $numericValue < $state
+                    ? $numericValue
+                    : $state;
+                break;
+
+            case AggregationType::MAX:
+                $state = $state === null || $numericValue > $state
+                    ? $numericValue
+                    : $state;
+                break;
+
+            case AggregationType::AVERAGE:
+                /** @var array{sum: int|float, count: int} $state */
+                $state["sum"] += $numericValue;
+                $state["count"]++;
+                break;
+
+            case AggregationType::COUNT:
+            case AggregationType::COUNT_WHERE:
+                break;
+        }
+    }
+
+    private static function finalizeAggregationState(
+        mixed $state,
+        Aggregation $aggregation,
+    ): mixed {
+        if ($aggregation->type() !== AggregationType::AVERAGE) {
+            return $state;
+        }
+
+        /** @var array{sum: int|float, count: int} $state */
+        return $state["count"] === 0
+            ? null
+            : (float) $state["sum"] / $state["count"];
+    }
+
+    /**
+     * @param array<string, mixed> $fieldCache
+     */
+    private static function cachedAggregationFieldValue(
+        Block $row,
+        int|string $field,
+        array &$fieldCache,
+        \stdClass $missing,
+    ): mixed {
+        $identity = serialize($field);
+        if (!array_key_exists($identity, $fieldCache)) {
+            $fieldCache[$identity] = $row->get($field, $missing);
+        }
+
+        return $fieldCache[$identity];
+    }
+
+    private static function numericAggregationValue(mixed $value): int|float|null
+    {
+        if (is_int($value) || is_float($value)) {
+            return $value;
+        }
+        if (is_string($value) && is_numeric($value)) {
+            return $value + 0;
+        }
+
+        return null;
     }
 
     /** @param array<int|string, mixed> $groupFields */

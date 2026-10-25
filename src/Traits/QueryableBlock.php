@@ -530,19 +530,7 @@ trait QueryableBlock
      */
     private static function queryOperators(): array
     {
-        return [
-            Operator::EQUAL,
-            Operator::STRICT_EQUAL,
-            Operator::GREATER_THAN,
-            Operator::LESS_THAN,
-            Operator::GREATER_THAN_OR_EQUAL,
-            Operator::LESS_THAN_OR_EQUAL,
-            Operator::NOT_EQUAL,
-            Operator::STRICT_NOT_EQUAL,
-            Operator::IN,
-            Operator::HAS,
-            Operator::LIKE,
-        ];
+        return Operator::values();
     }
 
     private function matchesQuery(
