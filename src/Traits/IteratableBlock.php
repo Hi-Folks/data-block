@@ -119,6 +119,31 @@ trait IteratableBlock
     }
 
     /**
+     * Return every item for which the callback returns false.
+     *
+     * @param callable(mixed, int|string): mixed $callback
+     */
+    public function reject(callable $callback): self
+    {
+        $result = [];
+
+        foreach ($this as $key => $item) {
+            $reject = $callback($item, $key);
+            if (!is_bool($reject)) {
+                throw new \UnexpectedValueException(
+                    "The reject callback must return a boolean value",
+                );
+            }
+
+            if (!$reject) {
+                $result[$key] = $item instanceof self ? $item->toArray() : $item;
+            }
+        }
+
+        return self::make($result, $this->iteratorReturnsBlock);
+    }
+
+    /**
      * Split the items into matching and non-matching Blocks in one pass.
      *
      * @param callable(mixed, int|string): mixed $callback

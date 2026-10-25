@@ -1085,7 +1085,46 @@ $activeStages = $rows->whereIn(
 );
 ```
 
-Pass `strict: false` only when PHP's loose membership comparison is explicitly required. All query helpers preserve keys; pass `preserveKeys: false` to return a zero-based result.
+Use `whereNotIn()` for the inverse operation: retain rows whose existing field
+value is not in an exclusion list. This communicates an exclusion rule more
+directly than filtering and manually negating `in_array()`.
+
+Given this input:
+
+```php
+$orders = Block::make([
+    'first' => ['status' => 'active'],
+    'second' => ['status' => 'cancelled'],
+    'third' => ['status' => 'pending'],
+    'fourth' => ['status' => 'deleted'],
+    'fifth' => ['reference' => 'missing-status'],
+]);
+
+$openOrders = $orders->whereNotIn(
+    'status',
+    ['cancelled', 'deleted'],
+);
+```
+
+The result preserves the original row keys and excludes the row with no
+`status` field:
+
+```php
+[
+    'first' => ['status' => 'active'],
+    'third' => ['status' => 'pending'],
+]
+```
+
+Like `whereIn()`, comparison is strict by default. Thus `0`, `"0"`, and
+`false` remain distinct. Pass `strict: false` only when PHP's loose membership
+comparison is intentional. Pass `preserveKeys: false` to produce a zero-based
+result. An explicit null is treated as an existing value: it is excluded only
+when `null` appears in the exclusion list. An empty exclusion list returns all
+rows that contain the selected field; rows missing the field are still skipped.
+
+All query helpers preserve keys by default; pass `preserveKeys: false` to return
+a zero-based result.
 
 #### The `in` operator
 
@@ -2090,6 +2129,41 @@ Call `values()` when a zero-based list is needed explicitly:
 ```php
 $priorities = $priorities->values();
 ```
+
+### Excluding items with `reject()`
+
+Use `reject()` when the callback describes what should be removed rather than
+what should be retained. It is the inverse of `filter()` and makes negative
+business rules easier to read.
+
+Given this input:
+
+```php
+$orders = Block::make([
+    'first' => ['status' => 'active'],
+    'second' => ['status' => 'cancelled'],
+    'third' => ['status' => 'pending'],
+]);
+
+$openOrders = $orders->reject(
+    fn (Block $row): bool => $row->get('status') === 'cancelled',
+);
+```
+
+The result contains every row for which the callback returned `false`:
+
+```php
+[
+    'first' => ['status' => 'active'],
+    'third' => ['status' => 'pending'],
+]
+```
+
+The callback receives the item followed by its key, must return a boolean, and
+is called exactly once per item. Keys and iteration mode are preserved, the
+source Block remains unchanged, and an empty Block returns an empty Block.
+Choose `filter()` when the callback naturally describes the rows to keep;
+choose `reject()` when it naturally describes the rows to discard.
 
 ### Splitting items with `partition()`
 

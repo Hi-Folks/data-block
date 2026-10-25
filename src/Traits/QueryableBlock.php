@@ -113,6 +113,25 @@ trait QueryableBlock
         );
     }
 
+    /**
+     * Return rows whose existing field value is not in the supplied list.
+     *
+     * @param array<mixed> $values
+     */
+    public function whereNotIn(
+        int|string $field,
+        array $values,
+        bool $strict = true,
+        bool $preserveKeys = true,
+    ): self {
+        return $this->wherePredicate(
+            $field,
+            fn(bool $exists, mixed $value): bool => $exists
+                && !in_array($value, $values, $strict),
+            $preserveKeys,
+        );
+    }
+
     public function orderBy(
         SortCriterion|string|int $field,
         SortDirection|string $order = SortDirection::ASC,
