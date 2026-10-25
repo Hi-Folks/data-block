@@ -1,6 +1,6 @@
 # Changelog
 
-## WIP
+## 2.3.0 - 2026-10-25
 - Added opt-in CSV normalization error context with the source, logical record
   number, and original exception preserved.
 - Added opt-in atomic JSON file writing with same-directory replacement and
