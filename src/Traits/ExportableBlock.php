@@ -66,6 +66,8 @@ trait ExportableBlock
      * Returns false when the destination already exists without overwrite
      * permission, JSON encoding fails, or the encoded data cannot be written.
      * Pass JSON_THROW_ON_ERROR in $flags to make encoding failures throw.
+     * Atomic writes use a temporary file in the destination directory and only
+     * replace the destination after the complete JSON has been written.
      *
      * @param string $filename file name for example "./file.json"
      * @param bool $overwrite if the file already exists you can force overwriting
@@ -75,6 +77,7 @@ trait ExportableBlock
         bool $overwrite = false,
         int $flags = JSON_PRETTY_PRINT,
         int $depth = 512,
+        bool $atomic = false,
     ): bool {
         if (file_exists($filename) && !$overwrite) {
             return false;
@@ -85,6 +88,50 @@ trait ExportableBlock
             return false;
         }
 
+        if ($atomic) {
+            return self::writeJsonAtomically($filename, $json);
+        }
+
         return @file_put_contents($filename, $json) !== false;
+    }
+
+    private static function writeJsonAtomically(
+        string $filename,
+        string $json,
+    ): bool {
+        $directory = dirname($filename);
+        if (!is_dir($directory)) {
+            return false;
+        }
+
+        $temporaryFile = @tempnam(
+            $directory,
+            "." . basename($filename) . ".tmp-",
+        );
+        if ($temporaryFile === false) {
+            return false;
+        }
+
+        try {
+            $written = @file_put_contents($temporaryFile, $json, LOCK_EX);
+            if ($written === false || $written !== strlen($json)) {
+                return false;
+            }
+
+            if (!@rename($temporaryFile, $filename)) {
+                return false;
+            }
+
+            $temporaryFile = null;
+
+            return true;
+        } finally {
+            if (
+                $temporaryFile !== null
+                && (is_file($temporaryFile) || is_link($temporaryFile))
+            ) {
+                @unlink($temporaryFile);
+            }
+        }
     }
 }

@@ -735,6 +735,7 @@ $saved = $data->saveToJson(
     overwrite: true,
     flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR,
     depth: 512,
+    atomic: true,
 );
 ```
 
@@ -742,6 +743,27 @@ The method returns `false` when overwrite is disabled for an existing file,
 when JSON encoding returns `false`, or when the file cannot be written. With
 `JSON_THROW_ON_ERROR`, encoding failures throw `JsonException`; filesystem
 failures still return `false`.
+
+Use `atomic: true` when readers must never observe a partially written JSON
+file—for example, when replacing application configuration, scheduled report
+output, or data consumed by another process. The JSON is encoded first and then
+written to a unique temporary file in the destination directory. Only after the
+complete write succeeds is that file renamed over the destination:
+
+```php
+$saved = $data->saveToJson(
+    'current-report.json',
+    overwrite: true,
+    atomic: true,
+);
+```
+
+Creating the temporary file beside the destination keeps the final rename on
+the same filesystem. If encoding, writing, or replacement fails, the method
+returns `false`, removes its exact temporary file, and does not intentionally
+modify the existing destination. Encoding exceptions requested through
+`JSON_THROW_ON_ERROR` continue to propagate. Atomic mode is opt-in, so existing
+calls retain their original direct-write behavior.
 
 
 ## Loading Data

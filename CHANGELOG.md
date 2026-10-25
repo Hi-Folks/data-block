@@ -1,6 +1,8 @@
 # Changelog
 
 ## WIP
+- Added opt-in atomic JSON file writing with same-directory replacement and
+  temporary-file cleanup.
 - Added `pivotSum()` for wide numeric pivot tables with the same layout,
   defaults, fill behavior, and collision safety as `crossTab()`.
 - Added count-based `crossTab()` reports with wide, row-oriented output,

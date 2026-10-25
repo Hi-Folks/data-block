@@ -281,6 +281,137 @@ final class BlockJsonTest extends TestCase
         );
     }
 
+    public function testSaveToJsonCanCreateAFileAtomically(): void
+    {
+        $filename = $this->temporaryPath("atomic.json");
+
+        $result = Block::make(["status" => "complete"])->saveToJson(
+            $filename,
+            atomic: true,
+        );
+
+        $this->assertTrue($result);
+        $this->assertSame(
+            ["status" => "complete"],
+            json_decode((string) file_get_contents($filename), true),
+        );
+    }
+
+    public function testAtomicSaveCanReplaceAnExistingFile(): void
+    {
+        $filename = $this->temporaryPath("atomic-overwrite.json");
+        file_put_contents($filename, '{"version":"old"}');
+
+        $result = Block::make(["version" => "new"])->saveToJson(
+            $filename,
+            overwrite: true,
+            atomic: true,
+        );
+
+        $this->assertTrue($result);
+        $this->assertSame(
+            ["version" => "new"],
+            json_decode((string) file_get_contents($filename), true),
+        );
+    }
+
+    public function testAtomicSaveHonorsOverwriteProtection(): void
+    {
+        $filename = $this->temporaryPath("atomic-protected.json");
+        file_put_contents($filename, '{"version":"original"}');
+
+        $result = Block::make(["version" => "replacement"])->saveToJson(
+            $filename,
+            atomic: true,
+        );
+
+        $this->assertFalse($result);
+        $this->assertSame(
+            '{"version":"original"}',
+            file_get_contents($filename),
+        );
+    }
+
+    public function testAtomicSavePreservesExistingFileWhenEncodingFails(): void
+    {
+        $filename = $this->temporaryPath("atomic-invalid.json");
+        file_put_contents($filename, '{"version":"original"}');
+
+        $result = Block::make(["invalid" => "\xB1\x31"])->saveToJson(
+            $filename,
+            overwrite: true,
+            atomic: true,
+        );
+
+        $this->assertFalse($result);
+        $this->assertSame(
+            '{"version":"original"}',
+            file_get_contents($filename),
+        );
+    }
+
+    public function testAtomicSaveCanThrowWithoutChangingTheExistingFile(): void
+    {
+        $filename = $this->temporaryPath("atomic-throw.json");
+        file_put_contents($filename, '{"version":"original"}');
+
+        try {
+            Block::make(["invalid" => "\xB1\x31"])->saveToJson(
+                $filename,
+                overwrite: true,
+                flags: JSON_THROW_ON_ERROR,
+                atomic: true,
+            );
+            $this->fail("Invalid JSON data should throw");
+        } catch (JsonException $exception) {
+            $this->assertSame(JSON_ERROR_UTF8, $exception->getCode());
+        }
+
+        $this->assertSame(
+            '{"version":"original"}',
+            file_get_contents($filename),
+        );
+    }
+
+    public function testAtomicSaveReturnsFalseForAMissingDestinationDirectory(): void
+    {
+        $filename = $this->temporaryPath(
+            "missing" . DIRECTORY_SEPARATOR . "atomic.json",
+        );
+
+        $result = Block::make(["valid" => true])->saveToJson(
+            $filename,
+            atomic: true,
+        );
+
+        $this->assertFalse($result);
+        $this->assertFileDoesNotExist($filename);
+    }
+
+    public function testAtomicSaveCleansItsTemporaryFileWhenReplacementFails(): void
+    {
+        $destination = $this->temporaryPath("destination-directory");
+        mkdir($destination, 0700);
+
+        try {
+            $result = Block::make(["valid" => true])->saveToJson(
+                $destination,
+                overwrite: true,
+                atomic: true,
+            );
+
+            $entries = scandir(dirname($destination));
+
+            $this->assertFalse($result);
+            $this->assertSame(
+                [basename($destination)],
+                array_values(array_diff($entries ?: [], [".", ".."])),
+            );
+        } finally {
+            rmdir($destination);
+        }
+    }
+
     public function testEmptyJson(): void
     {
         $data = Block::fromJsonFile("file-not-exists");
