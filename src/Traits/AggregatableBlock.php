@@ -229,6 +229,129 @@ trait AggregatableBlock
         );
     }
 
+    /**
+     * Build a wide count table for the combinations of two fields.
+     *
+     * Row and generated column values retain their first-seen order. Missing,
+     * null, and non-scalar grouping values are skipped unless a default is
+     * configured for that axis.
+     */
+    public function crossTab(
+        int|string $rows,
+        int|string $columns,
+        int|string|null $rowAs = null,
+        mixed $fill = 0,
+        bool|float|int|string|null $defaultRow = null,
+        bool|float|int|string|null $defaultColumn = null,
+    ): self {
+        self::validateCrossTabField($rows, "row");
+        self::validateCrossTabField($columns, "column");
+
+        $rowColumn = $rowAs ?? $rows;
+        self::validateCrossTabField($rowColumn, "row output");
+        $rowColumnKey = self::crossTabOutputKey($rowColumn);
+
+        $defaults = [];
+        if ($defaultRow !== null) {
+            $defaults[$rows] = $defaultRow;
+        }
+        if ($defaultColumn !== null) {
+            $defaults[$columns] = $defaultColumn;
+        }
+
+        /** @var array<string, mixed> $rowValues */
+        $rowValues = [];
+        /** @var array<string, array{value: mixed, key: int|string}> $columnValues */
+        $columnValues = [];
+        /** @var array<int|string, string> $columnIdentitiesByKey */
+        $columnIdentitiesByKey = [];
+        /** @var array<string, array<string, int>> $counts */
+        $counts = [];
+
+        foreach ($this->data as $item) {
+            if ($item instanceof Block) {
+                $row = $item;
+            } elseif (is_array($item)) {
+                $row = Block::make($item, $this->iteratorReturnsBlock);
+            } else {
+                continue;
+            }
+
+            $groupValues = self::summaryGroupValues(
+                $row,
+                [$rows, $columns],
+                $defaults,
+            );
+            if ($groupValues === null) {
+                continue;
+            }
+
+            $rowValue = $groupValues[$rows];
+            /** @var bool|float|int|string $columnValue */
+            $columnValue = $groupValues[$columns];
+            $rowIdentity = serialize($rowValue);
+            $columnIdentity = serialize($columnValue);
+            $columnKey = self::crossTabOutputKey($columnValue);
+
+            if ($columnKey === $rowColumnKey) {
+                throw new \UnexpectedValueException(
+                    "Cross-tab column value "
+                    . self::describeCrossTabValue($columnValue)
+                    . " conflicts with row output column "
+                    . self::describeCrossTabValue($rowColumn),
+                );
+            }
+
+            if (
+                array_key_exists($columnKey, $columnIdentitiesByKey)
+                && $columnIdentitiesByKey[$columnKey] !== $columnIdentity
+            ) {
+                $existingValue = $columnValues[
+                    $columnIdentitiesByKey[$columnKey]
+                ]["value"];
+
+                throw new \UnexpectedValueException(
+                    "Cross-tab column values "
+                    . self::describeCrossTabValue($existingValue)
+                    . " and "
+                    . self::describeCrossTabValue($columnValue)
+                    . " both produce output column "
+                    . self::describeCrossTabValue($columnKey),
+                );
+            }
+
+            if (!array_key_exists($rowIdentity, $rowValues)) {
+                $rowValues[$rowIdentity] = $rowValue;
+            }
+            if (!array_key_exists($columnIdentity, $columnValues)) {
+                $columnValues[$columnIdentity] = [
+                    "value" => $columnValue,
+                    "key" => $columnKey,
+                ];
+                $columnIdentitiesByKey[$columnKey] = $columnIdentity;
+            }
+
+            $counts[$rowIdentity][$columnIdentity] = (
+                $counts[$rowIdentity][$columnIdentity] ?? 0
+            ) + 1;
+        }
+
+        $table = [];
+
+        foreach ($rowValues as $rowIdentity => $rowValue) {
+            $tableRow = [$rowColumn => $rowValue];
+
+            foreach ($columnValues as $columnIdentity => $column) {
+                $tableRow[$column["key"]] = $counts[$rowIdentity][$columnIdentity]
+                    ?? $fill;
+            }
+
+            $table[] = $tableRow;
+        }
+
+        return self::make($table, $this->iteratorReturnsBlock);
+    }
+
     public function countBy(
         int|string $groupField,
         int|string|null $defaultGroup = null,
@@ -386,6 +509,33 @@ trait AggregatableBlock
                 );
             }
         }
+    }
+
+    private static function validateCrossTabField(
+        int|string $field,
+        string $description,
+    ): void {
+        if ($field === "") {
+            throw new \InvalidArgumentException(
+                "Cross-tab {$description} field must not be empty",
+            );
+        }
+    }
+
+    private static function crossTabOutputKey(bool|float|int|string $value): int|string
+    {
+        $key = match (gettype($value)) {
+            "boolean" => (int) $value,
+            "double" => (string) $value,
+            "integer", "string" => $value,
+        };
+
+        return array_key_first([$key => true]);
+    }
+
+    private static function describeCrossTabValue(mixed $value): string
+    {
+        return var_export($value, true) . " (" . get_debug_type($value) . ")";
     }
 
     /**

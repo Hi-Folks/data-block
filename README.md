@@ -1883,6 +1883,97 @@ therefore remain three separate combinations. Grouping fields must be a unique
 list containing at least two non-empty string or integer fields. Group columns
 cannot conflict with metric names, and default values must be scalar or null.
 
+### Building a cross-tabulation
+
+Use `crossTab()` when you want to see how often values from one field occur for
+each value of another field. It returns a wide, row-oriented table so the result
+remains readable and works naturally with other Block methods.
+
+Given this input:
+
+```php
+$orders = Block::make([
+    ['region' => 'Europe',  'status' => 'paid'],
+    ['region' => 'America', 'status' => 'paid'],
+    ['region' => 'Europe',  'status' => 'pending'],
+    ['region' => 'Europe',  'status' => 'paid'],
+]);
+
+$table = $orders->crossTab(
+    rows: 'region',
+    columns: 'status',
+);
+```
+
+Every distinct `status` becomes an output column, and every cell contains the
+number of matching input rows:
+
+```php
+[
+    ['region' => 'Europe',  'paid' => 2, 'pending' => 1],
+    ['region' => 'America', 'paid' => 1, 'pending' => 0],
+]
+```
+
+The wide output is designed for normal Block operations and export:
+
+```php
+$table->get('0.paid');              // 2
+$table->where('region', 'Europe');  // the Europe result row
+$table->toJson();                   // directly serializable
+```
+
+Row and generated column values preserve their first-seen order. Missing
+combinations contain `0` by default; use `fill` when another marker is clearer:
+
+```php
+$table = $orders->crossTab(
+    'region',
+    'status',
+    fill: null,
+);
+```
+
+Rename the first output column with `rowAs`, which is especially useful for a
+nested row field:
+
+```php
+$table = $orders->crossTab(
+    'customer.region',
+    'status',
+    rowAs: 'region',
+);
+```
+
+Rows with a missing, null, or non-scalar grouping value are skipped by default.
+Keep them visible by assigning readable labels to either axis:
+
+```php
+$table = $orders->crossTab(
+    'customer.region',
+    'status',
+    rowAs: 'region',
+    defaultRow: 'unknown-region',
+    defaultColumn: 'unknown-status',
+);
+```
+
+Because column values become PHP array keys, two different values can sometimes
+produce the same output column. For example, integer `0`, string `"0"`, and
+boolean `false` all become key `0`. `crossTab()` throws an
+`UnexpectedValueException` instead of silently merging those categories. It
+also throws if a generated column has the same key as the row output column.
+
+Row values do not become array keys, so their PHP types remain distinct. When
+column categories intentionally include values that PHP cannot represent as
+distinct keys, use `countByMany()` instead. Its long output preserves the exact
+types of both grouping fields without collisions.
+
+`crossTab()` supports nested fields, array and Block rows, configurable fill
+values, and leaves the source Block unchanged. The initial API intentionally
+counts rows only; use `summarizeByMany()` when each combination needs custom
+aggregates.
+
 Use the grouped aggregation helpers when you need one result for each value of another field:
 
 ```php
