@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- Added `countWhere()` and `sumWhere()` conditional aggregation helpers with
+  the same field, nested-path, and operator semantics as `where()`.
 - Added immutable `withColumn()` and `withColumns()` helpers for adding or
   replacing computed fields across tabular Blocks.
 - Added validation-oriented `requireString()`, `requireInt()`, `requireFloat()`,

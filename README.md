@@ -1493,6 +1493,86 @@ Block::make([10, 20, 30])->sum(); // 60
 
 Integer values, floating-point values, and numeric strings are included. Missing fields, `null`, booleans, and non-numeric values are ignored. An empty selection returns `0` from `sum()` and `null` from `average()`, `min()`, and `max()`.
 
+### Conditional counts and sums
+
+Use `countWhere()` and `sumWhere()` when an aggregate applies only to matching
+rows. `countWhere()` returns the number of rows that match the condition.
+`sumWhere()` returns a number representing the sum of a selected column across
+those matching rows. They express the intent directly and avoid repeating
+`where(...)->count()` or `where(...)->sum()` throughout reporting code:
+
+```php
+$orders = Block::make([
+    ['status' => 'paid', 'amount' => 10],
+    ['status' => 'pending', 'amount' => 50],
+    ['status' => 'paid', 'amount' => '20.5'],
+    ['status' => 'paid', 'amount' => null],
+]);
+
+$summary = [
+    'paid_orders' => $orders->countWhere('status', 'paid'),
+    'paid_amount' => $orders->sumWhere('amount', 'status', 'paid'),
+];
+```
+
+The resulting summary is:
+
+```php
+[
+    'paid_orders' => 3,
+    'paid_amount' => 30.5,
+]
+```
+
+All three `paid` rows are counted. The null amount is ignored by the sum, while
+the numeric string `"20.5"` is included consistently with `sum()`.
+
+The first `sumWhere()` argument is the numeric field to total. The remaining
+arguments describe the condition. Both methods support nested fields and use
+the same shorthand and operators as `where()`:
+
+```php
+use HiFolks\DataType\Enums\Operator;
+
+$largeOrders = $orders->countWhere(
+    'totals.amount',
+    Operator::GREATER_THAN,
+    100,
+);
+
+$largeOrderTotal = $orders->sumWhere(
+    'totals.amount',
+    'totals.amount',
+    Operator::GREATER_THAN,
+    100,
+);
+```
+
+With one condition argument, the methods use `where()`'s boolean shorthand:
+
+```php
+$activeOrders = $orders->countWhere('active');
+$activeAmount = $orders->sumWhere('totals.amount', 'active');
+```
+
+With a field and value, equality follows `where()` and is intentionally loose.
+This is convenient for CSV data, where numbers commonly arrive as strings:
+
+```php
+$rows->countWhere('quantity', 10); // matches 10 and "10"
+```
+
+Use `Operator::STRICT_EQUAL` when the PHP type is significant:
+
+```php
+$rows->countWhere('quantity', Operator::STRICT_EQUAL, 10); // only integer 10
+```
+
+`sumWhere()` follows the same numeric rules as `sum()`: integers, floats, and
+numeric strings are included, while missing, null, boolean, and non-numeric
+values are ignored. Both helpers return `0` when no rows match and leave the
+source Block unchanged.
+
 Use the grouped aggregation helpers when you need one result for each value of another field:
 
 ```php

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiFolks\DataType\Traits;
 
 use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\Operator;
 
 trait AggregatableBlock
 {
@@ -50,6 +51,41 @@ trait AggregatableBlock
         $values = $this->numericValues($field);
 
         return $values === [] ? null : max($values);
+    }
+
+    /**
+     * Count rows matching the same field/operator/value conditions as where().
+     */
+    public function countWhere(
+        int|string $field,
+        mixed $operator = Operator::EQUAL,
+        mixed $value = null,
+    ): int {
+        $matching = match (func_num_args()) {
+            1 => $this->where($field),
+            2 => $this->where($field, $operator),
+            default => $this->where($field, $operator, $value),
+        };
+
+        return $matching->count();
+    }
+
+    /**
+     * Sum a numeric field for rows matching the same conditions as where().
+     */
+    public function sumWhere(
+        int|string $valueField,
+        int|string $conditionField,
+        mixed $operator = Operator::EQUAL,
+        mixed $value = null,
+    ): int|float {
+        $matching = match (func_num_args()) {
+            2 => $this->where($conditionField),
+            3 => $this->where($conditionField, $operator),
+            default => $this->where($conditionField, $operator, $value),
+        };
+
+        return $matching->sum($valueField);
     }
 
     public function countBy(
