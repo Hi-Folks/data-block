@@ -244,112 +244,55 @@ trait AggregatableBlock
         bool|float|int|string|null $defaultRow = null,
         bool|float|int|string|null $defaultColumn = null,
     ): self {
-        self::validateCrossTabField($rows, "row");
-        self::validateCrossTabField($columns, "column");
+        return $this->buildWideTable(
+            $rows,
+            $columns,
+            $rowAs,
+            $fill,
+            $defaultRow,
+            $defaultColumn,
+            fn(mixed $count): int => (is_int($count) ? $count : 0) + 1,
+        );
+    }
 
-        $rowColumn = $rowAs ?? $rows;
-        self::validateCrossTabField($rowColumn, "row output");
-        $rowColumnKey = self::crossTabOutputKey($rowColumn);
+    /**
+     * Build a wide table that sums one numeric field for each combination.
+     *
+     * Numeric strings are included. Missing, null, boolean, and non-numeric
+     * values contribute zero, consistently with sum().
+     */
+    public function pivotSum(
+        int|string $rows,
+        int|string $columns,
+        int|string $values,
+        int|string|null $rowAs = null,
+        mixed $fill = 0,
+        bool|float|int|string|null $defaultRow = null,
+        bool|float|int|string|null $defaultColumn = null,
+    ): self {
+        self::validateCrossTabField($values, "value");
 
-        $defaults = [];
-        if ($defaultRow !== null) {
-            $defaults[$rows] = $defaultRow;
-        }
-        if ($defaultColumn !== null) {
-            $defaults[$columns] = $defaultColumn;
-        }
+        return $this->buildWideTable(
+            $rows,
+            $columns,
+            $rowAs,
+            $fill,
+            $defaultRow,
+            $defaultColumn,
+            function (mixed $sum, Block $row) use ($values): int|float {
+                $total = is_int($sum) || is_float($sum) ? $sum : 0;
+                $value = $row->get($values);
 
-        /** @var array<string, mixed> $rowValues */
-        $rowValues = [];
-        /** @var array<string, array{value: mixed, key: int|string}> $columnValues */
-        $columnValues = [];
-        /** @var array<int|string, string> $columnIdentitiesByKey */
-        $columnIdentitiesByKey = [];
-        /** @var array<string, array<string, int>> $counts */
-        $counts = [];
+                if (is_int($value) || is_float($value)) {
+                    return $total + $value;
+                }
+                if (is_string($value) && is_numeric($value)) {
+                    return $total + ($value + 0);
+                }
 
-        foreach ($this->data as $item) {
-            if ($item instanceof Block) {
-                $row = $item;
-            } elseif (is_array($item)) {
-                $row = Block::make($item, $this->iteratorReturnsBlock);
-            } else {
-                continue;
-            }
-
-            $groupValues = self::summaryGroupValues(
-                $row,
-                [$rows, $columns],
-                $defaults,
-            );
-            if ($groupValues === null) {
-                continue;
-            }
-
-            $rowValue = $groupValues[$rows];
-            /** @var bool|float|int|string $columnValue */
-            $columnValue = $groupValues[$columns];
-            $rowIdentity = serialize($rowValue);
-            $columnIdentity = serialize($columnValue);
-            $columnKey = self::crossTabOutputKey($columnValue);
-
-            if ($columnKey === $rowColumnKey) {
-                throw new \UnexpectedValueException(
-                    "Cross-tab column value "
-                    . self::describeCrossTabValue($columnValue)
-                    . " conflicts with row output column "
-                    . self::describeCrossTabValue($rowColumn),
-                );
-            }
-
-            if (
-                array_key_exists($columnKey, $columnIdentitiesByKey)
-                && $columnIdentitiesByKey[$columnKey] !== $columnIdentity
-            ) {
-                $existingValue = $columnValues[
-                    $columnIdentitiesByKey[$columnKey]
-                ]["value"];
-
-                throw new \UnexpectedValueException(
-                    "Cross-tab column values "
-                    . self::describeCrossTabValue($existingValue)
-                    . " and "
-                    . self::describeCrossTabValue($columnValue)
-                    . " both produce output column "
-                    . self::describeCrossTabValue($columnKey),
-                );
-            }
-
-            if (!array_key_exists($rowIdentity, $rowValues)) {
-                $rowValues[$rowIdentity] = $rowValue;
-            }
-            if (!array_key_exists($columnIdentity, $columnValues)) {
-                $columnValues[$columnIdentity] = [
-                    "value" => $columnValue,
-                    "key" => $columnKey,
-                ];
-                $columnIdentitiesByKey[$columnKey] = $columnIdentity;
-            }
-
-            $counts[$rowIdentity][$columnIdentity] = (
-                $counts[$rowIdentity][$columnIdentity] ?? 0
-            ) + 1;
-        }
-
-        $table = [];
-
-        foreach ($rowValues as $rowIdentity => $rowValue) {
-            $tableRow = [$rowColumn => $rowValue];
-
-            foreach ($columnValues as $columnIdentity => $column) {
-                $tableRow[$column["key"]] = $counts[$rowIdentity][$columnIdentity]
-                    ?? $fill;
-            }
-
-            $table[] = $tableRow;
-        }
-
-        return self::make($table, $this->iteratorReturnsBlock);
+                return $total;
+            },
+        );
     }
 
     public function countBy(
@@ -520,6 +463,128 @@ trait AggregatableBlock
                 "Cross-tab {$description} field must not be empty",
             );
         }
+    }
+
+    /**
+     * @param callable(mixed, Block): mixed $aggregate
+     */
+    private function buildWideTable(
+        int|string $rows,
+        int|string $columns,
+        int|string|null $rowAs,
+        mixed $fill,
+        bool|float|int|string|null $defaultRow,
+        bool|float|int|string|null $defaultColumn,
+        callable $aggregate,
+    ): self {
+        self::validateCrossTabField($rows, "row");
+        self::validateCrossTabField($columns, "column");
+
+        $rowColumn = $rowAs ?? $rows;
+        self::validateCrossTabField($rowColumn, "row output");
+        $rowColumnKey = self::crossTabOutputKey($rowColumn);
+
+        $defaults = [];
+        if ($defaultRow !== null) {
+            $defaults[$rows] = $defaultRow;
+        }
+        if ($defaultColumn !== null) {
+            $defaults[$columns] = $defaultColumn;
+        }
+
+        /** @var array<string, mixed> $rowValues */
+        $rowValues = [];
+        /** @var array<string, array{value: mixed, key: int|string}> $columnValues */
+        $columnValues = [];
+        /** @var array<int|string, string> $columnIdentitiesByKey */
+        $columnIdentitiesByKey = [];
+        /** @var array<string, array<string, mixed>> $cellValues */
+        $cellValues = [];
+
+        foreach ($this->data as $item) {
+            if ($item instanceof Block) {
+                $row = $item;
+            } elseif (is_array($item)) {
+                $row = Block::make($item, $this->iteratorReturnsBlock);
+            } else {
+                continue;
+            }
+
+            $groupValues = self::summaryGroupValues(
+                $row,
+                [$rows, $columns],
+                $defaults,
+            );
+            if ($groupValues === null) {
+                continue;
+            }
+
+            $rowValue = $groupValues[$rows];
+            /** @var bool|float|int|string $columnValue */
+            $columnValue = $groupValues[$columns];
+            $rowIdentity = serialize($rowValue);
+            $columnIdentity = serialize($columnValue);
+            $columnKey = self::crossTabOutputKey($columnValue);
+
+            if ($columnKey === $rowColumnKey) {
+                throw new \UnexpectedValueException(
+                    "Cross-tab column value "
+                    . self::describeCrossTabValue($columnValue)
+                    . " conflicts with row output column "
+                    . self::describeCrossTabValue($rowColumn),
+                );
+            }
+
+            if (
+                array_key_exists($columnKey, $columnIdentitiesByKey)
+                && $columnIdentitiesByKey[$columnKey] !== $columnIdentity
+            ) {
+                $existingValue = $columnValues[
+                    $columnIdentitiesByKey[$columnKey]
+                ]["value"];
+
+                throw new \UnexpectedValueException(
+                    "Cross-tab column values "
+                    . self::describeCrossTabValue($existingValue)
+                    . " and "
+                    . self::describeCrossTabValue($columnValue)
+                    . " both produce output column "
+                    . self::describeCrossTabValue($columnKey),
+                );
+            }
+
+            if (!array_key_exists($rowIdentity, $rowValues)) {
+                $rowValues[$rowIdentity] = $rowValue;
+            }
+            if (!array_key_exists($columnIdentity, $columnValues)) {
+                $columnValues[$columnIdentity] = [
+                    "value" => $columnValue,
+                    "key" => $columnKey,
+                ];
+                $columnIdentitiesByKey[$columnKey] = $columnIdentity;
+            }
+
+            $current = $cellValues[$rowIdentity][$columnIdentity] ?? null;
+            $cellValues[$rowIdentity][$columnIdentity] = $aggregate(
+                $current,
+                $row,
+            );
+        }
+
+        $table = [];
+
+        foreach ($rowValues as $rowIdentity => $rowValue) {
+            $tableRow = [$rowColumn => $rowValue];
+
+            foreach ($columnValues as $columnIdentity => $column) {
+                $tableRow[$column["key"]] = $cellValues[$rowIdentity][$columnIdentity]
+                    ?? $fill;
+            }
+
+            $table[] = $tableRow;
+        }
+
+        return self::make($table, $this->iteratorReturnsBlock);
     }
 
     private static function crossTabOutputKey(bool|float|int|string $value): int|string

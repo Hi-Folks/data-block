@@ -1,6 +1,8 @@
 # Changelog
 
 ## WIP
+- Added `pivotSum()` for wide numeric pivot tables with the same layout,
+  defaults, fill behavior, and collision safety as `crossTab()`.
 - Added count-based `crossTab()` reports with wide, row-oriented output,
   configurable fill values, nested fields, defaults, and collision detection.
 - Added `tap()` for observing intermediate pipeline results while returning the same Block instance.

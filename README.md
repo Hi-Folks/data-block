@@ -1974,6 +1974,63 @@ values, and leaves the source Block unchanged. The initial API intentionally
 counts rows only; use `summarizeByMany()` when each combination needs custom
 aggregates.
 
+### Building a summed pivot table
+
+Use `pivotSum()` when the same wide layout should contain numeric totals rather
+than row counts. The method name makes the aggregation explicit: every cell is
+the sum of `values` for one row-and-column combination.
+
+Given this input:
+
+```php
+$orders = Block::make([
+    ['region' => 'Europe',  'status' => 'paid',    'amount' => 10],
+    ['region' => 'America', 'status' => 'paid',    'amount' => 25],
+    ['region' => 'Europe',  'status' => 'pending', 'amount' => 30],
+    ['region' => 'Europe',  'status' => 'paid',    'amount' => '20.5'],
+]);
+
+$table = $orders->pivotSum(
+    rows: 'region',
+    columns: 'status',
+    values: 'amount',
+);
+```
+
+The result is:
+
+```php
+[
+    ['region' => 'Europe',  'paid' => 30.5, 'pending' => 30],
+    ['region' => 'America', 'paid' => 25,   'pending' => 0],
+]
+```
+
+Numeric strings are included consistently with `sum()`. Missing, null,
+boolean, and non-numeric values contribute zero to an observed combination.
+
+An observed combination that contains no numeric values therefore has a sum of
+`0`. A combination that never occurred uses `fill`. This distinction is useful
+when missing cells should remain visible:
+
+```php
+$table = $orders->pivotSum(
+    'region',
+    'status',
+    'amount',
+    fill: null,
+);
+```
+
+In that example, `0` means input rows existed but had no numeric amount, while
+`null` means that row-and-column combination did not occur at all.
+
+`pivotSum()` has the same layout options and safety guarantees as `crossTab()`:
+`rowAs`, `fill`, `defaultRow`, `defaultColumn`, nested fields, first-seen
+ordering, source immutability, and explicit generated-column collision errors.
+Use `crossTab()` when cells should contain counts, and `pivotSum()` when they
+should contain numeric totals.
+
 Use the grouped aggregation helpers when you need one result for each value of another field:
 
 ```php
