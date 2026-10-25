@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- Added validation-oriented `requireString()`, `requireInt()`, `requireFloat()`,
+  and `requireBoolean()` accessors for mandatory typed input.
+
 ## 2.1.0 - 2026-09-20
 - Added `partition()` for splitting a Block into matching and non-matching
   results in one pass.

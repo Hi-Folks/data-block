@@ -14,3 +14,4 @@ vendor
 .zed
 .DS_Store
 output-coverage-html/
+datablock-progressive-improvements.md

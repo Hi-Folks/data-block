@@ -292,6 +292,65 @@ never falls back to automatic parsing when the explicit format does not match.
 work, but new code should use `getFormattedDate()` for nullable formatting or
 `requireDate()->format()` when invalid input must throw.
 
+### Required typed accessors
+
+Use the `require*()` accessors when a field is mandatory and invalid input must
+stop processing. They are especially useful at import and API boundaries,
+where silently turning malformed data into `0`, `false`, or an empty string can
+hide a data-quality problem:
+
+```php
+$name = $row->requireString('name');
+$quantity = $row->requireInt('quantity');
+$amount = $row->requireFloat('amount');
+$enabled = $row->requireBoolean('enabled');
+```
+
+The existing nullable and `Strict` getters remain useful when fallback or
+coercion is intentional. Despite their historical name, methods such as
+`getIntStrict()` guarantee a non-null return type; they do not validate that the
+source value is a well-formed integer.
+
+| Need | Example | Behavior |
+|---|---|---|
+| Optional value | `getInt('quantity')` | Returns an integer or `null` |
+| Guaranteed value with fallback | `getIntStrict('quantity')` | Coerces the value or returns `0` |
+| Mandatory valid value | `requireInt('quantity')` | Returns an integer or throws |
+
+All required accessors throw `OutOfBoundsException` for a missing field and
+`UnexpectedValueException` for `null` or invalid data. They support nested
+paths and custom separators in the same way as `get()`.
+
+Their validation rules are deliberately explicit:
+
+- `requireString()` accepts only non-blank strings. It does not turn integers
+  or booleans into strings.
+- `requireInt()` accepts integers, integral floats, and integer-formatted
+  strings such as `"42"` or `"0042"`. It rejects fractional and out-of-range
+  values instead of silently truncating them.
+- `requireFloat()` accepts finite integers, floats, and numeric strings. It
+  rejects booleans, non-numeric strings, infinity, and `NaN`.
+- `requireBoolean()` accepts booleans, integers `1` and `0`, and the strings
+  `true`, `false`, `1`, `0`, `yes`, `no`, `on`, and `off`. String matching is
+  case-insensitive and ignores surrounding whitespace.
+
+For example, this is appropriate while normalizing imported CSV rows:
+
+```php
+$rows = Block::fromCsvFile(
+    'orders.csv',
+    normalize: fn (Block $row): array => [
+        'reference' => $row->requireString('reference'),
+        'quantity' => $row->requireInt('quantity'),
+        'amount' => $row->requireFloat('amount'),
+        'paid' => $row->requireBoolean('paid'),
+    ],
+);
+```
+
+If malformed values should instead be replaced with application defaults, use
+the existing getters rather than the required accessors.
+
 ### The `getFormattedByte()` for getting and formatting a 'byte' field value
 
 The `getFormattedByte()` method retrieves and formats a byte value from a specified field in a data block. It converts the raw byte count into a more human-readable format (e.g., GB, MB, etc.), with an optional precision parameter to control the number of decimal places displayed.
