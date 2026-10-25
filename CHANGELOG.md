@@ -1,6 +1,8 @@
 # Changelog
 
-## 2.2.0 - WIP
+## 2.2.0 - 2026-10-25
+- Added `keyBy()` with explicit throw, keep-first, and keep-last collision
+  policies through the `KeyCollision` enum.
 - Added strict-by-default `whereNotIn()` and callback-based `reject()` exclusion
   helpers with key preservation.
 - Added collision-free `summarizeByMany()` and `countByMany()` flat reports for

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiFolks\DataType\Traits;
 
 use HiFolks\DataType\Block;
+use HiFolks\DataType\Enums\KeyCollision;
 use HiFolks\DataType\Enums\Operator;
 use HiFolks\DataType\Enums\SortDirection;
 use HiFolks\DataType\SortCriterion;
@@ -314,6 +315,77 @@ trait QueryableBlock
         return self::make($result, $this->iteratorReturnsBlock);
     }
 
+    /**
+     * Index tabular rows by the value of one field.
+     */
+    public function keyBy(
+        int|string $field,
+        KeyCollision $onDuplicate = KeyCollision::THROW,
+    ): self {
+        $result = [];
+        $sourceKeys = [];
+        $missing = new \stdClass();
+
+        foreach ($this->data as $sourceKey => $item) {
+            if ($item instanceof Block) {
+                $rowData = $item->toArray();
+            } elseif (is_array($item)) {
+                $rowData = $item;
+            } else {
+                throw new \UnexpectedValueException(
+                    "Cannot index source row "
+                    . self::describeArrayKey($sourceKey)
+                    . ": every row must be an array or Block",
+                );
+            }
+
+            $value = Block::make($rowData)->get($field, $missing);
+            if ($value === $missing) {
+                throw new \OutOfBoundsException(
+                    "Cannot index source row "
+                    . self::describeArrayKey($sourceKey)
+                    . " by field "
+                    . self::describeArrayKey($field)
+                    . ": the field is missing",
+                );
+            }
+
+            $key = self::valueForArrayKey($value);
+            if ($key === null) {
+                throw new \UnexpectedValueException(
+                    "Cannot index source row "
+                    . self::describeArrayKey($sourceKey)
+                    . " by field "
+                    . self::describeArrayKey($field)
+                    . ": the value must be a non-null scalar",
+                );
+            }
+
+            if (array_key_exists($key, $result)) {
+                if ($onDuplicate === KeyCollision::KEEP_FIRST) {
+                    continue;
+                }
+                if ($onDuplicate === KeyCollision::THROW) {
+                    throw new \UnexpectedValueException(
+                        "Duplicate key "
+                        . self::describeArrayKey($key)
+                        . " for field "
+                        . self::describeArrayKey($field)
+                        . " at source rows "
+                        . self::describeArrayKey($sourceKeys[$key])
+                        . " and "
+                        . self::describeArrayKey($sourceKey),
+                    );
+                }
+            }
+
+            $result[$key] = $rowData;
+            $sourceKeys[$key] = $sourceKey;
+        }
+
+        return self::make($result, $this->iteratorReturnsBlock);
+    }
+
     public function select(int|string ...$columns): self
     {
         $table = self::make([], $this->iteratorReturnsBlock);
@@ -578,6 +650,22 @@ trait QueryableBlock
         $missing = new \stdClass();
 
         return $row->get($field, $missing) !== $missing;
+    }
+
+    private static function valueForArrayKey(mixed $value): int|string|null
+    {
+        return match (gettype($value)) {
+            "boolean" => (int) $value,
+            "double" => (int) $value,
+            "integer" => $value,
+            "string" => array_key_first([$value => true]),
+            default => null,
+        };
+    }
+
+    private static function describeArrayKey(int|string $key): string
+    {
+        return is_int($key) ? (string) $key : "'{$key}'";
     }
 
     private function sortableItem(mixed $item): mixed

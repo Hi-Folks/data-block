@@ -1401,6 +1401,66 @@ Every callback receives an independent snapshot of the original row, so one
 computed column cannot accidentally affect another and results do not depend on
 the order of the callback array.
 
+### Indexing rows with `keyBy()`
+
+Use `keyBy()` when rows have a unique identifier and later operations need fast,
+readable lookup by that identifier. It replaces the table's current keys with
+values from the selected field while preserving each complete row.
+
+Given this input:
+
+```php
+$users = Block::make([
+    ['id' => 'user-1', 'name' => 'Ada'],
+    ['id' => 'user-2', 'name' => 'Grace'],
+]);
+
+$usersById = $users->keyBy('id');
+```
+
+The result is:
+
+```php
+[
+    'user-1' => ['id' => 'user-1', 'name' => 'Ada'],
+    'user-2' => ['id' => 'user-2', 'name' => 'Grace'],
+]
+```
+
+Rows can then be accessed directly through normal nested paths:
+
+```php
+$name = $usersById->get('user-2.name'); // Grace
+```
+
+Duplicate identifiers throw by default because silently discarding a row can
+hide an import or data-quality problem. When duplicates are expected, choose an
+explicit policy with the `KeyCollision` enum:
+
+```php
+use HiFolks\DataType\Enums\KeyCollision;
+
+$first = $rows->keyBy('id', KeyCollision::KEEP_FIRST);
+$last = $rows->keyBy('id', KeyCollision::KEEP_LAST);
+```
+
+`KEEP_FIRST` retains the first row encountered for each key. `KEEP_LAST`
+replaces its value with the last row while retaining the key's original output
+position. Use `groupBy()` instead when every duplicate row should be retained
+as a group.
+
+Nested fields such as `metadata.id` are supported. Missing fields throw
+`OutOfBoundsException`; null, array, and object values throw
+`UnexpectedValueException`. Scalar rows are also rejected because they cannot
+provide an indexing field. Duplicate exceptions include the effective key and
+both source row keys to help locate invalid input.
+
+The resulting keys follow PHP array-key semantics. In particular, integer `0`,
+string `"0"`, and boolean `false` refer to the same key and therefore trigger
+the selected collision policy. Floating-point keys are converted to integers in
+the same way as native PHP array keys. `keyBy()` returns a new Block, preserves
+iteration mode, and leaves the source unchanged.
+
 ### The `groupBy()` method
 
 Groups the elements of the `Block` object by a specified field.
