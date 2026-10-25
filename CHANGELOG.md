@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- Added collision-free `summarizeByMany()` and `countByMany()` flat reports for
+  multi-column grouping with per-field defaults.
 - Added `summarizeBy()` for flat grouped reports with named metric callbacks,
   group aliases, and default groups.
 - Added `countWhere()` and `sumWhere()` conditional aggregation helpers with

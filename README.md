@@ -1704,6 +1704,86 @@ The result is:
 ]
 ```
 
+### Grouping and summarizing by multiple columns
+
+Use `summarizeByMany()` when a group is defined by a combination of two or more
+fields. The output remains a flat report, so it can be filtered, sorted, or
+exported without navigating nested group levels.
+
+Given this input:
+
+```php
+$orders = Block::make([
+    ['region' => 'Europe',  'status' => 'paid',    'amount' => 10],
+    ['region' => 'America', 'status' => 'paid',    'amount' => 25],
+    ['region' => 'Europe',  'status' => 'pending', 'amount' => 50],
+    ['region' => 'Europe',  'status' => 'paid',    'amount' => '20.5'],
+]);
+```
+
+Create one summary row for every region and status combination:
+
+```php
+$summary = $orders->summarizeByMany(
+    ['region', 'status'],
+    [
+        'orders' => fn (Block $group): int => $group->count(),
+        'amount' => fn (Block $group): int|float => $group->sum('amount'),
+    ],
+);
+```
+
+The result preserves the first-seen order of each combination:
+
+```php
+[
+    ['region' => 'Europe',  'status' => 'paid',    'orders' => 2, 'amount' => 30.5],
+    ['region' => 'America', 'status' => 'paid',    'orders' => 1, 'amount' => 25],
+    ['region' => 'Europe',  'status' => 'pending', 'orders' => 1, 'amount' => 50],
+]
+```
+
+When only counts are needed, `countByMany()` is a shorter equivalent:
+
+```php
+$counts = $orders->countByMany(
+    ['region', 'status'],
+    countAs: 'orders',
+);
+```
+
+Missing or null grouping values cause a row to be skipped by default. Supply a
+default independently for each field that should retain incomplete rows:
+
+```php
+$counts = $orders->countByMany(
+    ['customer.region', 'status'],
+    defaultGroups: [
+        'customer.region' => 'unknown-region',
+        'status' => 'unknown-status',
+    ],
+);
+```
+
+Metric callbacks receive the grouped rows and an associative array containing
+all group values:
+
+```php
+$summary = $orders->summarizeByMany(
+    ['region', 'status'],
+    [
+        'label' => fn (Block $group, array $values): string =>
+            $values['region'] . ' / ' . $values['status'],
+    ],
+);
+```
+
+Multi-column grouping uses an internal type-preserving tuple identity rather
+than encoded display keys. Integer `0`, string `"0"`, and boolean `false`
+therefore remain three separate combinations. Grouping fields must be a unique
+list containing at least two non-empty string or integer fields. Group columns
+cannot conflict with metric names, and default values must be scalar or null.
+
 Use the grouped aggregation helpers when you need one result for each value of another field:
 
 ```php
